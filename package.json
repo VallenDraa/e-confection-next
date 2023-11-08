@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "author": "VallenDraa",
+  "packageManager": "^pnpm@8.9.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -24,6 +25,7 @@
     "geist": "^1.0.0",
     "next": "14.0.1",
     "next-auth": "^4.24.4",
+    "next-pwa": "^5.6.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.48.2",
