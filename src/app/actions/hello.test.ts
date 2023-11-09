@@ -1,7 +1,7 @@
-import { hello } from "./hello";
+import { hello } from './hello';
 
-it("should return world", async () => {
+it('should return world', async () => {
   const result = await hello();
 
-  expect(result).toBe("world");
+  expect(result).toBe('world');
 });
