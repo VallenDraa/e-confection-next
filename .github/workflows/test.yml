@@ -1,0 +1,38 @@
+name: Linting Process
+
+on: [pull_request, push]
+
+env:
+  PORT: 4000
+  ENABLE_LOGGING: true
+  NODE_ENV: "development"
+  ALLOWED_ORIGIN: "http://localhost/5173"
+  DB_HOST: "localhost"
+  DB_PORT: 3306
+  DB_USERNAME: ""
+  DB_PASSWORD: ""
+  DB_DATABASE: ""
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+      strategy:
+        matrix:
+          node-version: [20]
+      steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Test project
+        run: pnpm test:ci
