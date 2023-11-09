@@ -3,7 +3,6 @@ name: Linting Process
 on: [pull_request, push]
 
 env:
-  PORT: 4000
   ENABLE_LOGGING: true
   NODE_ENV: "development"
   ALLOWED_ORIGIN: "http://localhost/5173"
@@ -16,10 +15,10 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-20.04
-      strategy:
-        matrix:
-          node-version: [20]
-      steps:
+    strategy:
+      matrix:
+        node-version: [20]
+    steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
         with:
