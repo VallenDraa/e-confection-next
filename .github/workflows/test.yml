@@ -1,4 +1,4 @@
-name: Linting Process
+name: Testing Process
 
 on: [pull_request, push]
 
