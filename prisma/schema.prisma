@@ -10,6 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Bahan {
+  id                  String                @id @default(cuid())
+  nama                String
+  harga               Decimal
+  size                Decimal
+  quantity            Int
+  RekapBarangKaryawan RekapBarangKaryawan[]
+}
+
+model Benang {
+  id       String @id @default(cuid())
+  warna    String
+  quantity Int
+}
+
+model Karyawan {
+  id                  String                @id @default(cuid())
+  nama                String
+  RekapBarangKaryawan RekapBarangKaryawan[]
+}
+
+model RekapBarangKaryawan {
+  id         String   @id @default(cuid())
+  bahan      Bahan    @relation(fields: [bahanId], references: [id])
+  bahanId    String
+  karyawan   Karyawan @relation(fields: [karyawanId], references: [id])
+  karyawanId String
+  quantity   Int
+}
+
 model Account {
   id                 String    @id @default(cuid())
   userId             String
