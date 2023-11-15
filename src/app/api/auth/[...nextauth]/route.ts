@@ -7,15 +7,12 @@ import { prisma } from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  pages: {
-    signIn: '/login',
-  },
   session: {
     strategy: 'jwt',
   },
   providers: [
     CredentialsProvider({
-      name: 'Sign in',
+      name: 'Credentials',
       credentials: {
         email: {
           label: 'Email',
@@ -30,9 +27,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
+          where: { email: credentials.email },
+          select: { id: true, email: true, name: true, password: true },
         });
 
         if (!user || !(await compare(credentials.password, user.password!))) {
@@ -43,13 +39,13 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          randomKey: 'Hey cool',
+          randomKey: crypto.randomUUID(),
         };
       },
     }),
   ],
   callbacks: {
-    session: ({ session, token }) => {
+    session({ session, token }) {
       return {
         ...session,
         user: {
@@ -59,7 +55,8 @@ export const authOptions: NextAuthOptions = {
         },
       };
     },
-    jwt: ({ token, user }) => {
+    redirect: () => '/',
+    jwt({ token, user }) {
       if (user) {
         const u = user as unknown as any;
         return {

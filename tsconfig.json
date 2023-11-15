@@ -30,5 +30,5 @@
     "jest.config.js",
     "jest.setup.js"
   ],
-  "exclude": ["node_modules", "dist", "__tests__"]
+  "exclude": [".next", "node_modules", "dist", "__tests__"]
 }
