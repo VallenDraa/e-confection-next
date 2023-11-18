@@ -67,7 +67,8 @@
     "node-mocks-http": "^1.13.0",
     "prettier": "^3.0.3",
     "prisma": "^5.5.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "whatwg-fetch": "^3.6.19"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": "eslint --fix"

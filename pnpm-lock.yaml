@@ -142,6 +142,9 @@ devDependencies:
   typescript:
     specifier: ^5
     version: 5.2.2
+  whatwg-fetch:
+    specifier: ^3.6.19
+    version: 3.6.19
 
 packages:
 
