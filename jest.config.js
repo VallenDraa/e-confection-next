@@ -16,6 +16,7 @@ const customJestConfig = {
       statements: -10,
     },
   },
+  preset: 'ts-jest',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   // on node 14.x coverage provider v8 offers good speed and more or less good report
