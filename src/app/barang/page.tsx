@@ -1,4 +1,4 @@
-import { clientUnauthedRedirect } from '@/lib/auth/is-client-authed';
+import { clientUnauthedRedirect } from '@/lib/auth/user-auth-checker';
 
 export default async function BarangPage() {
   await clientUnauthedRedirect();
