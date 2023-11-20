@@ -4,13 +4,13 @@ import { FormEvent, useState } from 'react';
 
 export default function Login() {
   const { data } = useSession();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    await signIn('credentials', { email, password });
+    await signIn('credentials', { username, password });
   };
 
   if (data) {
@@ -20,10 +20,10 @@ export default function Login() {
   return (
     <form onSubmit={login}>
       <input
-        type="email"
-        name="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
+        type="username"
+        name="username"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
       />
       <input
         type="password"

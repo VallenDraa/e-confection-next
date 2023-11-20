@@ -16,9 +16,9 @@
     "test:coverage": "pnpm test --coverage",
     "test:ci": "jest --ci",
     "prepare": "husky install",
-    "prisma:generate": "pnpm prisma generate",
-    "prisma:migrate": "pnpm prisma migrate dev",
-    "prisma:push": "pnpm prisma db push"
+    "db:generate": "pnpm prisma generate",
+    "db:migrate": "pnpm prisma migrate dev",
+    "db:push": "pnpm prisma db push"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

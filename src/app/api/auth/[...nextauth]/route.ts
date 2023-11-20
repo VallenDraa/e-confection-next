@@ -7,28 +7,45 @@ import { prisma } from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  pages: {
+    signIn: '/login',
+  },
   session: {
+    // Choose how you want to save the user session.
+    // The default is `"jwt"`, an encrypted JWT (JWE) stored in the session cookie.
+    // If you use an `adapter` however, we default it to `"database"` instead.
+    // You can still force a JWT session by explicitly defining `"jwt"`.
+    // When using `"database"`, the session cookie will only contain a `sessionToken` value,
+    // which is used to look up the session in the database.
     strategy: 'jwt',
+
+    // Seconds - How long until an idle session expires and is no longer valid.
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+
+    // Seconds - Throttle how frequently to write to database to extend a session.
+    // Use it to limit write operations. Set to 0 to always update the database.
+    // Note: This option is ignored if using JSON Web Tokens
+    updateAge: 24 * 60 * 60, // 24 hours
+
+    // The session token is usually either a random UUID or string, however if you
+    // need a more customized session token string, you can define your own generate function.
+    generateSessionToken: () => crypto.randomUUID(),
   },
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: {
-          label: 'Email',
-          type: 'email',
-          placeholder: 'example@example.com',
-        },
+        username: { label: 'Username', type: 'string' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials?.username || !credentials.password) {
           return null;
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-          select: { id: true, email: true, name: true, password: true },
+          where: { username: credentials.username },
+          select: { id: true, name: true, username: true, password: true },
         });
 
         if (!user || !(await compare(credentials.password, user.password!))) {
@@ -37,7 +54,7 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: user.id,
-          email: user.email,
+          username: user.username,
           name: user.name,
           randomKey: crypto.randomUUID(),
         };
@@ -45,28 +62,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
-        },
-      };
-    },
     redirect: () => '/',
-    jwt({ token, user }) {
-      if (user) {
-        const u = user as unknown as any;
-        return {
-          ...token,
-          id: u.id,
-          randomKey: u.randomKey,
-        };
-      }
-      return token;
-    },
   },
 };
 
