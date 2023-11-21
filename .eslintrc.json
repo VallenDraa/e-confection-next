@@ -1,6 +1,7 @@
 {
   "extends": ["next/core-web-vitals", "plugin:prettier/recommended"],
   "rules": {
+    "no-console": "error",
     "prettier/prettier": ["error", { "endOfLine": "auto" }]
   }
 }
