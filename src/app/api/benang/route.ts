@@ -6,7 +6,7 @@ import { benangSchemaWithoutId } from '@/store/benang';
 export const GET = async (req: Request) => {
   clientUnauthedApiResponse();
 
-  const ITEM_PER_PAGE = 10;
+  const ITEM_PER_PAGE = 2;
 
   const searchParams = new URL(req.url).searchParams;
   const page = parseInt(searchParams.get('page') ?? '1');
@@ -25,7 +25,7 @@ export const GET = async (req: Request) => {
     });
 
     const benangQty = await prisma.benang.count();
-    const totalPages = Math.floor(benangQty / ITEM_PER_PAGE);
+    const totalPages = Math.ceil(benangQty / ITEM_PER_PAGE);
 
     return NextResponse.json(
       { benang, meta: { currentPage: page, totalPages: totalPages || 1 } },
