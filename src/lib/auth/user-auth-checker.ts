@@ -21,3 +21,11 @@ export const clientUnauthedApiResponse = async () => {
     );
   }
 };
+
+export const clientUnauthedServerAction = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    throw new Error('Unauthorized action!');
+  }
+};
