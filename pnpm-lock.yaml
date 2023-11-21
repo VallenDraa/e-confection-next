@@ -59,6 +59,9 @@ dependencies:
   next-pwa:
     specifier: ^5.6.0
     version: 5.6.0(@babel/core@7.23.3)(next@14.0.1)(webpack@5.89.0)
+  prisma:
+    specifier: ^5.5.2
+    version: 5.5.2
   react:
     specifier: ^18
     version: 18.2.0
@@ -139,9 +142,6 @@ devDependencies:
   prettier:
     specifier: ^3.0.3
     version: 3.0.3
-  prisma:
-    specifier: ^5.5.2
-    version: 5.5.2
   typescript:
     specifier: ^5
     version: 5.2.2
@@ -2489,6 +2489,7 @@ packages:
   /@prisma/engines@5.5.2:
     resolution: {integrity: sha512-Be5hoNF8k+lkB3uEMiCHbhbfF6aj1GnrTBnn5iYFT7GEr3TsOEp1soviEcBR0tYCgHbxjcIxJMhdbvxALJhAqg==}
     requiresBuild: true
+    dev: false
 
   /@rollup/plugin-babel@5.3.1(@babel/core@7.23.2)(rollup@2.79.1):
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -7375,6 +7376,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 5.5.2
+    dev: false
 
   /prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
