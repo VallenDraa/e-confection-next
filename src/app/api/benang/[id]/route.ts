@@ -41,8 +41,6 @@ export const PUT = async (
 
   const { id } = params;
 
-  console.log({ id });
-
   const updatedBenang = await req.json();
   const parsedBenang =
     await benangSchemaWithoutId.safeParseAsync(updatedBenang);
