@@ -3,7 +3,7 @@ name: Linting Process
 on: [pull_request, push]
 
 env:
-  DATABASE_URL: url
+  DATABASE_URL: mysql://root@129.0.0.1:9000/e-confection
   NEXTAUTH_SECRET: secret
 
 jobs:
