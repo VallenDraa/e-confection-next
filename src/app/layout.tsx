@@ -3,6 +3,7 @@ import { GeistSans } from 'geist/font';
 import { getServerSession } from 'next-auth';
 import { SessionProvider } from '@/store/session';
 import './globals.css';
+import { QueryProvider } from '@/store/query-provider/query-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,10 +18,12 @@ export default async function RootLayout({
   const session = await getServerSession();
 
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body className={GeistSans.className}>{children}</body>
-      </html>
-    </SessionProvider>
+    <html lang="en">
+      <body className={GeistSans.className}>
+        <SessionProvider session={session}>
+          <QueryProvider>{children}</QueryProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }

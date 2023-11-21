@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Bahan {
+model Barang {
   id                  String                @id @default(cuid())
   nama                String
   harga               Decimal
@@ -21,7 +21,7 @@ model Bahan {
 
 model Benang {
   id       String @id @default(cuid())
-  warna    String
+  color    String
   quantity Int
 }
 
@@ -33,8 +33,8 @@ model Karyawan {
 
 model RekapBarangKaryawan {
   id         String   @id @default(cuid())
-  bahan      Bahan    @relation(fields: [bahanId], references: [id])
-  bahanId    String
+  barang     Barang   @relation(fields: [barangId], references: [id])
+  barangId   String
   karyawan   Karyawan @relation(fields: [karyawanId], references: [id])
   karyawanId String
   quantity   Int
