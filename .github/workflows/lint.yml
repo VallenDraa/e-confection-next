@@ -3,14 +3,8 @@ name: Linting Process
 on: [pull_request, push]
 
 env:
-  ENABLE_LOGGING: true
-  NODE_ENV: "development"
-  ALLOWED_ORIGIN: "http://localhost/5173"
-  DB_HOST: "localhost"
-  DB_PORT: 3306
-  DB_USERNAME: ""
-  DB_PASSWORD: ""
-  DB_DATABASE: ""
+  DATABASE_URL: url
+  NEXTAUTH_SECRET: secret
 
 jobs:
   lint:
