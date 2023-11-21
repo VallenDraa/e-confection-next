@@ -6,7 +6,7 @@
   "packageManager": "^pnpm@8.9.0",
   "scripts": {
     "dev": "next dev",
-    "postinstall": "pnpm db:generate",
+    "postinstall": "pnpm db:generate && pnpm db:migrate:prod",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -18,7 +18,8 @@
     "test:ci": "jest --ci",
     "prepare": "husky install",
     "db:generate": "pnpm prisma generate",
-    "db:migrate": "pnpm prisma migrate dev",
+    "db:migrate:prod": "pnpm prisma migrate deploy",
+    "db:migrate:dev": "pnpm prisma migrate dev",
     "db:push": "pnpm prisma db push"
   },
   "dependencies": {
