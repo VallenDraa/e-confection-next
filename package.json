@@ -6,7 +6,6 @@
   "packageManager": "^pnpm@8.9.0",
   "scripts": {
     "dev": "next dev",
-    "postinstall": "pnpm db:generate && pnpm db:migrate:prod",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
