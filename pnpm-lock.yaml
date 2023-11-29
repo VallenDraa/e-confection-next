@@ -47,6 +47,9 @@ dependencies:
   geist:
     specifier: ^1.0.0
     version: 1.0.0
+  just-debounce:
+    specifier: ^1.1.0
+    version: 1.1.0
   msw:
     specifier: ^2.0.6
     version: 2.0.6(typescript@5.2.2)
@@ -6385,6 +6388,10 @@ packages:
       object.assign: 4.1.4
       object.values: 1.1.7
     dev: true
+
+  /just-debounce@1.1.0:
+    resolution: {integrity: sha512-qpcRocdkUmf+UTNBYx5w6dexX5J31AKK1OmPwH630a83DdVVUIngk55RSAiIGpQyoH0dlr872VHfPjnQnK1qDQ==}
+    dev: false
 
   /keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}

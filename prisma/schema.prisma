@@ -10,34 +10,78 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Barang {
-  id                  String                @id @default(cuid())
-  nama                String
-  harga               Decimal
-  size                Decimal
-  quantity            Int
-  RekapBarangKaryawan RekapBarangKaryawan[]
+model Size {
+  id        String   @id @default(cuid())
+  nama      String   @unique
+  harga     BigInt
+  createdAt DateTime @default(now())
+  Baju      Baju[]
 }
 
-model Benang {
-  id       String @id @default(cuid())
-  color    String
-  quantity Int
+model Warna {
+  id            String          @id @default(cuid())
+  nama          String          @unique
+  kodeWarna     String
+  createdAt     DateTime        @default(now())
+  GrupWarnaBaju GrupWarnaBaju[]
+}
+
+model Merek {
+  id        String   @id @default(cuid())
+  nama      String   @unique
+  createdAt DateTime @default(now())
+  Baju      Baju[]
+}
+
+model Baju {
+  id              String        @id @default(cuid())
+  jumlahDepan     Int
+  jumlahBelakang  Int
+  size            Size          @relation(fields: [sizeId], references: [id])
+  sizeId          String
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
+  grupWarnaBajuId String
+  merek           Merek?        @relation(fields: [merekId], references: [id])
+  merekId         String?
+  createdAt       DateTime      @default(now())
+}
+
+model GrupWarnaBaju {
+  id                String              @id @default(cuid())
+  warna             Warna               @relation(fields: [warnaId], references: [id])
+  warnaId           String
+  seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
+  seriProduksiId    String
+  baju              Baju[]
+  createdAt         DateTime            @default(now())
+  RekapGajiKaryawan RekapGajiKaryawan[]
+}
+
+model SeriProduksi {
+  id            String          @id @default(cuid())
+  nama          String?
+  nomorSeri     BigInt          @unique
+  createdAt     DateTime        @default(now())
+  GrupWarnaBaju GrupWarnaBaju[]
 }
 
 model Karyawan {
-  id                  String                @id @default(cuid())
+  id                  String            @id @default(cuid())
   nama                String
-  RekapBarangKaryawan RekapBarangKaryawan[]
+  rekapGajiKaryawan   RekapGajiKaryawan @relation(fields: [rekapGajiKaryawanId], references: [id])
+  rekapGajiKaryawanId String
+  createdAt           DateTime          @default(now())
 }
 
-model RekapBarangKaryawan {
-  id         String   @id @default(cuid())
-  barang     Barang   @relation(fields: [barangId], references: [id])
-  barangId   String
-  karyawan   Karyawan @relation(fields: [karyawanId], references: [id])
-  karyawanId String
-  quantity   Int
+// When querying the salary, must get all of the entry
+// of a given time which points to the same karyawan ID 
+model RekapGajiKaryawan {
+  id              String        @id @default(cuid())
+  jumlahGaji      BigInt
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
+  grupWarnaBajuId String
+  Karyawan        Karyawan[]
+  createdAt       DateTime      @default(now())
 }
 
 model Account {
