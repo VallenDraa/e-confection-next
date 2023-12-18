@@ -1,7 +1,7 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
+import { authOptions } from '.';
 
 export const clientUnauthedRedirect = async () => {
   const session = await getServerSession(authOptions);

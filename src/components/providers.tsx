@@ -1,0 +1,36 @@
+'use client';
+
+import * as React from 'react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SessionProvider } from 'next-auth/react';
+import {
+  ThemeProvider,
+  createTheme,
+  responsiveFontSizes,
+} from '@mui/material/styles';
+
+let theme = createTheme();
+theme = responsiveFontSizes(theme);
+
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
+
+export function Providers({ children }: React.PropsWithChildren) {
+  return (
+    <SessionProvider>
+      <QueryClientProvider client={client}>
+        <ThemeProvider theme={theme}>
+          {children}
+          <ReactQueryDevtools />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SessionProvider>
+  );
+}
