@@ -69,8 +69,8 @@ export function BackgroundSvg() {
           gradientUnits="userSpaceOnUse"
           id="SvgjsLinearGradient1621"
         >
-          <stop stop-color="rgba(250, 250, 250, 1)" offset="0.22"></stop>
-          <stop stop-color="rgba(245, 245, 245, 1)" offset="1"></stop>
+          <stop stopColor="rgba(250, 250, 250, 1)" offset="0.22"></stop>
+          <stop stopColor="rgba(245, 245, 245, 1)" offset="1"></stop>
         </linearGradient>
       </defs>
     </svg>

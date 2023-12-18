@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { SignInIllustration } from '@/components/icons/icons';
 import { FloatingAlert } from '@/components/ui/floating-alert';
+import { useSearchParams } from 'next/navigation';
 
 const signInFormSchema = z.object({
   username: z.string().min(1, 'Username tidak boleh kosong.'),
@@ -27,10 +28,27 @@ const signInFormSchema = z.object({
 type SignInFormSchema = z.infer<typeof signInFormSchema>;
 
 export default function SignIn() {
+  const search = useSearchParams();
+  const callbackURLError = search.get('error');
+  const [errorMessage, setErrorMessage] = React.useState('');
+
   const [isAlertOn, setIsAlertOn] = React.useState(false);
   const { register, handleSubmit, formState } = useForm<SignInFormSchema>({
     resolver: zodResolver(signInFormSchema),
   });
+
+  const turnOnErrorAlert = React.useCallback((message: string) => {
+    setErrorMessage(message);
+    setIsAlertOn(true);
+    setTimeout(() => setIsAlertOn(false), 3000);
+  }, []);
+
+  // Handle URL error
+  React.useEffect(() => {
+    if (callbackURLError) {
+      turnOnErrorAlert('Email atau password salah!');
+    }
+  }, [callbackURLError, turnOnErrorAlert]);
 
   const onSubmit: SubmitHandler<SignInFormSchema> = async data => {
     try {
@@ -40,8 +58,7 @@ export default function SignIn() {
         callbackUrl: '/',
       });
     } catch (error) {
-      setIsAlertOn(true);
-      setTimeout(() => setIsAlertOn(false), 3000);
+      turnOnErrorAlert('Gagal untuk sign in, silahkan coba di lain waktu!');
     }
   };
 
@@ -118,7 +135,7 @@ export default function SignIn() {
         onClose={() => setIsAlertOn(false)}
         severity="error"
       >
-        Gagal untuk sign in, silahkan coba di lain waktu.
+        {errorMessage}
       </FloatingAlert>
     </Container>
   );

@@ -31,7 +31,7 @@ export function SignInIllustration(props?: React.SVGProps<SVGSVGElement>) {
         fill="#A0C8FF"
         stroke="black"
         strokeWidth="5.7611"
-        stroke-miterlimit="10"
+        strokeMiterlimit="10"
       />
       <path
         d="M82.3629 111.248H101.567M82.3629 99.7259H101.567M82.3629 88.2037H101.567"
