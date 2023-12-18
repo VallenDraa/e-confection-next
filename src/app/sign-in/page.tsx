@@ -14,27 +14,25 @@ import {
   Box,
   FormControlLabel,
   Button,
-  Alert,
-  Fade,
 } from '@mui/material';
-import { LoginIllustration } from '@/components/icons/icons';
+import { SignInIllustration } from '@/components/icons/icons';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 
-const loginFormSchema = z.object({
+const signInFormSchema = z.object({
   username: z.string().min(1, 'Username tidak boleh kosong.'),
   password: z.string().min(1, 'Password tidak boleh kosong.'),
   rememberMe: z.boolean(),
 });
 
-type LoginFormSchema = z.infer<typeof loginFormSchema>;
+type SignInFormSchema = z.infer<typeof signInFormSchema>;
 
-export default function Login() {
+export default function SignIn() {
   const [isAlertOn, setIsAlertOn] = React.useState(false);
-  const { register, handleSubmit, formState } = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginFormSchema),
+  const { register, handleSubmit, formState } = useForm<SignInFormSchema>({
+    resolver: zodResolver(signInFormSchema),
   });
 
-  const onSubmit: SubmitHandler<LoginFormSchema> = async data => {
+  const onSubmit: SubmitHandler<SignInFormSchema> = async data => {
     try {
       await signIn('credentials', {
         username: data.username,
@@ -70,7 +68,7 @@ export default function Login() {
           </Typography>
 
           <Stack direction="row" justifyContent="center" my={4}>
-            <LoginIllustration />
+            <SignInIllustration />
           </Stack>
 
           <Stack gap={2} mb={3}>
@@ -120,7 +118,7 @@ export default function Login() {
         onClose={() => setIsAlertOn(false)}
         severity="error"
       >
-        Gagal untuk login, silahkan coba di lain waktu.
+        Gagal untuk sign in, silahkan coba di lain waktu.
       </FloatingAlert>
     </Container>
   );

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function LoginIllustration(props?: React.SVGProps<SVGSVGElement>) {
+export function SignInIllustration(props?: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       width="155"
