@@ -1,8 +1,9 @@
-import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font';
-import { getServerSession } from 'next-auth';
-import { SessionProvider } from '@/store/session';
 import './globals.css';
+
+import type { Metadata } from 'next';
+import { Providers } from '@/components/providers';
+import { CssBaseline } from '@mui/material';
+import { BackgroundSvg } from '@/components/background-svg';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -14,13 +15,17 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
-
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body className={GeistSans.className}>{children}</body>
-      </html>
-    </SessionProvider>
+    <html lang="en" style={{ height: '100%' }}>
+      <body style={{ height: '100%' }}>
+        <BackgroundSvg />
+        <CssBaseline />
+        <Providers>
+          <div style={{ height: '100%', position: 'relative', zIndex: '2000' }}>
+            {children}
+          </div>
+        </Providers>
+      </body>
+    </html>
   );
 }
