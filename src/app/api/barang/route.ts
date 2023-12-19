@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { SeriProduksiSchema } from '@/types/baju.types';
+import { SeriProduksiSchema } from '@/schema/baju.schema';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const { data: seriProduksiData } = seriParsingResult;
     await prisma.seriProduksi.create({ data: seriProduksiData });
 
-    return NextResponse.json({ status: 204 });
+    return new Response(null, { status: 204 });
   } catch (error) {
     return NextResponse.json(
       { message: 'Gagal menambahkan data baju baru!' },

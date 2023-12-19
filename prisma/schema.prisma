@@ -72,12 +72,12 @@ model SeriProduksi {
 }
 
 model Karyawan {
-  id                  String            @id @default(cuid())
+  id                  String             @id @default(cuid())
   nama                String
-  rekapGajiKaryawan   RekapGajiKaryawan @relation(fields: [rekapGajiKaryawanId], references: [id])
-  rekapGajiKaryawanId String
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  rekapGajiKaryawan   RekapGajiKaryawan? @relation(fields: [rekapGajiKaryawanId], references: [id])
+  rekapGajiKaryawanId String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 }
 
 // When querying the salary, must get all of the entry
