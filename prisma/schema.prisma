@@ -56,6 +56,7 @@ model GrupWarnaBaju {
   warnaId           String
   seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
   seriProduksiId    String
+  karyawanName      String
   baju              Baju[]
   RekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
@@ -72,12 +73,11 @@ model SeriProduksi {
 }
 
 model Karyawan {
-  id                  String             @id @default(cuid())
-  nama                String
-  rekapGajiKaryawan   RekapGajiKaryawan? @relation(fields: [rekapGajiKaryawanId], references: [id])
-  rekapGajiKaryawanId String?
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
+  id                String              @id @default(cuid())
+  nama              String
+  RekapGajiKaryawan RekapGajiKaryawan[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 }
 
 // When querying the salary, must get all of the entry
@@ -87,7 +87,8 @@ model RekapGajiKaryawan {
   jumlahGaji      BigInt
   grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
   grupWarnaBajuId String
-  Karyawan        Karyawan[]
+  karyawanId      String
+  Karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 }
