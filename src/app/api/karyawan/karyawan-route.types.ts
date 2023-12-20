@@ -9,3 +9,9 @@ export type KaryawanGET = {
     last: number;
   };
 };
+
+export type KaryawanPUTBody = {
+  id: string;
+  nama: string;
+  telepon: string;
+};
