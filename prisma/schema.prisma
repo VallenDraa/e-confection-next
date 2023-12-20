@@ -75,6 +75,7 @@ model SeriProduksi {
 model Karyawan {
   id                String              @id @default(cuid())
   nama              String
+  telepon           String
   RekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
