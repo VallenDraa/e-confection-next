@@ -21,7 +21,7 @@ export default async function RootLayout({
         <BackgroundSvg />
         <CssBaseline />
         <Providers>
-          <div style={{ height: '100%', position: 'relative', zIndex: '2000' }}>
+          <div style={{ height: '100%', position: 'relative', zIndex: '500' }}>
             {children}
           </div>
         </Providers>
