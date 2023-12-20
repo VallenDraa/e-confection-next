@@ -21,6 +21,7 @@ import {
   PreviewKaryawan,
   previewKaryawanSchema,
 } from '@/schema/karyawan.schema';
+import { willDisableSubmit } from '@/lib/will-disable-submit';
 
 type AddKaryawanDialogProps = {
   children: (
@@ -104,11 +105,7 @@ export function AddKaryawanDialog(props: AddKaryawanDialogProps) {
               Batal
             </Button>
             <Button
-              disabled={
-                !formState.isDirty ||
-                !formState.isValid ||
-                formState.isSubmitting
-              }
+              disabled={willDisableSubmit(formState)}
               type="submit"
               variant="contained"
               color="success"
