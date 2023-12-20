@@ -25,6 +25,8 @@ import {
 } from '@/schema/karyawan.schema';
 import { willDisableSubmit } from '@/lib/will-disable-submit';
 import { KaryawanPUTBody } from '@/app/api/karyawan/karyawan-route.types';
+import { WorkHistoryItemProps } from './work-history-item';
+import WorkHistoryList from './work-history-list';
 
 type KaryawanItemProps = {
   karyawan: Karyawan;
@@ -32,6 +34,23 @@ type KaryawanItemProps = {
   onChecked: (isChecked: boolean) => void;
   onEdit: (karyawan: KaryawanPUTBody) => void;
 };
+
+const generateMockData = (): WorkHistoryItemProps => ({
+  noSeri: Math.floor(Math.random() * 1000) + 1,
+  size: ['S', 'M', 'L'][Math.floor(Math.random() * 3)],
+  warna: Array.from(
+    { length: Math.floor(Math.random() * 4) + 1 },
+    () => ['Red', 'Blue', 'Green', 'Yellow'][Math.floor(Math.random() * 4)],
+  ),
+  merek: 'Some Brand',
+  gaji: Math.floor(Math.random() * 5000) + 500,
+  createdAt: new Date(),
+});
+
+const mockData: WorkHistoryItemProps[] = Array.from(
+  { length: 20 },
+  generateMockData,
+);
 
 export function KaryawanItem(props: KaryawanItemProps) {
   const { karyawan, checkable, onChecked, onEdit } = props;
@@ -114,6 +133,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
 
       {/* Karyawan detail dialog */}
       <Dialog
+        fullScreen
         PaperProps={{ square: false }}
         open={isDetailOpen}
         onClose={setIsDetailOpen}
@@ -134,8 +154,20 @@ export function KaryawanItem(props: KaryawanItemProps) {
             </Typography>
           </Box>
         </Header>
-        <Box component="form" onSubmit={handleSubmit(handleAddKaryawan)}>
-          <DialogContent>
+        <Box
+          height="100%"
+          component="form"
+          overflow="hidden"
+          onSubmit={handleSubmit(handleAddKaryawan)}
+        >
+          <DialogContent
+            sx={{
+              height: '100%',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             <Paper sx={{ padding: '24px', backgroundColor: grey[100] }}>
               <Stack direction="row" alignItems="center" gap={2}>
                 <Avatar
@@ -207,6 +239,17 @@ export function KaryawanItem(props: KaryawanItemProps) {
                 Edit
               </Button>
             )}
+
+            <Typography
+              fontWeight={700}
+              variant="h6"
+              mt={3}
+              mb={1}
+              component="h2"
+            >
+              Riwayat Pekerjaan
+            </Typography>
+            <WorkHistoryList workHistory={mockData} />
           </DialogContent>
         </Box>
       </Dialog>

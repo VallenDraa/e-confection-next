@@ -74,6 +74,9 @@ dependencies:
   react-hook-form:
     specifier: ^7.48.2
     version: 7.48.2(react@18.2.0)
+  react-window:
+    specifier: ^1.8.10
+    version: 1.8.10(react-dom@18.2.0)(react@18.2.0)
   validator:
     specifier: ^13.11.0
     version: 13.11.0
@@ -112,6 +115,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18
     version: 18.2.17
+  '@types/react-window':
+    specifier: ^1.8.8
+    version: 1.8.8
   '@types/validator':
     specifier: ^13.11.7
     version: 13.11.7
@@ -2868,6 +2874,12 @@ packages:
     dependencies:
       '@types/react': 18.2.39
     dev: false
+
+  /@types/react-window@1.8.8:
+    resolution: {integrity: sha512-8Ls660bHR1AUA2kuRvVG9D/4XpRC6wjAaPT9dil7Ckc76eP9TKWZwwmgfq8Q1LANX3QNDnoU4Zp48A3w+zK69Q==}
+    dependencies:
+      '@types/react': 18.2.39
+    dev: true
 
   /@types/react@18.2.39:
     resolution: {integrity: sha512-Oiw+ppED6IremMInLV4HXGbfbG6GyziY3kqAwJYOR0PNbkYDmLWQA3a95EhdSmamsvbkJN96ZNN+YD+fGjzSBA==}
@@ -6694,6 +6706,10 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
+  /memoize-one@5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
+    dev: false
+
   /meow@12.1.1:
     resolution: {integrity: sha512-BhXM0Au22RwUneMPwSCnyhTOizdWoIEPU9sp0Aqa1PnDMR5Wv2FGXYDjuzJEIX+Eo2Rb8xuYe5jrnm5QowQFkw==}
     engines: {node: '>=16.10'}
@@ -7567,6 +7583,19 @@ packages:
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /react-window@1.8.10(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Y0Cx+dnU6NLa5/EvoHukUD0BklJ8qITCtVEPY1C/nL8wwoZ0b5aEw8Ff1dOVHw7fCzMt55XfJDd8S8W8LCaUCg==}
+    engines: {node: '>8.0.0'}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.23.5
+      memoize-one: 5.2.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
