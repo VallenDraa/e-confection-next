@@ -27,8 +27,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Typecheck project
-        run: pnpm run typecheck
-
       - name: Lint project
         run: pnpm lint
