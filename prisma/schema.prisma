@@ -37,25 +37,25 @@ model Merek {
 }
 
 model Baju {
-  id              String         @id @default(cuid())
+  id              String        @id @default(cuid())
   jumlahDepan     Int
   jumlahBelakang  Int
-  size            Size           @relation(fields: [sizeId], references: [id])
+  size            Size          @relation(fields: [sizeId], references: [id])
   sizeId          String
-  grupWarnaBaju   GrupWarnaBaju? @relation(fields: [grupWarnaBajuId], references: [id])
-  grupWarnaBajuId String?
-  merek           Merek?         @relation(fields: [merekId], references: [id])
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id], onDelete: Cascade)
+  grupWarnaBajuId String
+  merek           Merek?        @relation(fields: [merekId], references: [id])
   merekId         String?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model GrupWarnaBaju {
   id                String              @id @default(cuid())
   warna             Warna               @relation(fields: [warnaId], references: [id])
   warnaId           String
-  seriProduksi      SeriProduksi?       @relation(fields: [seriProduksiId], references: [id])
-  seriProduksiId    String?
+  seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id], onDelete: Cascade)
+  seriProduksiId    String
   karyawanName      String
   baju              Baju[]
   RekapGajiKaryawan RekapGajiKaryawan[]
@@ -84,14 +84,14 @@ model Karyawan {
 // When querying the salary, must get all of the entry
 // of a given time which points to the same karyawan ID 
 model RekapGajiKaryawan {
-  id              String         @id @default(cuid())
+  id              String        @id @default(cuid())
   jumlahGaji      BigInt
-  grupWarnaBaju   GrupWarnaBaju? @relation(fields: [grupWarnaBajuId], references: [id])
-  grupWarnaBajuId String?
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id], onDelete: Cascade)
+  grupWarnaBajuId String
   karyawanId      String
-  Karyawan        Karyawan       @relation(fields: [karyawanId], references: [id])
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  Karyawan        Karyawan      @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model Account {
