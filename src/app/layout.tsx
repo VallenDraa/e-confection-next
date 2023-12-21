@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Providers } from '@/components/providers';
 import { CssBaseline } from '@mui/material';
 import { BackgroundSvg } from '@/components/background-svg';
+import Menubar from '@/components/ui/menubar';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -23,6 +24,7 @@ export default async function RootLayout({
         <Providers>
           <div style={{ height: '100%', position: 'relative', zIndex: '500' }}>
             {children}
+            <Menubar />
           </div>
         </Providers>
       </body>

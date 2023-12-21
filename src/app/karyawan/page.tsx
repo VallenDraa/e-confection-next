@@ -160,8 +160,8 @@ export default function KaryawanPage() {
 
       <Box
         position="fixed"
-        bottom={20}
-        right={20}
+        bottom={65}
+        right={16}
         gap={1}
         display="flex"
         flexDirection="column"
@@ -222,12 +222,7 @@ export default function KaryawanPage() {
         )}
       </Box>
 
-      <Box
-        position="fixed"
-        bottom={20}
-        left="50%"
-        sx={{ transform: 'translateX(-50%)' }}
-      >
+      <Box position="fixed" bottom={65} left={16}>
         <Pagination
           shape="rounded"
           onChange={(e, page) => setKaryawanPage(page)}
