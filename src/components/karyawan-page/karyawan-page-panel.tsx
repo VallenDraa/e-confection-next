@@ -11,24 +11,18 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
 import { KaryawanItem } from '@/components/karyawan-page/karyawan-item';
 import { grey } from '@mui/material/colors';
 import { AddKaryawanDialog } from '@/components/karyawan-page/add-karyawan-dialog';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import { Karyawan } from '@prisma/client';
 import { ConfirmDeleteDialog } from '@/components/karyawan-page/confirm-delete-dialog';
-import {
-  KaryawanGET,
-  KaryawanPUTBody,
-} from '@/app/api/karyawan/karyawan-route.types';
+import useKaryawan from '@/hooks/use-karyawan';
 
 export function KaryawanPagePanel() {
   const query = useSearchParams();
   const [karyawanPage, setKaryawanPage] = React.useState(
-    query.get('page') ?? 1,
+    isNaN(Number(query.get('page') ?? 1)) ? 1 : Number(query.get('page') ?? 1),
   );
 
   const [isDeletingKaryawan, setIsDeletingKaryawan] = React.useState(false);
@@ -36,71 +30,18 @@ export function KaryawanPagePanel() {
     string[]
   >([]);
 
-  const queryClient = useQueryClient();
-
   const [isAlertOn, setIsAlertOn] = React.useState(false);
-  function onError() {
-    setIsAlertOn(true);
-    setTimeout(() => setIsAlertOn(false), 3000);
-  }
-
   const {
-    data: result,
-    error,
-    isLoading,
-  } = useQuery<KaryawanGET>({
-    queryKey: ['karyawan', karyawanPage],
-    async queryFn() {
-      try {
-        const { data } = await axios.get<KaryawanGET>(
-          `/api/karyawan?page=${karyawanPage}`,
-        );
-
-        return data;
-      } catch (error) {
-        onError();
-
-        return {
-          data: [],
-          metadata: { last: 0, current: 0, next: 0, prev: 0 },
-        };
-      }
+    queryResult: { data: result, error, isLoading },
+    addKaryawan,
+    editKaryawan,
+    deleteKaryawan,
+  } = useKaryawan({
+    karyawanPage,
+    onError() {
+      setIsAlertOn(true);
+      setTimeout(() => setIsAlertOn(false), 3000);
     },
-  });
-
-  const addKaryawan = useMutation({
-    mutationKey: ['karyawan', karyawanPage],
-    mutationFn: async (newKaryawan: Pick<Karyawan, 'nama' | 'telepon'>) => {
-      await axios.post('/api/karyawan', newKaryawan);
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
-    },
-    onError,
-  });
-
-  const editKaryawan = useMutation({
-    mutationFn: async (newKaryawan: KaryawanPUTBody) => {
-      await axios.put('/api/karyawan', newKaryawan);
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
-    },
-    onError,
-  });
-
-  const deleteKaryawan = useMutation({
-    mutationKey: ['karyawan', karyawanPage],
-    mutationFn: async (karyawanIds: string[]) => {
-      await axios.delete('/api/karyawan', { data: { ids: karyawanIds } });
-    },
-    onSuccess() {
-      setToBeDeletedKaryawan([]);
-      setIsDeletingKaryawan(false);
-
-      queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
-    },
-    onError,
   });
 
   return (
