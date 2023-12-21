@@ -7,7 +7,7 @@ export const clientUnauthedRedirect = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect('/login');
+    redirect('/sign-in');
   }
 };
 

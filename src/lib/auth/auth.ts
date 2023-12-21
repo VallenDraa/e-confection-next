@@ -19,26 +19,29 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
       credentials: {
         username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials.password) {
+        try {
+          if (!credentials?.username || !credentials.password) {
+            return null;
+          }
+
+          const user = await prisma.user.findFirst({
+            where: { username: credentials.username },
+            select: { id: true, email: true, name: true, password: true },
+          });
+
+          if (!user || !(await compare(credentials.password, user.password!))) {
+            return null;
+          }
+
+          return { id: user.id, email: user.email, name: user.name };
+        } catch (error) {
           return null;
         }
-
-        const user = await prisma.user.findFirst({
-          where: { name: credentials.username },
-          select: { id: true, email: true, name: true, password: true },
-        });
-
-        if (!user || !(await compare(credentials.password, user.password!))) {
-          return null;
-        }
-
-        return { id: user.id, email: user.email, name: user.name };
       },
     }),
   ],
