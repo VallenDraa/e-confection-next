@@ -36,9 +36,14 @@ export function KaryawanPagePanel() {
     string[]
   >([]);
 
-  const [isAlertOn, setIsAlertOn] = React.useState(false);
-
   const queryClient = useQueryClient();
+
+  const [isAlertOn, setIsAlertOn] = React.useState(false);
+  function onError() {
+    setIsAlertOn(true);
+    setTimeout(() => setIsAlertOn(false), 3000);
+  }
+
   const {
     data: result,
     error,
@@ -46,18 +51,22 @@ export function KaryawanPagePanel() {
   } = useQuery<KaryawanGET>({
     queryKey: ['karyawan', karyawanPage],
     async queryFn() {
-      const { data } = await axios.get<KaryawanGET>(
-        `/api/karyawan?page=${karyawanPage}`,
-      );
+      try {
+        const { data } = await axios.get<KaryawanGET>(
+          `/api/karyawan?page=${karyawanPage}`,
+        );
 
-      return data;
+        return data;
+      } catch (error) {
+        onError();
+
+        return {
+          data: [],
+          metadata: { last: 0, current: 0, next: 0, prev: 0 },
+        };
+      }
     },
   });
-
-  function onError() {
-    setIsAlertOn(true);
-    setTimeout(() => setIsAlertOn(false), 3000);
-  }
 
   const addKaryawan = useMutation({
     mutationKey: ['karyawan', karyawanPage],
