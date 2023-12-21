@@ -24,6 +24,7 @@ import {
   KaryawanPUTBody,
 } from '../api/karyawan/karyawan-route.types';
 import { Karyawan } from '@prisma/client';
+import { ConfirmDeleteDialog } from '@/components/karyawan-page/confirm-delete-dialog';
 
 export default function KaryawanPage() {
   const session = useSession();
@@ -56,6 +57,11 @@ export default function KaryawanPage() {
     },
   });
 
+  function onError() {
+    setIsAlertOn(true);
+    setTimeout(() => setIsAlertOn(false), 3000);
+  }
+
   const addKaryawan = useMutation({
     mutationKey: ['karyawan', karyawanPage],
     mutationFn: async (newKaryawan: Pick<Karyawan, 'nama' | 'telepon'>) => {
@@ -64,10 +70,7 @@ export default function KaryawanPage() {
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
     },
-    onError() {
-      setIsAlertOn(true);
-      setTimeout(() => setIsAlertOn(false), 3000);
-    },
+    onError,
   });
 
   const editKaryawan = useMutation({
@@ -77,6 +80,7 @@ export default function KaryawanPage() {
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
     },
+    onError,
   });
 
   const deleteKaryawan = useMutation({
@@ -90,6 +94,7 @@ export default function KaryawanPage() {
 
       queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
     },
+    onError,
   });
 
   // if (!session.data) {
@@ -171,15 +176,22 @@ export default function KaryawanPage() {
               BATAL
             </Button>
 
-            <Button
-              onClick={async () =>
+            <ConfirmDeleteDialog
+              onDelete={async () =>
                 await deleteKaryawan.mutateAsync(toBeDeletedKaryawan)
               }
-              variant="contained"
-              color="error"
             >
-              HAPUS DATA
-            </Button>
+              {setOpen => (
+                <Button
+                  disabled={toBeDeletedKaryawan.length === 0}
+                  onClick={() => setOpen(true)}
+                  variant="contained"
+                  color="error"
+                >
+                  HAPUS DATA
+                </Button>
+              )}
+            </ConfirmDeleteDialog>
           </>
         ) : (
           <>

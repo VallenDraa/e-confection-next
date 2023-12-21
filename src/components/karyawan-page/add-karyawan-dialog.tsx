@@ -36,9 +36,7 @@ export function AddKaryawanDialog(props: AddKaryawanDialogProps) {
   const [open, setOpen] = React.useState(false);
 
   const { register, handleSubmit, formState, reset } = useForm<PreviewKaryawan>(
-    {
-      resolver: zodResolver(previewKaryawanSchema),
-    },
+    { resolver: zodResolver(previewKaryawanSchema) },
   );
 
   return (
