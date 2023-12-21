@@ -18,21 +18,37 @@ import {
 import { Header } from './header';
 import { grey } from '@mui/material/colors';
 import { signOut, useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+
+const MENU_NAMES = {
+  home: 'home',
+  barang: 'barang',
+  karyawan: 'karyawan',
+  keluar: 'keluar',
+};
 
 export default function Menubar() {
-  const [value, setValue] = React.useState('home');
+  const pathname = usePathname();
+  const [activeMenu, setActiveMenu] = React.useState(() => {
+    if (pathname === '/sign-in' || pathname === '/') {
+      return MENU_NAMES.home;
+    }
+
+    const currPath = pathname.split('/')[1];
+    return currPath in MENU_NAMES ? currPath : MENU_NAMES.home;
+  });
+
   const [willLogout, setWillLogout] = React.useState(false);
   const router = useRouter();
   const session = useSession();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    if (newValue === 'keluar') {
+    if (newValue === MENU_NAMES.keluar) {
       setWillLogout(true);
     } else {
-      setValue(newValue);
+      setActiveMenu(newValue);
 
-      router.push(newValue === 'home' ? '/' : `/${newValue}`);
+      router.push(newValue === MENU_NAMES.home ? '/' : `/${newValue}`);
     }
   };
 
@@ -47,27 +63,27 @@ export default function Menubar() {
           position: 'fixed',
           bottom: 0,
         }}
-        value={value}
+        value={activeMenu}
         onChange={handleChange}
       >
         <BottomNavigationAction
           label="Home"
-          value="home"
+          value={MENU_NAMES.home}
           icon={<HomeTwoToneIcon />}
         />
         <BottomNavigationAction
           label="Barang"
-          value="barang"
+          value={MENU_NAMES.barang}
           icon={<AssignmentTwoToneIcon />}
         />
         <BottomNavigationAction
           label="Karyawan"
-          value="karyawan"
+          value={MENU_NAMES.karyawan}
           icon={<PeopleTwoToneIcon />}
         />
         <BottomNavigationAction
           label="Keluar"
-          value="keluar"
+          value={MENU_NAMES.keluar}
           icon={<LogoutTwoToneIcon />}
         />
       </BottomNavigation>
