@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import * as React from 'react';
 import * as z from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -29,6 +29,8 @@ const signInFormSchema = z.object({
 type SignInFormSchema = z.infer<typeof signInFormSchema>;
 
 export default function SignIn() {
+  const session = useSession();
+
   const search = useSearchParams();
   const callbackURLError = search.get('error');
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -43,6 +45,13 @@ export default function SignIn() {
     setIsAlertOn(true);
     setTimeout(() => setIsAlertOn(false), 3000);
   }, []);
+
+  // Logout if logged in
+  React.useEffect(() => {
+    if (session.data) {
+      signOut({ callbackUrl: '/sign-in', redirect: false });
+    }
+  }, [session.data]);
 
   // Handle URL error
   React.useEffect(() => {

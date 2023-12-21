@@ -17,13 +17,14 @@ import {
 } from '@mui/material';
 import { Header } from './header';
 import { grey } from '@mui/material/colors';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function Menubar() {
   const [value, setValue] = React.useState('home');
   const [willLogout, setWillLogout] = React.useState(false);
   const router = useRouter();
+  const session = useSession();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     if (newValue === 'keluar') {
@@ -35,7 +36,7 @@ export default function Menubar() {
     }
   };
 
-  return (
+  return !session.data ? null : (
     <>
       <BottomNavigation
         sx={{
@@ -104,7 +105,12 @@ export default function Menubar() {
             BATAL
           </Button>
           <Button
-            onClick={() => signOut({ callbackUrl: '/sign-in' })}
+            onClick={() =>
+              signOut({
+                callbackUrl: '/sign-in',
+                redirect: false,
+              })
+            }
             variant="contained"
             color="error"
           >
