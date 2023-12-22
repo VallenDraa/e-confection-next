@@ -56,7 +56,8 @@ model GrupWarnaBaju {
   warnaId           String
   seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id], onDelete: Cascade)
   seriProduksiId    String
-  karyawanName      String
+  karyawan          Karyawan            @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+  karyawanId        String
   baju              Baju[]
   RekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
@@ -79,6 +80,7 @@ model Karyawan {
   RekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
+  GrupWarnaBaju     GrupWarnaBaju[]
 }
 
 // When querying the salary, must get all of the entry
