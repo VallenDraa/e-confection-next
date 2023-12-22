@@ -23,6 +23,8 @@ export async function createSeriProduksi(nomorSeri: number, nama?: string) {
   return newSeriProduksi;
 }
 
-export async function deleteSeriProduksi(nomorSeri: number) {
-  await prisma.seriProduksi.deleteMany({ where: { nomorSeri } });
+export async function deleteSeriProduksi(nomorSeri: number[]) {
+  await prisma.seriProduksi.deleteMany({
+    where: { nomorSeri: { in: nomorSeri } },
+  });
 }
