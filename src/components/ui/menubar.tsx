@@ -22,7 +22,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 const MENU_NAMES = {
   home: 'home',
-  barang: 'barang',
+  baju: 'baju',
   karyawan: 'karyawan',
   keluar: 'keluar',
 };
@@ -72,8 +72,8 @@ export default function Menubar() {
           icon={<HomeTwoToneIcon />}
         />
         <BottomNavigationAction
-          label="Barang"
-          value={MENU_NAMES.barang}
+          label="Baju"
+          value={MENU_NAMES.baju}
           icon={<AssignmentTwoToneIcon />}
         />
         <BottomNavigationAction
