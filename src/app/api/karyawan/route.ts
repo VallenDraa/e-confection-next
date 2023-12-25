@@ -3,7 +3,7 @@ import { clientUnauthedApiResponse } from '@/lib/auth/user-auth-checker';
 import { prisma } from '@/lib/prisma';
 import { KaryawanSchema } from '@/schema/karyawan.schema';
 import { NextRequest, NextResponse } from 'next/server';
-import { KaryawanGET, KaryawanPUTBody } from './karyawan-route.types';
+import { KaryawanGETResponse, KaryawanPUTBody } from './karyawan-route.types';
 import v from 'validator';
 
 export async function GET(req: { query: { page: string; size: string } }) {
@@ -21,7 +21,7 @@ export async function GET(req: { query: { page: string; size: string } }) {
       take: size,
     });
 
-    return NextResponse.json<KaryawanGET>(
+    return NextResponse.json<KaryawanGETResponse>(
       {
         data: karyawanData,
         metadata: {

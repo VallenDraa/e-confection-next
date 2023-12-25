@@ -1,5 +1,5 @@
 import {
-  KaryawanGET,
+  KaryawanGETResponse,
   KaryawanPUTBody,
 } from '@/app/api/karyawan/karyawan-route.types';
 import { Karyawan } from '@prisma/client';
@@ -19,11 +19,11 @@ export default function useKaryawan(props: useKaryawanProps) {
 
   const queryClient = useQueryClient();
 
-  const queryResult = useQuery<KaryawanGET>({
+  const queryResult = useQuery<KaryawanGETResponse>({
     queryKey: ['karyawan', karyawanPage],
     async queryFn() {
       try {
-        const { data } = await axios.get<KaryawanGET>(
+        const { data } = await axios.get<KaryawanGETResponse>(
           `/api/karyawan?page=${karyawanPage}`,
         );
 

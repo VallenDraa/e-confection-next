@@ -1,6 +1,6 @@
 import { Karyawan } from '@prisma/client';
 
-export type KaryawanGET = {
+export type KaryawanGETResponse = {
   data: Karyawan[];
   metadata: {
     prev: number;

@@ -38,7 +38,7 @@ export function BajuPagePanel() {
     queryKey: ['baju', bajuPage],
     async queryFn() {
       try {
-        // const { data } = await axios.get<KaryawanGET>(
+        // const { data } = await axios.get<KaryawanGETResponse>(
         //   `/api/baju?page=${bajuPage}`,
         // );
 
