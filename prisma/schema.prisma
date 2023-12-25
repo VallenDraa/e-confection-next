@@ -13,7 +13,7 @@ datasource db {
 model Size {
   id         String    @id @default(cuid())
   nama       String    @unique
-  harga      BigInt
+  harga      Int
   Baju       Baju[]
   softDelete DateTime?
   createdAt  DateTime  @default(now())
