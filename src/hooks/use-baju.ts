@@ -1,17 +1,16 @@
-import { Baju } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 type CallbackType = 'query' | 'add' | 'edit' | 'delete';
 
-type useBarangProps = {
+type useBajuProps = {
   type: 'baju';
   page: number;
   onSuccess?: (type: CallbackType) => void;
   onError?: (type: CallbackType) => void;
 };
 
-export default function useBarang(props: useBarangProps) {
+export default function useBaju(props: useBajuProps) {
   const { page, onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
