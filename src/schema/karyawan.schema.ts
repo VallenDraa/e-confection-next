@@ -19,6 +19,7 @@ export const KaryawanSchema: z.ZodType<OptionalDBMetadata<Karyawan>> = z.object(
     nama: z.string(),
     telepon: z.string().refine(v.isMobilePhone),
     id: z.string().cuid().optional(),
+    softDelete: z.date().nullable(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
   },

@@ -1,6 +1,5 @@
 import { clientUnauthedApiResponse } from '@/lib/auth/user-auth-checker';
 import { prisma } from '@/lib/prisma';
-import { warnaSchema } from '@/schema/warna.schema';
 import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 import { WarnaBody } from '../warna-route.types';
@@ -17,6 +16,7 @@ export async function PUT(
     const bodySchema: z.ZodType<WarnaBody> = z.object({
       nama: z.string(),
       kodeWarna: z.string(),
+      softDelete: z.date().nullable(),
     });
 
     const bodyParsingResult = await bodySchema.safeParseAsync(body);

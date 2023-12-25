@@ -25,7 +25,7 @@ type WarnaForm = {
   warnaIds: string[];
 };
 
-const DEFAULT_NEW_COLOR = { nama: '', kodeWarna: '#000000' };
+const DEFAULT_NEW_COLOR = { nama: '', kodeWarna: '#000000', softDelete: null };
 
 export default function WarnaForm(props: FormProps<WarnaForm>) {
   const { onSubmit, onCancel } = props;

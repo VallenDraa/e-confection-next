@@ -6,5 +6,6 @@ export type WarnaGETResponse = {
 
 export type WarnaBody = {
   nama: string;
+  softDelete: Date | null;
   kodeWarna: string;
 };

@@ -9,6 +9,7 @@ import { OptionalDBMetadata } from './helper';
 
 export const merekSchema: z.ZodType<OptionalDBMetadata<MerekType>> = z.object({
   nama: z.string(),
+  softDelete: z.date().nullable(),
   id: z.string().cuid().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
@@ -20,6 +21,7 @@ export const bajuSchema: z.ZodType<OptionalDBMetadata<BajuType>> = z.object({
   sizeId: z.string(),
   grupWarnaBajuId: z.string(),
   merekId: z.string().nullable(),
+  softDelete: z.date().nullable(),
   id: z.string().cuid().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
