@@ -91,7 +91,12 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
     <>
       {children(setOpen)}
 
-      <Dialog PaperProps={{ square: false }} open={open} onClose={setOpen}>
+      <Dialog
+        fullWidth
+        PaperProps={{ square: false }}
+        open={open}
+        onClose={setOpen}
+      >
         <Header>
           <Box display="flex" alignItems="center" px={3}>
             <Typography

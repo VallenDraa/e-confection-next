@@ -16,7 +16,7 @@ import { KaryawanItem } from '@/components/karyawan-page/karyawan-item';
 import { grey } from '@mui/material/colors';
 import { AddKaryawanDialog } from '@/components/karyawan-page/add-karyawan-dialog';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import { ConfirmDeleteDialog } from '@/components/karyawan-page/confirm-delete-dialog';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import useKaryawan from '@/hooks/use-karyawan';
 
 export function KaryawanPagePanel() {

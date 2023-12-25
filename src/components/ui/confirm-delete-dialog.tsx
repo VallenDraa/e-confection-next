@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import * as React from 'react';
-import { Header } from '../ui/header';
+import { Header } from './header';
 import { grey } from '@mui/material/colors';
 
 type ConfirmDeleteDialogProps = {
@@ -53,7 +53,14 @@ export function ConfirmDeleteDialog(props: ConfirmDeleteDialogProps) {
           >
             BATAL
           </Button>
-          <Button onClick={onDelete} variant="contained" color="error">
+          <Button
+            onClick={() => {
+              onDelete();
+              setOpen(false);
+            }}
+            variant="contained"
+            color="error"
+          >
             HAPUS
           </Button>
         </DialogActions>

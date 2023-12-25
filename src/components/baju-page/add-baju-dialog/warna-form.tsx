@@ -3,35 +3,53 @@
 import {
   Box,
   Button,
-  Checkbox,
   DialogActions,
   DialogContent,
-  FormControlLabel,
+  IconButton,
+  Skeleton,
   Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
 import * as React from 'react';
 import { FormProps } from '.';
+import DeleteIcon from '@mui/icons-material/Delete';
+import useWarna from '@/hooks/use-warna';
+import { FloatingAlert } from '@/components/ui/floating-alert';
+import { grey } from '@mui/material/colors';
+import { WarnaBody } from '@/app/api/warna/warna-route.types';
+import { NamedCheckbox } from './named-checkbox';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 type WarnaForm = {
   warnaIds: string[];
 };
 
-const colors = [
-  { id: crypto.randomUUID(), nama: 'Red' },
-  { id: crypto.randomUUID(), nama: 'Blue' },
-  { id: crypto.randomUUID(), nama: 'Green' },
-  { id: crypto.randomUUID(), nama: 'Yellow' },
-  { id: crypto.randomUUID(), nama: 'Orange' },
-];
+const DEFAULT_NEW_COLOR = { nama: '', kodeWarna: '#000000' };
 
 export default function WarnaForm(props: FormProps<WarnaForm>) {
   const { onSubmit, onCancel } = props;
-  const [warnaIds, setWarnaIds] = React.useState<string[]>([]);
 
-  const handleWarnaCheckbox = (
+  const [warnaIds, setWarnaIds] = React.useState<string[]>([]);
+  const [isAlertOn, setIsAlertOn] = React.useState(false);
+
+  const {
+    queryResult: { data: result, error, isLoading },
+    addWarna,
+    deleteWarna,
+  } = useWarna({
+    onError() {
+      setIsAlertOn(true);
+      setTimeout(() => setIsAlertOn(false), 3000);
+    },
+  });
+
+  // New color handler
+  const [newColor, setNewColor] = React.useState<WarnaBody>(DEFAULT_NEW_COLOR);
+  function handleWarnaCheckbox(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     colorId: string,
-  ) =>
+  ) {
     setWarnaIds(prev => {
       return Array.from(
         new Set(
@@ -41,47 +59,152 @@ export default function WarnaForm(props: FormProps<WarnaForm>) {
         ),
       );
     });
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await onSubmit({ warnaIds });
+  }
 
   return (
-    <Box
-      component="form"
-      onSubmit={async e => {
-        e.preventDefault();
+    <>
+      <Box component="form" onSubmit={handleSubmit}>
+        <DialogContent>
+          <Stack gap={1}>
+            {isLoading && (
+              <>
+                <Skeleton variant="rounded" width="100%" height={41} />
+                <Skeleton variant="rounded" width="100%" height={41} />
+              </>
+            )}
 
-        await onSubmit({ warnaIds });
-      }}
-    >
-      <DialogContent>
-        <Stack gap={1}>
-          {colors.map(color => {
-            return (
-              <FormControlLabel
-                key={color.id}
-                label={color.nama}
-                control={
-                  <Checkbox
-                    onClick={e => handleWarnaCheckbox(e, color.id)}
-                    value={warnaIds.includes(color.id)}
-                  />
+            {!isLoading && (!result || result?.data.length === 0) ? (
+              <Typography
+                textAlign="center"
+                my={2}
+                variant="subtitle1"
+                color={grey[600]}
+                fontWeight={500}
+                component="p"
+              >
+                {error
+                  ? 'Error mengambil warna, silahkan coba diwaktu lain.'
+                  : 'Belum ada warna, silahkan tambah warna baru.'}
+              </Typography>
+            ) : (
+              result?.data.map(color => {
+                return (
+                  <ConfirmDeleteDialog
+                    key={color.id}
+                    onDelete={async () =>
+                      await deleteWarna.mutateAsync(color.id)
+                    }
+                  >
+                    {setOpen => (
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        gap={2}
+                      >
+                        <NamedCheckbox
+                          label={color.nama}
+                          onChange={e => handleWarnaCheckbox(e, color.id)}
+                          value={warnaIds.includes(color.id)}
+                        />
+
+                        {/* Color code and delete button */}
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Box
+                            height={30}
+                            width={30}
+                            borderRadius={'50%'}
+                            bgcolor={color.kodeWarna}
+                          />
+                          <IconButton
+                            color="error"
+                            size="medium"
+                            onClick={() => setOpen(true)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Box>
+                    )}
+                  </ConfirmDeleteDialog>
+                );
+              })
+            )}
+
+            <Box
+              display="flex"
+              gap={1.5}
+              justifyContent="space-between"
+              alignItems="end"
+            >
+              <Box flexGrow={1} display="flex" alignItems="end" gap={1}>
+                <TextField
+                  fullWidth
+                  label="Nama Warna Baru"
+                  variant="standard"
+                  value={newColor.nama}
+                  onChange={e =>
+                    setNewColor(prev => ({ ...prev, nama: e.target.value }))
+                  }
+                />
+                <input
+                  type="color"
+                  value={newColor.kodeWarna}
+                  onChange={e =>
+                    setNewColor(prev => ({
+                      ...prev,
+                      kodeWarna: e.target.value,
+                    }))
+                  }
+                />
+              </Box>
+
+              <Button
+                type="button"
+                size="small"
+                variant="contained"
+                color="success"
+                disabled={
+                  newColor.nama.trim() === '' || newColor.kodeWarna === ''
                 }
-              />
-            );
-          })}
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button type="button" color="error" onClick={onCancel}>
-          Batal
-        </Button>
-        <Button
-          disabled={warnaIds.length === 0}
-          type="submit"
-          variant="contained"
-          color="success"
-        >
-          Selanjutnya
-        </Button>
-      </DialogActions>
-    </Box>
+                onClick={async () => {
+                  await addWarna.mutateAsync(newColor);
+                  setNewColor(DEFAULT_NEW_COLOR);
+                }}
+              >
+                Tambah
+              </Button>
+            </Box>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button type="button" color="error" onClick={onCancel}>
+            Batal
+          </Button>
+          <Button
+            disabled={warnaIds.length === 0}
+            type="submit"
+            variant="contained"
+            color="success"
+          >
+            Selanjutnya
+          </Button>
+        </DialogActions>
+      </Box>
+
+      {/* Alert message */}
+      <FloatingAlert
+        severity="error"
+        isActive={isAlertOn}
+        onClose={() => setIsAlertOn(false)}
+      >
+        {error?.message}
+      </FloatingAlert>
+    </>
   );
 }
