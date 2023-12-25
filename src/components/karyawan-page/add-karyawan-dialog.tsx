@@ -21,7 +21,7 @@ import {
   PreviewKaryawan,
   previewKaryawanSchema,
 } from '@/schema/karyawan.schema';
-import { willDisableSubmit } from '@/lib/will-disable-submit';
+import { willDisableSubmit } from '@/lib/form-helpers';
 
 type AddKaryawanDialogProps = {
   children: (

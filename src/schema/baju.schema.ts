@@ -7,14 +7,14 @@ import {
 import { z } from 'zod';
 import { OptionalDBMetadata } from './helper';
 
-export const MerekSchema: z.ZodType<OptionalDBMetadata<MerekType>> = z.object({
+export const merekSchema: z.ZodType<OptionalDBMetadata<MerekType>> = z.object({
   nama: z.string(),
   id: z.string().cuid().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
 
-export const BajuSchema: z.ZodType<OptionalDBMetadata<BajuType>> = z.object({
+export const bajuSchema: z.ZodType<OptionalDBMetadata<BajuType>> = z.object({
   jumlahDepan: z.number(),
   jumlahBelakang: z.number(),
   sizeId: z.string(),
@@ -25,18 +25,18 @@ export const BajuSchema: z.ZodType<OptionalDBMetadata<BajuType>> = z.object({
   updatedAt: z.date().optional(),
 });
 
-export const GrupWarnaBajuSchema: z.ZodType<
+export const grupWarnaBajuSchema: z.ZodType<
   OptionalDBMetadata<GrupWarnaBajuType>
 > = z.object({
   warnaId: z.string(),
   seriProduksiId: z.string(),
-  karyawanName: z.string(),
+  karyawanId: z.string(),
   id: z.string().cuid().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
 
-export const SeriProduksiSchema: z.ZodType<
+export const seriProduksiSchema: z.ZodType<
   OptionalDBMetadata<SeriProduksiType>
 > = z.object({
   nama: z.string().nullable(),

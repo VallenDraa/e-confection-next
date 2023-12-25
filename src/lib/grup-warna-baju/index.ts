@@ -4,7 +4,7 @@ export async function createManyGrupWarnaBaju(
   data: Array<{
     seriProduksiId: string;
     warnaId: string;
-    karyawanName: string;
+    karyawanId: string;
   }>,
 ) {
   const grupBajuList = await prisma.$transaction(

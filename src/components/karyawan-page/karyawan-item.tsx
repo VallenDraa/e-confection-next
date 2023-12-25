@@ -23,7 +23,7 @@ import {
   PreviewKaryawan,
   previewKaryawanSchema,
 } from '@/schema/karyawan.schema';
-import { willDisableSubmit } from '@/lib/will-disable-submit';
+import { willDisableSubmit } from '@/lib/form-helpers';
 import { KaryawanPUTBody } from '@/app/api/karyawan/karyawan-route.types';
 import { WorkHistoryItemProps } from './work-history-item';
 import WorkHistoryList from './work-history-list';

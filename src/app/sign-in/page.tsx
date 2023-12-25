@@ -18,7 +18,7 @@ import {
 import { SignInIllustration } from '@/components/icons/icons';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { useSearchParams } from 'next/navigation';
-import { willDisableSubmit } from '@/lib/will-disable-submit';
+import { willDisableSubmit } from '@/lib/form-helpers';
 
 const signInFormSchema = z.object({
   username: z.string().min(1, 'Username tidak boleh kosong.'),

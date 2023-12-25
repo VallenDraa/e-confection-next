@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { SeriProduksiSchema } from '@/schema/baju.schema';
+import { seriProduksiSchema } from '@/schema/baju.schema';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { seriProduksi, grupWarnaBaju } = await req.json();
 
     const seriParsingResult =
-      await SeriProduksiSchema.safeParseAsync(seriProduksi);
+      await seriProduksiSchema.safeParseAsync(seriProduksi);
 
     if (!seriParsingResult.success) {
       return NextResponse.json(

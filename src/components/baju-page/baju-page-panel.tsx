@@ -156,7 +156,7 @@ export function BajuPagePanel() {
               HAPUS
             </Button>
 
-            <AddBajuDialog onSubmit={async () => {}}>
+            <AddBajuDialog onCancel={() => {}} onSubmit={async () => {}}>
               {setOpen => (
                 <Button
                   onClick={() => setOpen(true)}
