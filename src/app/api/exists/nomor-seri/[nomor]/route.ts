@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { zodNumericString } from '@/schema/helper';
 import { NextRequest, NextResponse } from 'next/server';
-import { NomorSeriExistsGETResponse } from './nomor-seri-exists.types';
+import { ExistsGETResponse } from '../../exists.types';
 
 export async function GET(
   req: NextRequest,
@@ -22,7 +22,7 @@ export async function GET(
     const nomorSeri = parsingResult.data;
     const data = await prisma.seriProduksi.count({ where: { nomorSeri } });
 
-    return NextResponse.json<NomorSeriExistsGETResponse>(
+    return NextResponse.json<ExistsGETResponse>(
       { data: data > 0 },
       { status: 200 },
     );

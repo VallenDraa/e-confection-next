@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import axios from 'axios';
-import { NomorSeriExistsGETResponse } from '@/app/api/exists/nomor-seri/[nomor]/nomor-seri-exists.types';
+import { ExistsGETResponse } from '@/app/api/exists/exists.types';
 
 const seriProduksiFormSchema = z.object({
   nama: z.string().nullable(),
@@ -38,7 +38,7 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
       // Validate if nomor seri doesn't exists
       const {
         data: { data: isNomorSeriExists },
-      } = await axios.get<NomorSeriExistsGETResponse>(
+      } = await axios.get<ExistsGETResponse>(
         `/api/exists/nomor-seri/${data.nomorSeri}`,
       );
 
@@ -51,10 +51,10 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
         setTimeout(() => setAlertMessage(''), 3000);
       }
     } catch (error) {
-      setAlertMessage(
-        'Gagal untuk menambahkan seri baru, silahkan coba dilain waktu.',
-      );
-      setTimeout(() => setAlertMessage(''), 3000);
+      if (error instanceof Error) {
+        setAlertMessage(error.message);
+        setTimeout(() => setAlertMessage(''), 3000);
+      }
     }
   }
 

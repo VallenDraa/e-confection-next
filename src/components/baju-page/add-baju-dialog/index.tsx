@@ -14,17 +14,19 @@ export type FormProps<T extends unknown | unknown[]> = {
   onSubmit: (data: T) => Promise<void>;
 };
 
+export type NewBaju = {
+  warnaId: string;
+  karyawanId: string | null;
+  marekId: string | null;
+  sizeId: string | null;
+  jmlDepan: number;
+  jmlBelakang: number;
+};
+
 export type FinalBajuData = {
   nama: string | null;
   nomorSeri: number;
-  data: Array<{
-    warnaId: string;
-    karyawanId: string | null;
-    marekId: string | null;
-    sizeId: string | null;
-    jmlDepan: number;
-    jmlBelakang: number;
-  }>;
+  data: NewBaju[];
 };
 
 const DEFAULT_FINAL_DATA: FinalBajuData = {

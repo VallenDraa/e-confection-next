@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import * as React from 'react';
-import { FinalBajuData, FormProps } from '.';
+import { FinalBajuData, FormProps } from '..';
 
 export type FinalizeFormProps = {
   finalBajuData: FinalBajuData;
