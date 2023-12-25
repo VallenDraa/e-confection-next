@@ -11,12 +11,13 @@ datasource db {
 }
 
 model Size {
-  id        String   @id @default(cuid())
-  nama      String   @unique
-  harga     BigInt
-  Baju      Baju[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  nama       String    @unique
+  harga      BigInt
+  Baju       Baju[]
+  softDelete DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Warna {
@@ -24,16 +25,18 @@ model Warna {
   nama          String          @unique
   kodeWarna     String
   GrupWarnaBaju GrupWarnaBaju[]
+  softDelete    DateTime?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
 
 model Merek {
-  id        String   @id @default(cuid())
-  nama      String   @unique
-  Baju      Baju[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  nama       String    @unique
+  Baju       Baju[]
+  softDelete DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Baju {
@@ -42,10 +45,11 @@ model Baju {
   jumlahBelakang  Int
   size            Size          @relation(fields: [sizeId], references: [id])
   sizeId          String
-  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id], onDelete: Cascade)
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
   grupWarnaBajuId String
   merek           Merek?        @relation(fields: [merekId], references: [id])
   merekId         String?
+  softDelete      DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 }
@@ -54,9 +58,9 @@ model GrupWarnaBaju {
   id                String              @id @default(cuid())
   warna             Warna               @relation(fields: [warnaId], references: [id])
   warnaId           String
-  seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id], onDelete: Cascade)
+  seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
   seriProduksiId    String
-  karyawan          Karyawan            @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+  karyawan          Karyawan            @relation(fields: [karyawanId], references: [id])
   karyawanId        String
   baju              Baju[]
   RekapGajiKaryawan RekapGajiKaryawan[]
@@ -78,6 +82,7 @@ model Karyawan {
   nama              String
   telepon           String
   RekapGajiKaryawan RekapGajiKaryawan[]
+  softDelete        DateTime?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   GrupWarnaBaju     GrupWarnaBaju[]
@@ -88,10 +93,10 @@ model Karyawan {
 model RekapGajiKaryawan {
   id              String        @id @default(cuid())
   jumlahGaji      BigInt
-  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id], onDelete: Cascade)
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
   grupWarnaBajuId String
   karyawanId      String
-  Karyawan        Karyawan      @relation(fields: [karyawanId], references: [id], onDelete: Cascade)
+  Karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 }
