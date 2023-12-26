@@ -89,7 +89,7 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
         </DialogContent>
         <DialogActions>
           <Button type="button" color="error" onClick={onCancel}>
-            Batal
+            BATAL
           </Button>
           <Button
             disabled={willDisableSubmit(formState)}

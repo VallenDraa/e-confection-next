@@ -16,41 +16,31 @@ import { Header } from '../ui/header';
 import { grey } from '@mui/material/colors';
 import { AddBajuDialog } from './add-baju-dialog';
 import { FloatingAlert } from '../ui/floating-alert';
+import useBaju from '@/hooks/use-baju';
+import { ConfirmDeleteDialog } from '../ui/confirm-delete-dialog';
 
 export function BajuPagePanel() {
   const query = useSearchParams();
-  const [bajuPage, setBajuPage] = React.useState(query.get('page') ?? 1);
+  const [bajuPage, setBajuPage] = React.useState(
+    isNaN(Number(query.get('page'))) ? Number(query.get('page')) : 1,
+  );
 
   const [isDeletingBaju, setIsDeletingBaju] = React.useState(false);
   const [toBeDeletedBaju, setToBeDeletedBaju] = React.useState<string[]>([]);
 
   const [isAlertOn, setIsAlertOn] = React.useState(false);
-  function onError() {
-    setIsAlertOn(true);
-    setTimeout(() => setIsAlertOn(false), 3000);
-  }
 
   const {
-    data: result,
-    error,
-    isLoading,
-  } = useQuery<any>({
-    queryKey: ['baju', bajuPage],
-    async queryFn() {
-      try {
-        // const { data } = await axios.get<KaryawanGETResponse>(
-        //   `/api/baju?page=${bajuPage}`,
-        // );
-
-        return [];
-      } catch (error) {
-        onError();
-
-        return {
-          data: [],
-          metadata: { last: 0, current: 0, next: 0, prev: 0 },
-        };
-      }
+    queryResult: { data: result, error, isLoading },
+    addBaju,
+    deleteBaju,
+    editBaju,
+  } = useBaju({
+    type: 'baju',
+    page: bajuPage,
+    onError() {
+      setIsAlertOn(true);
+      setTimeout(() => setIsAlertOn(false), 3000);
     },
   });
 
@@ -122,6 +112,7 @@ export function BajuPagePanel() {
         {isDeletingBaju ? (
           <>
             <Button
+              disabled={result?.data.length === 0 ?? true}
               onClick={() => setIsDeletingBaju(false)}
               variant="contained"
               color="success"
@@ -129,9 +120,9 @@ export function BajuPagePanel() {
               BATAL
             </Button>
 
-            {/* <ConfirmDeleteDialog
+            <ConfirmDeleteDialog
               onDelete={async () =>
-                await deleteKaryawan.mutateAsync(toBeDeletedBaju)
+                await deleteBaju.mutateAsync(toBeDeletedBaju)
               }
             >
               {setOpen => (
@@ -144,7 +135,7 @@ export function BajuPagePanel() {
                   HAPUS DATA
                 </Button>
               )}
-            </ConfirmDeleteDialog> */}
+            </ConfirmDeleteDialog>
           </>
         ) : (
           <>

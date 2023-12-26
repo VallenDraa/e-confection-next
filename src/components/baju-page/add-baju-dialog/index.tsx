@@ -15,21 +15,25 @@ export type FormProps<T extends unknown | unknown[]> = {
 };
 
 export type NewBaju = {
-  warnaId: string;
-  karyawanId: string | null;
-  marekId: string | null;
-  sizeId: string | null;
+  merekId: string;
+  sizeId: string;
   jmlDepan: number;
   jmlBelakang: number;
 };
 
-export type FinalBajuData = {
-  nama: string | null;
-  nomorSeri: number;
-  data: NewBaju[];
+export type NewGrupWarna = {
+  warnaId: string;
+  karyawanId: string;
+  bajuList: NewBaju[];
 };
 
-const DEFAULT_FINAL_DATA: FinalBajuData = {
+export type NewSeriProduksi = {
+  nama: string | null;
+  nomorSeri: number;
+  data: NewGrupWarna[];
+};
+
+const DEFAULT_FINAL_DATA: NewSeriProduksi = {
   nama: null,
   nomorSeri: 0,
   data: [],
@@ -44,8 +48,8 @@ type AddBajuDialogProps<T> = {
 
 export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
   const { children } = props;
-  const [finalBajuData, setFinalBajuData] =
-    React.useState<FinalBajuData>(DEFAULT_FINAL_DATA);
+  const [newSeriProduksi, setNewSeriProduksi] =
+    React.useState<NewSeriProduksi>(DEFAULT_FINAL_DATA);
 
   const [open, setOpen] = React.useState(false);
   const { next, back, step } = useMultistepForm([
@@ -53,7 +57,7 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
       key={0}
       onCancel={() => setOpen(false)}
       onSubmit={async seriData => {
-        setFinalBajuData(prev => ({
+        setNewSeriProduksi(prev => ({
           ...prev,
           nama: seriData.nama,
           nomorSeri: seriData.nomorSeri,
@@ -66,15 +70,13 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
       key={1}
       onCancel={() => back()}
       onSubmit={async warnaData => {
-        setFinalBajuData(prev => ({
+        setNewSeriProduksi(prev => ({
           ...prev,
           data: warnaData.warnaIds.map(warnaId => ({
             warnaId,
-            karyawanId: null,
-            marekId: null,
-            sizeId: null,
-            jmlBelakang: 0,
-            jmlDepan: 0,
+            karyawanId: '',
+            sizeId: '',
+            bajuList: [],
           })),
         }));
 
@@ -82,8 +84,8 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
       }}
     />,
     <FinalizeForm
-      key={3}
-      finalBajuData={finalBajuData}
+      key={2}
+      newSeriProduksi={newSeriProduksi}
       onCancel={() => back()}
       onSubmit={async data => {}}
     />,

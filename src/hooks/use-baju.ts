@@ -1,3 +1,4 @@
+import { BajuGETResponse } from '@/app/api/baju/baju-route.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -14,7 +15,7 @@ export default function useBaju(props: useBajuProps) {
   const { page, onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
-  const queryResult = useQuery({
+  const queryResult = useQuery<BajuGETResponse>({
     queryKey: ['baju', page],
     async queryFn() {
       try {

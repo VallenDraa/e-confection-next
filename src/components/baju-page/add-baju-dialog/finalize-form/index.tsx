@@ -9,41 +9,86 @@ import {
   Typography,
 } from '@mui/material';
 import * as React from 'react';
-import { FinalBajuData, FormProps } from '..';
+import { NewSeriProduksi, FormProps, NewGrupWarna } from '..';
+import { GrupWarnaItem } from './grup-warna';
 
 export type FinalizeFormProps = {
-  finalBajuData: FinalBajuData;
-} & FormProps<FinalBajuData>;
+  newSeriProduksi: NewSeriProduksi;
+} & FormProps<NewSeriProduksi>;
 
 export default function FinalizeForm(props: FinalizeFormProps) {
-  const { onSubmit, onCancel, finalBajuData } = props;
-  const [localFinalBajuData, setLocalFinalBajuData] =
-    React.useState<FinalBajuData>(finalBajuData);
+  const { onSubmit, onCancel, newSeriProduksi } = props;
+
+  const [localNewSeriProduksi, setLocalNewSeriProduksi] =
+    React.useState<NewSeriProduksi>(newSeriProduksi);
+
+  function disableSubmit() {
+    return (
+      newSeriProduksi.data.length === 0 ||
+      newSeriProduksi.data.some(grupWarna => grupWarna.bajuList.length === 0)
+    );
+  }
 
   async function onSubmitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    await onSubmit(localFinalBajuData);
+    await onSubmit(localNewSeriProduksi);
   }
 
+  const handleGrupWarnaChange = React.useCallback(
+    (grupWarna: NewGrupWarna, grupWarnaIdx: number) => {
+      setLocalNewSeriProduksi(prev => {
+        const newBajuFinalData = { ...prev };
+
+        for (let i = 0; i < newBajuFinalData.data.length; i++) {
+          if (i === grupWarnaIdx) {
+            newBajuFinalData.data[i] = grupWarna;
+            break;
+          }
+        }
+
+        return newBajuFinalData;
+      });
+    },
+    [],
+  );
+
   return (
-    <Box component="form" onSubmit={onSubmitHandler}>
-      <DialogContent>
-        <Typography variant="h3">{localFinalBajuData.nomorSeri}</Typography>
-        <Stack gap={1}>
-          {localFinalBajuData.data.map(size => {
-            return size.warnaId;
-          })}
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button type="button" color="error" onClick={onCancel}>
-          Batal
-        </Button>
-        <Button type="submit" variant="contained" color="success">
-          Selanjutnya
-        </Button>
-      </DialogActions>
-    </Box>
+    <>
+      <Box component="form" onSubmit={onSubmitHandler}>
+        <DialogContent>
+          {localNewSeriProduksi.nama && (
+            <Typography variant="h6">{localNewSeriProduksi.nama}</Typography>
+          )}
+          <Typography variant="h4">{localNewSeriProduksi.nomorSeri}</Typography>
+
+          <Stack gap={2} mt={2}>
+            {localNewSeriProduksi.data.map((data, i) => {
+              return (
+                <GrupWarnaItem
+                  key={i}
+                  onDataChange={handleGrupWarnaChange}
+                  grupWarna={data}
+                  grupWarnaIdx={i}
+                />
+              );
+            })}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button type="button" color="error" onClick={onCancel}>
+            BATAL
+          </Button>
+
+          <Button
+            type="submit"
+            disabled={disableSubmit()}
+            variant="contained"
+            color="success"
+          >
+            TAMBAH
+          </Button>
+        </DialogActions>
+      </Box>
+    </>
   );
 }

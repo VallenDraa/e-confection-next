@@ -100,7 +100,7 @@ export function AddKaryawanDialog(props: AddKaryawanDialogProps) {
                 onCancel?.();
               }}
             >
-              Batal
+              BATAL
             </Button>
             <Button
               disabled={willDisableSubmit(formState)}

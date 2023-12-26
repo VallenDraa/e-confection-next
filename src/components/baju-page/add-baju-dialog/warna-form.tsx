@@ -108,6 +108,7 @@ export default function WarnaForm(props: FormProps<WarnaForm>) {
                         gap={2}
                       >
                         <NamedCheckbox
+                          labelFullWidth
                           label={color.nama}
                           onChange={e => handleWarnaCheckbox(e, color.id)}
                           value={warnaIds.includes(color.id)}
@@ -184,7 +185,7 @@ export default function WarnaForm(props: FormProps<WarnaForm>) {
         </DialogContent>
         <DialogActions>
           <Button type="button" color="error" onClick={onCancel}>
-            Batal
+            BATAL
           </Button>
           <Button
             disabled={warnaIds.length === 0}

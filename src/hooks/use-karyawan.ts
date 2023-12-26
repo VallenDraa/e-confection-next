@@ -2,6 +2,7 @@ import {
   KaryawanGETResponse,
   KaryawanPUTBody,
 } from '@/app/api/karyawan/karyawan-route.types';
+import { KaryawanPreviewGETResponse } from '@/app/api/karyawan/preview/karyawan-preview-route.types';
 import { Karyawan } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -39,6 +40,23 @@ export default function useKaryawan(props: useKaryawanProps) {
     },
   });
 
+  const previewQueryResult = useQuery<KaryawanPreviewGETResponse>({
+    queryKey: ['karyawan', 'preview'],
+    async queryFn() {
+      try {
+        const { data } = await axios.get<KaryawanGETResponse>(
+          '/api/karyawan/preview',
+        );
+
+        return data;
+      } catch (error) {
+        onError?.('query');
+
+        return { data: [] };
+      }
+    },
+  });
+
   const addKaryawan = useMutation({
     mutationKey: ['karyawan', karyawanPage],
     mutationFn: async (newKaryawan: Pick<Karyawan, 'nama' | 'telepon'>) => {
@@ -46,6 +64,7 @@ export default function useKaryawan(props: useKaryawanProps) {
     },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
+      queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
       onSuccess?.('add');
     },
     onError: () => onError?.('add'),
@@ -57,6 +76,7 @@ export default function useKaryawan(props: useKaryawanProps) {
     },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
+      queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
       onSuccess?.('edit');
     },
     onError: () => onError?.('edit'),
@@ -69,10 +89,18 @@ export default function useKaryawan(props: useKaryawanProps) {
     },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
+      queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
+
       onSuccess?.('delete');
     },
     onError: () => onError?.('delete'),
   });
 
-  return { queryResult, addKaryawan, editKaryawan, deleteKaryawan };
+  return {
+    queryResult,
+    previewQueryResult,
+    addKaryawan,
+    editKaryawan,
+    deleteKaryawan,
+  };
 }
