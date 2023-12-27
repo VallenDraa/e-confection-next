@@ -14,7 +14,7 @@ model Size {
   id         String    @id @default(uuid())
   nama       String    @unique
   harga      Int
-  Baju       Baju[]
+  baju       Baju[]
   softDelete DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -33,7 +33,7 @@ model Warna {
 model Merek {
   id         String    @id @default(uuid())
   nama       String    @unique
-  Baju       Baju[]
+  baju       Baju[]
   softDelete DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -63,7 +63,7 @@ model GrupWarnaBaju {
   karyawan          Karyawan            @relation(fields: [karyawanId], references: [id])
   karyawanId        String
   baju              Baju[]
-  RekapGajiKaryawan RekapGajiKaryawan[]
+  rekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 }
@@ -72,7 +72,7 @@ model SeriProduksi {
   id            String          @id @default(uuid())
   nama          String?
   nomorSeri     Int             @unique
-  GrupWarnaBaju GrupWarnaBaju[]
+  grupWarnaBaju GrupWarnaBaju[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
@@ -81,11 +81,11 @@ model Karyawan {
   id                String              @id @default(uuid())
   nama              String
   telepon           String
-  RekapGajiKaryawan RekapGajiKaryawan[]
+  rekapGajiKaryawan RekapGajiKaryawan[]
   softDelete        DateTime?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  GrupWarnaBaju     GrupWarnaBaju[]
+  grupWarnaBaju     GrupWarnaBaju[]
 }
 
 // When querying the salary, must get all of the entry
