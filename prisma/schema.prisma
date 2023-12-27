@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Size {
-  id         String    @id @default(cuid())
+  id         String    @id @default(uuid())
   nama       String    @unique
   harga      Int
   Baju       Baju[]
@@ -21,7 +21,7 @@ model Size {
 }
 
 model Warna {
-  id            String          @id @default(cuid())
+  id            String          @id @default(uuid())
   nama          String          @unique
   kodeWarna     String
   GrupWarnaBaju GrupWarnaBaju[]
@@ -31,7 +31,7 @@ model Warna {
 }
 
 model Merek {
-  id         String    @id @default(cuid())
+  id         String    @id @default(uuid())
   nama       String    @unique
   Baju       Baju[]
   softDelete DateTime?
@@ -40,7 +40,7 @@ model Merek {
 }
 
 model Baju {
-  id              String        @id @default(cuid())
+  id              String        @id @default(uuid())
   jumlahDepan     Int
   jumlahBelakang  Int
   size            Size          @relation(fields: [sizeId], references: [id])
@@ -55,7 +55,7 @@ model Baju {
 }
 
 model GrupWarnaBaju {
-  id                String              @id @default(cuid())
+  id                String              @id @default(uuid())
   warna             Warna               @relation(fields: [warnaId], references: [id])
   warnaId           String
   seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
@@ -69,16 +69,16 @@ model GrupWarnaBaju {
 }
 
 model SeriProduksi {
-  id            String          @id @default(cuid())
+  id            String          @id @default(uuid())
   nama          String?
-  nomorSeri     BigInt          @unique
+  nomorSeri     Int             @unique
   GrupWarnaBaju GrupWarnaBaju[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 }
 
 model Karyawan {
-  id                String              @id @default(cuid())
+  id                String              @id @default(uuid())
   nama              String
   telepon           String
   RekapGajiKaryawan RekapGajiKaryawan[]
@@ -91,8 +91,8 @@ model Karyawan {
 // When querying the salary, must get all of the entry
 // of a given time which points to the same karyawan ID 
 model RekapGajiKaryawan {
-  id              String        @id @default(cuid())
-  jumlahGaji      BigInt
+  id              String        @id @default(uuid())
+  jumlahGaji      Int
   grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
   grupWarnaBajuId String
   karyawanId      String
@@ -102,7 +102,7 @@ model RekapGajiKaryawan {
 }
 
 model Account {
-  id                 String    @id @default(cuid())
+  id                 String    @id @default(uuid())
   userId             String
   providerType       String
   providerId         String
@@ -118,7 +118,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   userId       String
   expires      DateTime
   sessionToken String   @unique
@@ -129,7 +129,7 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   username      String    @unique
   name          String
   password      String
@@ -143,7 +143,7 @@ model User {
 }
 
 model VerificationRequest {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   identifier String
   token      String   @unique
   expires    DateTime
