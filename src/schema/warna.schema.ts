@@ -3,7 +3,7 @@ import { OptionalDBMetadata } from './helper';
 import * as z from 'zod';
 
 export const warnaSchema: z.ZodType<OptionalDBMetadata<Warna>> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   nama: z.string(),
   kodeWarna: z.string(),
   softDelete: z.date().nullable(),

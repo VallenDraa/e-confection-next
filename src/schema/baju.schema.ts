@@ -1,49 +1,12 @@
-import {
-  Merek as MerekType,
-  Baju as BajuType,
-  GrupWarnaBaju as GrupWarnaBajuType,
-  SeriProduksi as SeriProduksiType,
-} from '@prisma/client';
 import { z } from 'zod';
-import { OptionalDBMetadata } from './helper';
 
-export const merekSchema: z.ZodType<OptionalDBMetadata<MerekType>> = z.object({
-  nama: z.string(),
-  softDelete: z.date().nullable(),
-  id: z.string().cuid().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-});
-
-export const bajuSchema: z.ZodType<OptionalDBMetadata<BajuType>> = z.object({
-  jumlahDepan: z.number(),
-  jumlahBelakang: z.number(),
+export const newBajuSchema = z.object({
+  id: z.string(),
+  merekId: z.string().nullable(),
   sizeId: z.string(),
   grupWarnaBajuId: z.string(),
-  merekId: z.string().nullable(),
-  softDelete: z.date().nullable(),
-  id: z.string().cuid().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  jumlahDepan: z.number(),
+  jumlahBelakang: z.number(),
 });
 
-export const grupWarnaBajuSchema: z.ZodType<
-  OptionalDBMetadata<GrupWarnaBajuType>
-> = z.object({
-  warnaId: z.string(),
-  seriProduksiId: z.string(),
-  karyawanId: z.string(),
-  id: z.string().cuid().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-});
-
-export const seriProduksiSchema: z.ZodType<
-  OptionalDBMetadata<SeriProduksiType>
-> = z.object({
-  nama: z.string().nullable(),
-  nomorSeri: z.bigint(),
-  id: z.string().cuid().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-});
+export type NewBaju = z.infer<typeof newBajuSchema>;

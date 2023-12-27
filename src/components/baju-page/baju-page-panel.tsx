@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Button,
@@ -16,8 +15,9 @@ import { Header } from '../ui/header';
 import { grey } from '@mui/material/colors';
 import { AddBajuDialog } from './add-baju-dialog';
 import { FloatingAlert } from '../ui/floating-alert';
-import useBaju from '@/hooks/use-baju';
-import { ConfirmDeleteDialog } from '../ui/confirm-delete-dialog';
+import { useSeriProduksi } from '@/hooks/use-seri-produksi';
+import { SeriProduksiItem } from './seri-produksi-item';
+import BajuPageSkeleton from './baju-page-skeleton';
 
 export function BajuPagePanel() {
   const query = useSearchParams();
@@ -25,18 +25,12 @@ export function BajuPagePanel() {
     isNaN(Number(query.get('page'))) ? Number(query.get('page')) : 1,
   );
 
-  const [isDeletingBaju, setIsDeletingBaju] = React.useState(false);
-  const [toBeDeletedBaju, setToBeDeletedBaju] = React.useState<string[]>([]);
-
   const [isAlertOn, setIsAlertOn] = React.useState(false);
 
   const {
     queryResult: { data: result, error, isLoading },
-    addBaju,
-    deleteBaju,
-    editBaju,
-  } = useBaju({
-    type: 'baju',
+    addSeriProduksi,
+  } = useSeriProduksi({
     page: bajuPage,
     onError() {
       setIsAlertOn(true);
@@ -61,32 +55,9 @@ export function BajuPagePanel() {
 
       <Container maxWidth="sm">
         <Stack gap={2} my={2}>
-          {isLoading &&
-            new Array(5).map((a, i) => {
-              return (
-                <Skeleton key={i} variant="rounded" width="100%" height={76} />
-              );
-            })}
+          {isLoading && <BajuPageSkeleton />}
 
-          {/* {!isLoading && result?.data && result?.data?.length > 0 ? (
-            result?.data.map(baju => {
-              return (
-                <KaryawanItem
-                  onEdit={editKaryawan.mutateAsync}
-                  checkable={isDeletingBaju}
-                  onChecked={isChecked => {
-                    setToBeDeletedBaju(prev =>
-                      isChecked
-                        ? [...prev, baju.id]
-                        : prev.filter(id => id !== baju.id),
-                    );
-                  }}
-                  baju={baju}
-                  key={baju.id}
-                />
-              );
-            })
-          ) : (
+          {!isLoading && !result?.data && (
             <Typography
               textAlign="center"
               my={5}
@@ -97,7 +68,19 @@ export function BajuPagePanel() {
             >
               Belum ada baju.
             </Typography>
-          )} */}
+          )}
+
+          {!isLoading &&
+            result?.data &&
+            result?.data?.length > 0 &&
+            result?.data.map(seriProduksi => {
+              return (
+                <SeriProduksiItem
+                  key={seriProduksi.id}
+                  seriProduksi={seriProduksi}
+                />
+              );
+            })}
         </Stack>
       </Container>
 
@@ -109,57 +92,19 @@ export function BajuPagePanel() {
         display="flex"
         flexDirection="column"
       >
-        {isDeletingBaju ? (
-          <>
+        <AddBajuDialog
+          onSubmit={async data => await addSeriProduksi.mutateAsync(data)}
+        >
+          {setOpen => (
             <Button
-              disabled={result?.data.length === 0 ?? true}
-              onClick={() => setIsDeletingBaju(false)}
+              onClick={() => setOpen(true)}
               variant="contained"
               color="success"
             >
-              BATAL
+              TAMBAH
             </Button>
-
-            <ConfirmDeleteDialog
-              onDelete={async () =>
-                await deleteBaju.mutateAsync(toBeDeletedBaju)
-              }
-            >
-              {setOpen => (
-                <Button
-                  disabled={toBeDeletedBaju.length === 0}
-                  onClick={() => setOpen(true)}
-                  variant="contained"
-                  color="error"
-                >
-                  HAPUS DATA
-                </Button>
-              )}
-            </ConfirmDeleteDialog>
-          </>
-        ) : (
-          <>
-            <Button
-              onClick={() => setIsDeletingBaju(true)}
-              variant="contained"
-              color="error"
-            >
-              HAPUS
-            </Button>
-
-            <AddBajuDialog onCancel={() => {}} onSubmit={async () => {}}>
-              {setOpen => (
-                <Button
-                  onClick={() => setOpen(true)}
-                  variant="contained"
-                  color="success"
-                >
-                  TAMBAH
-                </Button>
-              )}
-            </AddBajuDialog>
-          </>
-        )}
+          )}
+        </AddBajuDialog>
       </Box>
 
       <Box position="fixed" bottom={65} left={16}>

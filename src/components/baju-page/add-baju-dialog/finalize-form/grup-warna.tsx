@@ -16,30 +16,33 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import * as React from 'react';
 import useKaryawan from '@/hooks/use-karyawan';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import { NewBaju, NewGrupWarna } from '..';
 import useWarna from '@/hooks/use-warna';
 import useMerek from '@/hooks/use-merek';
 import useSize from '@/hooks/use-size';
 import { BajuTable } from './baju-table';
 import { grey } from '@mui/material/colors';
+import { NewGrupWarna } from '@/schema/grup-warna.schema';
+import { NewBaju } from '@/schema/baju.schema';
 
 type GrupWarnaItemProps = {
-  grupWarnaIdx: number;
   grupWarna: NewGrupWarna;
-  onDataChange(data: NewGrupWarna, index: number): void;
+  bajuList: NewBaju[];
+  onDataChange(grupWarna: NewGrupWarna, bajuList: NewBaju[]): void;
 };
 
-function getDefaultNewBaju(): NewBaju {
+function getDefaultNewBaju(grupWarnaBajuId: string): NewBaju {
   return {
-    jmlBelakang: 0,
-    jmlDepan: 0,
-    merekId: '',
+    id: crypto.randomUUID(),
+    grupWarnaBajuId,
+    jumlahBelakang: 0,
+    jumlahDepan: 0,
+    merekId: null,
     sizeId: '',
   };
 }
 
 export function GrupWarnaItem(props: GrupWarnaItemProps) {
-  const { grupWarna, grupWarnaIdx, onDataChange } = props;
+  const { grupWarna, bajuList, onDataChange } = props;
 
   const [isAlertOn, setIsAlertOn] = React.useState(false);
   function onError() {
@@ -67,7 +70,9 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
     queryResult: { data: sizeResult, error: sizeError },
   } = useSize({ onError });
 
-  const [newBaju, setNewBaju] = React.useState<NewBaju>(getDefaultNewBaju());
+  const [newBaju, setNewBaju] = React.useState<NewBaju>(
+    getDefaultNewBaju(grupWarna.id),
+  );
 
   const warnaItem = warnaResult?.data.find(
     warna => warna.id === grupWarna.warnaId,
@@ -118,12 +123,12 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
               variant="standard"
               size="medium"
               value={grupWarna.karyawanId || defaultKaryawanId}
-              onChange={e => {
+              onChange={e =>
                 onDataChange(
-                  { ...grupWarna, karyawanId: e.target.value as string },
-                  grupWarnaIdx,
-                );
-              }}
+                  { ...grupWarna, karyawanId: e.target.value },
+                  bajuList,
+                )
+              }
             >
               {previewKaryawanResult?.data.map(karyawan => (
                 <MenuItem value={karyawan.id} key={karyawan.id}>
@@ -133,19 +138,15 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
             </Select>
           </FormControl>
           <BajuTable
-            bajuList={grupWarna.bajuList}
+            bajuList={bajuList}
             sizeList={sizeResult?.data ?? []}
             merekList={merekResult?.data ?? []}
-            onBajuDelete={bajuIdx => {
-              const newBajuList = grupWarna.bajuList.filter(
-                (baju, i) => i !== bajuIdx,
-              );
-
+            onBajuDelete={bajuId =>
               onDataChange(
-                { ...grupWarna, bajuList: newBajuList },
-                grupWarnaIdx,
-              );
-            }}
+                grupWarna,
+                bajuList.filter(baju => baju.id !== bajuId),
+              )
+            }
           />
 
           {/* Add new baju to grup warna */}
@@ -163,7 +164,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                   onChange={e => {
                     const newMerekId =
                       e.target.value && e.target.value === 'addMerek'
-                        ? ''
+                        ? null
                         : e.target.value;
 
                     setNewBaju(prev => ({ ...prev, merekId: newMerekId }));
@@ -218,11 +219,11 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                 size="small"
                 label="Jumlah Depan"
                 type="number"
-                value={newBaju.jmlDepan}
+                value={newBaju.jumlahDepan}
                 onChange={e =>
                   setNewBaju(prev => ({
                     ...prev,
-                    jmlDepan: (e.target as HTMLInputElement).valueAsNumber,
+                    jumlahDepan: (e.target as HTMLInputElement).valueAsNumber,
                   }))
                 }
               />
@@ -236,11 +237,12 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                 size="small"
                 label="Jumlah Belakang"
                 type="number"
-                value={newBaju.jmlBelakang}
+                value={newBaju.jumlahBelakang}
                 onChange={e =>
                   setNewBaju(prev => ({
                     ...prev,
-                    jmlBelakang: (e.target as HTMLInputElement).valueAsNumber,
+                    jumlahBelakang: (e.target as HTMLInputElement)
+                      .valueAsNumber,
                   }))
                 }
               />
@@ -249,21 +251,14 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
           <Button
             onClick={() => {
-              onDataChange(
-                {
-                  ...grupWarna,
-                  bajuList: [...grupWarna.bajuList, newBaju],
-                },
-                grupWarnaIdx,
-              );
-
-              setNewBaju(getDefaultNewBaju());
+              onDataChange(grupWarna, [...bajuList, newBaju]);
+              setNewBaju(getDefaultNewBaju(grupWarna.id));
             }}
             fullWidth
             disabled={
               !newBaju.sizeId ||
-              newBaju.jmlDepan === 0 ||
-              newBaju.jmlBelakang === 0
+              newBaju.jumlahDepan === 0 ||
+              newBaju.jumlahBelakang === 0
             }
             variant="contained"
           >

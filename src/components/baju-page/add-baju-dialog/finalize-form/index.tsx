@@ -9,8 +9,11 @@ import {
   Typography,
 } from '@mui/material';
 import * as React from 'react';
-import { NewSeriProduksi, FormProps, NewGrupWarna } from '..';
+import { FormProps } from '..';
 import { GrupWarnaItem } from './grup-warna';
+import { NewSeriProduksi } from '@/schema/seri-produksi.schema';
+import { NewGrupWarna } from '@/schema/grup-warna.schema';
+import { NewBaju } from '@/schema/baju.schema';
 
 export type FinalizeFormProps = {
   newSeriProduksi: NewSeriProduksi;
@@ -23,10 +26,18 @@ export default function FinalizeForm(props: FinalizeFormProps) {
     React.useState<NewSeriProduksi>(newSeriProduksi);
 
   function disableSubmit() {
-    return (
-      newSeriProduksi.data.length === 0 ||
-      newSeriProduksi.data.some(grupWarna => grupWarna.bajuList.length === 0)
+    const someGrupWarnaHasNoShirt = localNewSeriProduksi.grupWarnaList.some(
+      grupWarna =>
+        localNewSeriProduksi.bajuList.every(
+          baju => baju.grupWarnaBajuId !== grupWarna.id,
+        ),
     );
+
+    const someGrupWarnaHasNoKaryawan = localNewSeriProduksi.grupWarnaList.some(
+      grupWarna => grupWarna.karyawanId === '',
+    );
+
+    return someGrupWarnaHasNoShirt || someGrupWarnaHasNoKaryawan;
   }
 
   async function onSubmitHandler(e: React.FormEvent<HTMLFormElement>) {
@@ -35,60 +46,84 @@ export default function FinalizeForm(props: FinalizeFormProps) {
   }
 
   const handleGrupWarnaChange = React.useCallback(
-    (grupWarna: NewGrupWarna, grupWarnaIdx: number) => {
+    (incomingGrupWarna: NewGrupWarna, incomingBajuList: NewBaju[]) => {
       setLocalNewSeriProduksi(prev => {
-        const newBajuFinalData = { ...prev };
+        const editedSeriProduksi = { ...prev };
+        const currGrupWarnaListLen = editedSeriProduksi.grupWarnaList.length;
+        const currBajuListLen = editedSeriProduksi.bajuList.length;
 
-        for (let i = 0; i < newBajuFinalData.data.length; i++) {
-          if (i === grupWarnaIdx) {
-            newBajuFinalData.data[i] = grupWarna;
+        // Override grup warna data with new one
+        for (let i = 0; i < currGrupWarnaListLen; i++) {
+          const currGrupWarna = editedSeriProduksi.grupWarnaList[i];
+
+          if (currGrupWarna.id === incomingGrupWarna.id) {
+            editedSeriProduksi.grupWarnaList[i] = incomingGrupWarna;
             break;
           }
         }
 
-        return newBajuFinalData;
+        // Override baju data with new one
+        if (currBajuListLen > 0) {
+          for (let i = 0; i < currBajuListLen; i++) {
+            const currentBaju = editedSeriProduksi.bajuList[i];
+
+            for (const baju of incomingBajuList) {
+              if (!editedSeriProduksi.bajuList.some(b => b.id === baju.id)) {
+                editedSeriProduksi.bajuList.push(baju);
+              } else if (currentBaju.id === baju.id) {
+                editedSeriProduksi.bajuList[i] = baju;
+              }
+            }
+          }
+        } else {
+          editedSeriProduksi.bajuList.push(...incomingBajuList);
+        }
+
+        return editedSeriProduksi;
       });
     },
     [],
   );
 
   return (
-    <>
-      <Box component="form" onSubmit={onSubmitHandler}>
-        <DialogContent>
-          {localNewSeriProduksi.nama && (
-            <Typography variant="h6">{localNewSeriProduksi.nama}</Typography>
-          )}
-          <Typography variant="h4">{localNewSeriProduksi.nomorSeri}</Typography>
+    <Box component="form" onSubmit={onSubmitHandler}>
+      <DialogContent>
+        {localNewSeriProduksi.nama && (
+          <Typography variant="h6">{localNewSeriProduksi.nama}</Typography>
+        )}
+        <Typography variant="h4">{localNewSeriProduksi.nomorSeri}</Typography>
 
-          <Stack gap={2} mt={2}>
-            {localNewSeriProduksi.data.map((data, i) => {
-              return (
-                <GrupWarnaItem
-                  key={i}
-                  onDataChange={handleGrupWarnaChange}
-                  grupWarna={data}
-                  grupWarnaIdx={i}
-                />
-              );
-            })}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button type="button" color="error" onClick={onCancel}>
-            BATAL
-          </Button>
+        <Stack gap={2} mt={2}>
+          {localNewSeriProduksi.grupWarnaList.map((grupWarna, i) => {
+            const grupWarnaBajuList = localNewSeriProduksi.bajuList.filter(
+              baju => baju.grupWarnaBajuId === grupWarna.id,
+            );
 
-          <Button
-            type="submit"
-            disabled={disableSubmit()}
-            variant="contained"
-            color="success"
-          >
-            TAMBAH
-          </Button>
-        </DialogActions>
-      </Box>
-    </>
+            return (
+              <GrupWarnaItem
+                key={i}
+                grupWarna={grupWarna}
+                onDataChange={handleGrupWarnaChange}
+                bajuList={grupWarnaBajuList}
+              />
+            );
+          })}
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button type="button" color="error" onClick={onCancel}>
+          BATAL
+        </Button>
+
+        <Button
+          type="submit"
+          disabled={disableSubmit()}
+          variant="contained"
+          color="success"
+        >
+          TAMBAH
+        </Button>
+      </DialogActions>
+    </Box>
   );
 }

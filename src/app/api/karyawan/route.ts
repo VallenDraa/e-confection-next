@@ -17,6 +17,7 @@ export async function GET(req: { query: { page: string; size: string } }) {
     const totalPages = Math.ceil(totalData / size) || 1;
 
     const karyawanData = await prisma.karyawan.findMany({
+      where: { softDelete: null },
       skip: (page - 1) * size,
       take: size,
     });
@@ -77,7 +78,7 @@ export async function PUT(req: NextRequest) {
 
     const body = await req.json();
     const bodySchema: z.ZodType<KaryawanPUTBody> = z.object({
-      id: z.string().cuid(),
+      id: z.string(),
       nama: z.string(),
       telepon: z.string().refine(v.isMobilePhone),
     });
@@ -117,9 +118,7 @@ export async function DELETE(req: NextRequest) {
     await clientUnauthedApiResponse();
 
     const data = await req.json();
-    const parsingRes = await z
-      .array(z.string().cuid())
-      .safeParseAsync(data.ids);
+    const parsingRes = await z.array(z.string()).safeParseAsync(data.ids);
 
     if (!parsingRes.success) {
       return NextResponse.json(

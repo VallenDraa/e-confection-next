@@ -3,7 +3,7 @@ import { OptionalDBMetadata } from './helper';
 import * as z from 'zod';
 
 export const sizeSchema: z.ZodType<OptionalDBMetadata<Size>> = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().optional(),
   nama: z.string(),
   harga: z.number(),
   softDelete: z.date().nullable(),

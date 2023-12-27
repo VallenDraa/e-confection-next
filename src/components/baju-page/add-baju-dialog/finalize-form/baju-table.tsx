@@ -10,16 +10,16 @@ import {
   TableRow,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { NewBaju } from '..';
 import { Merek, Size } from '@prisma/client';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { grey } from '@mui/material/colors';
+import { NewBaju } from '@/schema/baju.schema';
 
 type BajuTableProps = {
   merekList: Merek[];
   sizeList: Size[];
   bajuList: NewBaju[];
-  onBajuDelete(index: number): void;
+  onBajuDelete(id: string): void;
 };
 
 type BajuColumn = {
@@ -53,14 +53,14 @@ const columns: BajuColumn[] = [
     format: (value: number) => value.toLocaleString('id-ID'),
   },
   {
-    id: 'jmlDepan',
+    id: 'jumlahDepan',
     label: 'J.Depan',
     minWidth: 50,
     align: 'center',
     format: (value: number) => value.toLocaleString('id-ID'),
   },
   {
-    id: 'jmlBelakang',
+    id: 'jumlahBelakang',
     label: 'J.Belakang',
     minWidth: 50,
     align: 'center',
@@ -108,7 +108,9 @@ export function BajuTable(props: BajuTableProps) {
                   if (column.id === 'hapus') {
                     return (
                       <TableCell key={column.id} align={column.align}>
-                        <ConfirmDeleteDialog onDelete={() => onBajuDelete(i)}>
+                        <ConfirmDeleteDialog
+                          onDelete={() => onBajuDelete(baju.id)}
+                        >
                           {setOpen => {
                             return (
                               <IconButton

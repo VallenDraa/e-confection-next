@@ -8,35 +8,15 @@ import SeriProduksiForm from './seri-produksi-form';
 import WarnaForm from './warna-form';
 import FinalizeForm from './finalize-form';
 import { useMultistepForm } from '@/hooks/use-multistep-form';
+import {
+  NewSeriProduksi,
+  newSeriProduksiSchema,
+} from '@/schema/seri-produksi.schema';
+import { FloatingAlert } from '@/components/ui/floating-alert';
 
 export type FormProps<T extends unknown | unknown[]> = {
-  onCancel: () => void;
+  onCancel?: () => void;
   onSubmit: (data: T) => Promise<void>;
-};
-
-export type NewBaju = {
-  merekId: string;
-  sizeId: string;
-  jmlDepan: number;
-  jmlBelakang: number;
-};
-
-export type NewGrupWarna = {
-  warnaId: string;
-  karyawanId: string;
-  bajuList: NewBaju[];
-};
-
-export type NewSeriProduksi = {
-  nama: string | null;
-  nomorSeri: number;
-  data: NewGrupWarna[];
-};
-
-const DEFAULT_FINAL_DATA: NewSeriProduksi = {
-  nama: null,
-  nomorSeri: 0,
-  data: [],
 };
 
 type AddBajuDialogProps<T> = {
@@ -46,16 +26,32 @@ type AddBajuDialogProps<T> = {
   onCancel?: () => void;
 } & FormProps<T>;
 
-export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
-  const { children } = props;
-  const [newSeriProduksi, setNewSeriProduksi] =
-    React.useState<NewSeriProduksi>(DEFAULT_FINAL_DATA);
+function getDefaultSeriProduksi(): NewSeriProduksi {
+  return {
+    id: crypto.randomUUID(),
+    nama: null,
+    nomorSeri: 0,
+    grupWarnaList: [],
+    bajuList: [],
+  };
+}
+
+export function AddBajuDialog(props: AddBajuDialogProps<NewSeriProduksi>) {
+  const { children, onSubmit, onCancel } = props;
+  const [newSeriProduksi, setNewSeriProduksi] = React.useState<NewSeriProduksi>(
+    getDefaultSeriProduksi(),
+  );
+
+  const [alertMessage, setAlertMessage] = React.useState('');
 
   const [open, setOpen] = React.useState(false);
-  const { next, back, step } = useMultistepForm([
+  const { next, back, step, goTo } = useMultistepForm([
     <SeriProduksiForm
       key={0}
-      onCancel={() => setOpen(false)}
+      onCancel={() => {
+        onCancel?.();
+        setOpen(false);
+      }}
       onSubmit={async seriData => {
         setNewSeriProduksi(prev => ({
           ...prev,
@@ -72,11 +68,11 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
       onSubmit={async warnaData => {
         setNewSeriProduksi(prev => ({
           ...prev,
-          data: warnaData.warnaIds.map(warnaId => ({
+          grupWarnaList: warnaData.warnaIds.map(warnaId => ({
+            id: crypto.randomUUID(),
+            seriProduksiId: prev.id,
             warnaId,
             karyawanId: '',
-            sizeId: '',
-            bajuList: [],
           })),
         }));
 
@@ -87,7 +83,19 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
       key={2}
       newSeriProduksi={newSeriProduksi}
       onCancel={() => back()}
-      onSubmit={async data => {}}
+      onSubmit={async data => {
+        const parsingResult = await newSeriProduksiSchema.safeParseAsync(data);
+
+        if (parsingResult.success) {
+          onSubmit(data);
+          setOpen(false);
+          goTo(0);
+          setNewSeriProduksi(getDefaultSeriProduksi());
+        } else {
+          setAlertMessage('Gagal untuk menambahkan seri produksi baru!');
+          setTimeout(() => setAlertMessage(''), 3000);
+        }
+      }}
     />,
   ]);
 
@@ -114,6 +122,13 @@ export function AddBajuDialog<T>(props: AddBajuDialogProps<T>) {
           </Box>
         </Header>
         {step}
+        <FloatingAlert
+          isActive={alertMessage !== ''}
+          onClose={() => setAlertMessage('')}
+          severity="error"
+        >
+          {alertMessage}
+        </FloatingAlert>
       </Dialog>
     </>
   );

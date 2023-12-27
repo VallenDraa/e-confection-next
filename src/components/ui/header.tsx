@@ -18,6 +18,9 @@ export function Header(props: HeaderProps) {
 
   return (
     <Box
+      position="sticky"
+      top={0}
+      zIndex={10}
       display="flex"
       alignItems="center"
       minHeight={60}

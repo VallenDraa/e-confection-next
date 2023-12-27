@@ -20,7 +20,7 @@ export async function PUT(
     });
 
     const bodyParsingResult = await bodySchema.safeParseAsync(body);
-    const idParsingResult = await z.string().cuid().safeParseAsync(id);
+    const idParsingResult = await z.string().safeParseAsync(id);
 
     if (!bodyParsingResult.success) {
       return NextResponse.json(
@@ -64,7 +64,7 @@ export async function DELETE(
     await clientUnauthedApiResponse();
     const { id } = params;
 
-    const idParsingResult = await z.string().cuid().safeParseAsync(id);
+    const idParsingResult = await z.string().safeParseAsync(id);
 
     if (!idParsingResult.success) {
       return NextResponse.json(

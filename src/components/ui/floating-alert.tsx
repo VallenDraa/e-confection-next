@@ -14,6 +14,7 @@ export function FloatingAlert(props: FloatingAlertProps) {
         {...others}
         sx={{
           ...others.sx,
+          zIndex: 1100,
           position: 'fixed',
           right: '20px',
           bottom: '20px',
