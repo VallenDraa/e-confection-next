@@ -7,7 +7,6 @@ import {
   Button,
   Container,
   Pagination,
-  Skeleton,
   Stack,
   Typography,
 } from '@mui/material';
@@ -15,7 +14,7 @@ import { Header } from '../ui/header';
 import { grey } from '@mui/material/colors';
 import { AddBajuDialog } from './add-baju-dialog';
 import { FloatingAlert } from '../ui/floating-alert';
-import { useSeriProduksi } from '@/hooks/use-seri-produksi';
+import { useSeriProduksi } from '@/hooks/server-state-hooks/use-seri-produksi';
 import { SeriProduksiItem } from './seri-produksi-item';
 import BajuPageSkeleton from './baju-page-skeleton';
 
@@ -57,7 +56,7 @@ export function BajuPagePanel() {
         <Stack gap={2} my={2}>
           {isLoading && <BajuPageSkeleton />}
 
-          {!isLoading && !result?.data && (
+          {!isLoading && (result?.data?.length === 0 || !result?.data) && (
             <Typography
               textAlign="center"
               my={5}

@@ -14,7 +14,7 @@ import {
 import * as React from 'react';
 import { FormProps } from '.';
 import DeleteIcon from '@mui/icons-material/Delete';
-import useWarna from '@/hooks/use-warna';
+import useWarna from '@/hooks/server-state-hooks/use-warna';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { grey } from '@mui/material/colors';
 import { WarnaBody } from '@/app/api/warna/warna-route.types';

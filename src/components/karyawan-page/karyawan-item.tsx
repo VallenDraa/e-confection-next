@@ -96,7 +96,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
           }
         }}
       >
-        <Stack direction="row" gap={3}>
+        <Stack direction="row" gap={3} alignItems="center">
           <Avatar alt="Avatar" variant="circular">
             <PersonIcon />
           </Avatar>
@@ -132,12 +132,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
       </Paper>
 
       {/* Karyawan detail dialog */}
-      <Dialog
-        fullScreen
-        PaperProps={{ square: false }}
-        open={isDetailOpen}
-        onClose={setIsDetailOpen}
-      >
+      <Dialog fullWidth open={isDetailOpen} onClose={setIsDetailOpen}>
         <Header>
           <Box display="flex" alignItems="center" width="100%" pl={1} pr={3}>
             <IconButton color="info" onClick={() => setIsDetailOpen(false)}>
@@ -154,20 +149,8 @@ export function KaryawanItem(props: KaryawanItemProps) {
             </Typography>
           </Box>
         </Header>
-        <Box
-          height="100%"
-          component="form"
-          overflow="hidden"
-          onSubmit={handleSubmit(handleAddKaryawan)}
-        >
-          <DialogContent
-            sx={{
-              height: '100%',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
+        <Box component="form" onSubmit={handleSubmit(handleAddKaryawan)}>
+          <DialogContent>
             <Paper sx={{ padding: '24px', backgroundColor: grey[100] }}>
               <Stack direction="row" alignItems="center" gap={2}>
                 <Avatar
@@ -175,7 +158,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
                   sx={{ aspectRatio: '1/1', height: '100%', width: '77px' }}
                 />
 
-                <Stack gap={1}>
+                <Stack gap={1} flexGrow={1}>
                   <TextField
                     fullWidth
                     label="Nama"
@@ -185,6 +168,11 @@ export function KaryawanItem(props: KaryawanItemProps) {
                     error={!!formState.errors.nama}
                     helperText={formState.errors.nama?.message}
                     {...register('nama')}
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        WebkitTextFillColor: grey[900],
+                      },
+                    }}
                   />
 
                   <TextField
@@ -196,6 +184,11 @@ export function KaryawanItem(props: KaryawanItemProps) {
                     error={!!formState.errors.telepon}
                     helperText={formState.errors.telepon?.message}
                     {...register('telepon')}
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        WebkitTextFillColor: grey[900],
+                      },
+                    }}
                   />
                 </Stack>
               </Stack>

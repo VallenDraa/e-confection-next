@@ -1,5 +1,5 @@
 import { Warna } from '@prisma/client';
-import { OptionalDBMetadata } from './helper';
+import { OptionalDBMetadata } from '@/lib/db';
 import * as z from 'zod';
 
 export const warnaSchema: z.ZodType<OptionalDBMetadata<Warna>> = z.object({

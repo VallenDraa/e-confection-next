@@ -1,12 +1,11 @@
 import { MerekBody, MerekGETResponse } from '@/app/api/merek/merek-route.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-
-type CallbackType = 'query' | 'add' | 'edit' | 'delete';
+import { ServerStateHooksCallbackType } from './server-state-hooks.types';
 
 type useMerekProps = {
-  onSuccess?: (type: CallbackType) => void;
-  onError?: (type: CallbackType) => void;
+  onSuccess?: (type: ServerStateHooksCallbackType) => void;
+  onError?: (type: ServerStateHooksCallbackType) => void;
 };
 
 export default function useMerek(props: useMerekProps) {

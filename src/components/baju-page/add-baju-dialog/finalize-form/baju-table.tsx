@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {
   IconButton,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TableFooter,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Merek, Size } from '@prisma/client';
@@ -16,10 +16,11 @@ import { grey } from '@mui/material/colors';
 import { NewBaju } from '@/schema/baju.schema';
 
 type BajuTableProps = {
+  canDelete?: boolean;
   merekList: Merek[];
   sizeList: Size[];
   bajuList: NewBaju[];
-  onBajuDelete(id: string): void;
+  onBajuDelete?: (id: string) => void;
 };
 
 type BajuColumn = {
@@ -76,7 +77,7 @@ const columns: BajuColumn[] = [
 ];
 
 export function BajuTable(props: BajuTableProps) {
-  const { bajuList, onBajuDelete, merekList, sizeList } = props;
+  const { bajuList, canDelete, onBajuDelete, merekList, sizeList } = props;
 
   return (
     <TableContainer
@@ -89,15 +90,21 @@ export function BajuTable(props: BajuTableProps) {
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            {columns.map(column => (
-              <TableCell
-                key={column.id}
-                align={column.align}
-                style={{ minWidth: column.minWidth }}
-              >
-                {column.label}
-              </TableCell>
-            ))}
+            {columns.map(column => {
+              if (!canDelete && column.id === 'hapus') {
+                return null;
+              }
+
+              return (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              );
+            })}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -105,11 +112,15 @@ export function BajuTable(props: BajuTableProps) {
             return (
               <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                 {columns.map(column => {
+                  if (!canDelete && column.id === 'hapus') {
+                    return null;
+                  }
+
                   if (column.id === 'hapus') {
                     return (
                       <TableCell key={column.id} align={column.align}>
                         <ConfirmDeleteDialog
-                          onDelete={() => onBajuDelete(baju.id)}
+                          onDelete={() => onBajuDelete?.(baju.id)}
                         >
                           {setOpen => {
                             return (
@@ -159,6 +170,35 @@ export function BajuTable(props: BajuTableProps) {
             );
           })}
         </TableBody>
+
+        <TableFooter>
+          <TableCell sx={{ fontSize: '16px !important' }} colSpan={3}>
+            Total Jumlah:
+          </TableCell>
+          {columns.map(column => {
+            if (!canDelete && column.id === 'hapus') {
+              return null;
+            }
+
+            if (column.id === 'jumlahDepan' || column.id === 'jumlahBelakang') {
+              return (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  sx={{ fontSize: '16px !important' }}
+                >
+                  {bajuList.reduce(
+                    (acc, baju) =>
+                      acc + baju[column.id as 'jumlahBelakang' | 'jumlahDepan'],
+                    0,
+                  )}
+                </TableCell>
+              );
+            }
+
+            return null;
+          })}
+        </TableFooter>
       </Table>
     </TableContainer>
   );

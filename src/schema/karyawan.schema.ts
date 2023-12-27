@@ -1,7 +1,7 @@
 import { Karyawan, RekapGajiKaryawan } from '@prisma/client';
-import { OptionalDBMetadata } from './helper';
 import * as z from 'zod';
 import v from 'validator';
+import { OptionalDBMetadata } from '@/lib/db';
 
 export const RekapGajiKaryawanSchema: z.ZodType<
   OptionalDBMetadata<RekapGajiKaryawan>

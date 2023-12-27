@@ -14,11 +14,11 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import * as React from 'react';
-import useKaryawan from '@/hooks/use-karyawan';
+import useKaryawan from '@/hooks/server-state-hooks/use-karyawan';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import useWarna from '@/hooks/use-warna';
-import useMerek from '@/hooks/use-merek';
-import useSize from '@/hooks/use-size';
+import useWarna from '@/hooks/server-state-hooks/use-warna';
+import useMerek from '@/hooks/server-state-hooks/use-merek';
+import useSize from '@/hooks/server-state-hooks/use-size';
 import { BajuTable } from './baju-table';
 import { grey } from '@mui/material/colors';
 import { NewGrupWarna } from '@/schema/grup-warna.schema';

@@ -6,13 +6,12 @@ import { KaryawanPreviewGETResponse } from '@/app/api/karyawan/preview/karyawan-
 import { Karyawan } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-
-type CallbackType = 'query' | 'add' | 'edit' | 'delete';
+import { ServerStateHooksCallbackType } from './server-state-hooks.types';
 
 type useKaryawanProps = {
   karyawanPage: number;
-  onSuccess?: (type: CallbackType) => void;
-  onError?: (type: CallbackType) => void;
+  onSuccess?: (type: ServerStateHooksCallbackType) => void;
+  onError?: (type: ServerStateHooksCallbackType) => void;
 };
 
 export default function useKaryawan(props: useKaryawanProps) {

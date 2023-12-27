@@ -1,5 +1,5 @@
+import { OptionalDBMetadata } from '@/lib/db';
 import { Merek } from '@prisma/client';
-import { OptionalDBMetadata } from './helper';
 import * as z from 'zod';
 
 export const merekSchema: z.ZodType<OptionalDBMetadata<Merek>> = z.object({

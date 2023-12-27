@@ -11,10 +11,5 @@ export function overrideNumberInput<T extends FieldValues>(
 export function willDisableSubmit<T extends FieldValues>(
   formState: FormState<T>,
 ) {
-  return (
-    !formState.isDirty ||
-    !formState.isValid ||
-    formState.isSubmitting ||
-    formState.isValidating
-  );
+  return !formState.isDirty || !formState.isValid || formState.isSubmitting;
 }

@@ -17,6 +17,9 @@ export async function GET(req: { query: { page: string; size: string } }) {
     const seriProduksiData = await prisma.seriProduksi.findMany({
       skip: (page - 1) * size,
       take: size,
+      include: {
+        grupWarnaBaju: { include: { baju: true } },
+      },
     });
 
     return NextResponse.json<SeriProduksiGETResponse>(

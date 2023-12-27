@@ -14,6 +14,7 @@ import { GrupWarnaItem } from './grup-warna';
 import { NewSeriProduksi } from '@/schema/seri-produksi.schema';
 import { NewGrupWarna } from '@/schema/grup-warna.schema';
 import { NewBaju } from '@/schema/baju.schema';
+import { ConfirmAddDialog } from '@/components/ui/confirm-add-dialog';
 
 export type FinalizeFormProps = {
   newSeriProduksi: NewSeriProduksi;
@@ -40,8 +41,7 @@ export default function FinalizeForm(props: FinalizeFormProps) {
     return someGrupWarnaHasNoShirt || someGrupWarnaHasNoKaryawan;
   }
 
-  async function onSubmitHandler(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function onSubmitHandler() {
     await onSubmit(localNewSeriProduksi);
   }
 
@@ -86,7 +86,7 @@ export default function FinalizeForm(props: FinalizeFormProps) {
   );
 
   return (
-    <Box component="form" onSubmit={onSubmitHandler}>
+    <Box>
       <DialogContent>
         {localNewSeriProduksi.nama && (
           <Typography variant="h6">{localNewSeriProduksi.nama}</Typography>
@@ -114,15 +114,21 @@ export default function FinalizeForm(props: FinalizeFormProps) {
         <Button type="button" color="error" onClick={onCancel}>
           BATAL
         </Button>
-
-        <Button
-          type="submit"
-          disabled={disableSubmit()}
-          variant="contained"
-          color="success"
-        >
-          TAMBAH
-        </Button>
+        <ConfirmAddDialog onAdd={onSubmitHandler}>
+          {setOpen => {
+            return (
+              <Button
+                type="submit"
+                disabled={disableSubmit()}
+                onClick={() => setOpen(true)}
+                variant="contained"
+                color="success"
+              >
+                TAMBAH
+              </Button>
+            );
+          }}
+        </ConfirmAddDialog>
       </DialogActions>
     </Box>
   );

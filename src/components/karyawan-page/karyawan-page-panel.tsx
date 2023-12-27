@@ -17,7 +17,8 @@ import { grey } from '@mui/material/colors';
 import { AddKaryawanDialog } from '@/components/karyawan-page/add-karyawan-dialog';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
-import useKaryawan from '@/hooks/use-karyawan';
+import useKaryawan from '@/hooks/server-state-hooks/use-karyawan';
+import { KaryawanPageSkeleton } from './karyawan-page-skeleton';
 
 export function KaryawanPagePanel() {
   const query = useSearchParams();
@@ -61,14 +62,11 @@ export function KaryawanPagePanel() {
 
       <Container maxWidth="sm">
         <Stack gap={2} my={2}>
-          {isLoading &&
-            new Array(5).map((a, i) => {
-              return (
-                <Skeleton key={i} variant="rounded" width="100%" height={76} />
-              );
-            })}
+          {isLoading && <KaryawanPageSkeleton />}
 
-          {!isLoading && result?.data && result?.data?.length > 0 ? (
+          {!isLoading &&
+            result?.data &&
+            result?.data?.length > 0 &&
             result?.data.map(karyawan => {
               return (
                 <KaryawanItem
@@ -85,8 +83,9 @@ export function KaryawanPagePanel() {
                   key={karyawan.id}
                 />
               );
-            })
-          ) : (
+            })}
+
+          {!isLoading && (result?.data?.length === 0 || !result?.data) && (
             <Typography
               textAlign="center"
               my={5}
