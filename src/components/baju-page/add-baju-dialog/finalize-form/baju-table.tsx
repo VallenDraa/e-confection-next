@@ -14,18 +14,27 @@ import { Merek, Size } from '@prisma/client';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { grey } from '@mui/material/colors';
 import { NewBaju } from '@/schema/baju.schema';
+import { PreviewKaryawan } from '@/schema/karyawan.schema';
 
 type BajuTableProps = {
   canDelete?: boolean;
   merekList: Merek[];
   sizeList: Size[];
   bajuList: NewBaju[];
+  previewKaryawanList: PreviewKaryawan[];
   onBajuDelete?: (id: string) => void;
 };
 
 type BajuColumn = {
   id: keyof NewBaju | 'hapus' | 'no';
-  label: 'No' | 'Merek' | 'Size' | 'J.Depan' | 'J.Belakang' | 'Hapus';
+  label:
+    | 'No'
+    | 'Merek'
+    | 'Size'
+    | 'J.Depan'
+    | 'J.Belakang'
+    | 'Pekerja'
+    | 'Hapus';
   minWidth?: number;
   align?: 'center';
   format?: (value: number) => string;
@@ -54,6 +63,13 @@ const columns: BajuColumn[] = [
     format: (value: number) => value.toLocaleString('id-ID'),
   },
   {
+    id: 'karyawanId',
+    label: 'Pekerja',
+    minWidth: 50,
+    align: 'center',
+    format: (value: number) => value.toLocaleString('id-ID'),
+  },
+  {
     id: 'jumlahDepan',
     label: 'J.Depan',
     minWidth: 50,
@@ -77,7 +93,14 @@ const columns: BajuColumn[] = [
 ];
 
 export function BajuTable(props: BajuTableProps) {
-  const { bajuList, canDelete, onBajuDelete, merekList, sizeList } = props;
+  const {
+    bajuList,
+    canDelete,
+    onBajuDelete,
+    merekList,
+    sizeList,
+    previewKaryawanList,
+  } = props;
 
   return (
     <TableContainer
@@ -139,18 +162,33 @@ export function BajuTable(props: BajuTableProps) {
                   } else {
                     let value;
 
-                    if (column.id === 'merekId') {
-                      value =
-                        merekList.find(merek => merek.id === baju.merekId)
-                          ?.nama ?? 'N/A';
-                    } else if (column.id === 'sizeId') {
-                      value =
-                        sizeList.find(size => size.id === baju.sizeId)?.nama ??
-                        'N/A';
-                    } else if (column.id === 'no') {
-                      value = i + 1;
-                    } else {
-                      value = baju[column.id];
+                    switch (true) {
+                      case column.id === 'merekId':
+                        value =
+                          merekList.find(merek => merek.id === baju.merekId)
+                            ?.nama ?? 'N/A';
+                        break;
+
+                      case column.id === 'sizeId':
+                        value =
+                          sizeList.find(size => size.id === baju.sizeId)
+                            ?.nama ?? 'N/A';
+                        break;
+
+                      case column.id === 'karyawanId':
+                        value =
+                          previewKaryawanList.find(
+                            karyawan => karyawan.id === baju.karyawanId,
+                          )?.nama ?? 'N/A';
+                        break;
+
+                      case column.id === 'no':
+                        value = i + 1;
+                        break;
+
+                      default:
+                        value = baju[column.id];
+                        break;
                     }
 
                     return (
@@ -172,32 +210,38 @@ export function BajuTable(props: BajuTableProps) {
         </TableBody>
 
         <TableFooter>
-          <TableCell sx={{ fontSize: '16px !important' }} colSpan={3}>
-            Total Jumlah:
-          </TableCell>
-          {columns.map(column => {
-            if (!canDelete && column.id === 'hapus') {
+          <TableRow>
+            <TableCell sx={{ fontSize: '16px !important' }} colSpan={4}>
+              Total Jumlah:
+            </TableCell>
+            {columns.map(column => {
+              if (!canDelete && column.id === 'hapus') {
+                return null;
+              }
+
+              if (
+                column.id === 'jumlahDepan' ||
+                column.id === 'jumlahBelakang'
+              ) {
+                return (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    sx={{ fontSize: '16px !important' }}
+                  >
+                    {bajuList.reduce(
+                      (acc, baju) =>
+                        acc +
+                        baju[column.id as 'jumlahBelakang' | 'jumlahDepan'],
+                      0,
+                    )}
+                  </TableCell>
+                );
+              }
+
               return null;
-            }
-
-            if (column.id === 'jumlahDepan' || column.id === 'jumlahBelakang') {
-              return (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  sx={{ fontSize: '16px !important' }}
-                >
-                  {bajuList.reduce(
-                    (acc, baju) =>
-                      acc + baju[column.id as 'jumlahBelakang' | 'jumlahDepan'],
-                    0,
-                  )}
-                </TableCell>
-              );
-            }
-
-            return null;
-          })}
+            })}
+          </TableRow>
         </TableFooter>
       </Table>
     </TableContainer>

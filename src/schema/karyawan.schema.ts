@@ -26,6 +26,7 @@ export const KaryawanSchema: z.ZodType<OptionalDBMetadata<Karyawan>> = z.object(
 );
 
 export const previewKaryawanSchema = z.object({
+  id: z.string().optional(),
   nama: z.string(),
   telepon: z.string(),
 });

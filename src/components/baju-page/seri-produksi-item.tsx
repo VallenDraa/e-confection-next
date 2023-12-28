@@ -70,8 +70,8 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
 
   const {
     previewQueryResult: {
-      data: karyawanResult,
-      error: karyawanError,
+      data: previewKaryawanResult,
+      error: previewKaryawanError,
       isLoading: isKaryawanLoading,
     },
   } = useKaryawan({ karyawanPage: 1, onError });
@@ -273,8 +273,9 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
 
                       {/* Karyawan */}
                       <Typography>
-                        {`Dikerjakan Oleh: ${karyawanResult?.data.find(
-                          karyawan => karyawan.id === grupWarna.karyawanId,
+                        {`Dikerjakan Oleh: ${previewKaryawanResult?.data.find(
+                          previewKaryawan =>
+                            previewKaryawan.id === grupWarna.karyawanId,
                         )?.nama}
                           `}
                       </Typography>
@@ -284,6 +285,7 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
                   <AccordionDetails>
                     <BajuTable
                       bajuList={grupWarna.baju}
+                      previewKaryawanList={previewKaryawanResult?.data ?? []}
                       sizeList={sizeResult?.data ?? []}
                       merekList={merekResult?.data ?? []}
                     />
@@ -299,7 +301,7 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
           onClose={() => setIsAlertOn(false)}
           severity="error"
         >
-          {karyawanError?.message && karyawanError.message}
+          {previewKaryawanError?.message && previewKaryawanError.message}
           {warnaError?.message && warnaError.message}
           {sizeError?.message && sizeError.message}
           {merekError?.message && merekError.message}

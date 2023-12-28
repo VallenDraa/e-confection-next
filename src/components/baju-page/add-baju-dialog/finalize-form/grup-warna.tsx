@@ -120,9 +120,11 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
         <AccordionDetails>
           <BajuTable
+            canDelete
             bajuList={bajuList}
             sizeList={sizeResult?.data ?? []}
             merekList={merekResult?.data ?? []}
+            previewKaryawanList={previewKaryawanResult?.data ?? []}
             onBajuDelete={bajuId =>
               onDataChange(
                 grupWarna,
