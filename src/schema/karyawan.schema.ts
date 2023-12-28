@@ -26,14 +26,8 @@ export const KaryawanSchema: z.ZodType<OptionalDBMetadata<Karyawan>> = z.object(
 );
 
 export const previewKaryawanSchema = z.object({
-  nama: z
-    .string()
-    .transform(value => value.replace(/\s+/g, ''))
-    .pipe(z.string().min(1, 'Nama tidak boleh kosong.')),
-  telepon: z
-    .string()
-    .transform(value => value.replace(/\s+/g, ''))
-    .pipe(z.string().refine(v.isMobilePhone, 'No.Telepon tidak valid.')),
+  nama: z.string(),
+  telepon: z.string(),
 });
 
 export type PreviewKaryawan = z.infer<typeof previewKaryawanSchema>;

@@ -1,22 +1,22 @@
 import * as z from 'zod';
 import { clientUnauthedApiResponse } from '@/lib/auth/user-auth-checker';
 import { prisma } from '@/lib/prisma';
-import { KaryawanSchema } from '@/schema/karyawan.schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { KaryawanGETResponse, KaryawanPUTBody } from './karyawan-route.types';
 import v from 'validator';
 
-export async function GET(req: { query: { page: string; size: string } }) {
+export async function GET(req: NextRequest) {
   try {
     await clientUnauthedApiResponse();
 
-    const page = Number(req.query?.page ?? 1);
-    const size = Number(req.query?.size ?? 15);
+    const page = Number(req.nextUrl.searchParams.get('page') ?? 1);
+    const size = Number(req.nextUrl.searchParams.get('size') ?? 6);
 
     const totalData = await prisma.karyawan.count();
     const totalPages = Math.ceil(totalData / size) || 1;
 
     const karyawanData = await prisma.karyawan.findMany({
+      orderBy: { createdAt: 'desc' },
       where: { softDelete: null },
       skip: (page - 1) * size,
       take: size,
@@ -48,7 +48,9 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const parsingRes = await KaryawanSchema.safeParseAsync(body);
+    const parsingRes = await z
+      .object({ nama: z.string(), telepon: z.string().refine(v.isMobilePhone) })
+      .safeParseAsync(body);
     if (!parsingRes.success) {
       return NextResponse.json(
         { message: 'Data body yang diberikan tidak valid!' },

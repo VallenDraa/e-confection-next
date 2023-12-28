@@ -22,6 +22,10 @@ import {
   previewKaryawanSchema,
 } from '@/schema/karyawan.schema';
 import { willDisableSubmit } from '@/lib/form-helpers';
+import axios from 'axios';
+import { ExistsGETResponse } from '@/app/api/exists/exists.types';
+import { FloatingAlert } from '../ui/floating-alert';
+import { karyawanExists } from '@/lib/karyawan';
 
 type AddKaryawanDialogProps = {
   children: (
@@ -35,6 +39,7 @@ export function AddKaryawanDialog(props: AddKaryawanDialogProps) {
   const { children, onCancel, onSubmit } = props;
   const [open, setOpen] = React.useState(false);
 
+  const [alertMessage, setAlertMessage] = React.useState('');
   const { register, handleSubmit, formState, reset } = useForm<PreviewKaryawan>(
     { resolver: zodResolver(previewKaryawanSchema) },
   );
@@ -59,9 +64,21 @@ export function AddKaryawanDialog(props: AddKaryawanDialogProps) {
         <Box
           component="form"
           onSubmit={handleSubmit(async karyawan => {
-            await onSubmit?.(karyawan);
-            reset();
-            setOpen(false);
+            try {
+              if (!(await karyawanExists(karyawan.nama))) {
+                await onSubmit?.(karyawan);
+                reset();
+                setOpen(false);
+              } else {
+                setAlertMessage(
+                  'Nama karyawan sudah ada, silahkan gunakan nama lain.',
+                );
+                setTimeout(() => setAlertMessage(''), 3000);
+              }
+            } catch (error) {
+              setAlertMessage('Gagal menambahkan karyawan!.');
+              setTimeout(() => setAlertMessage(''), 3000);
+            }
           })}
         >
           <DialogContent>
@@ -112,6 +129,14 @@ export function AddKaryawanDialog(props: AddKaryawanDialogProps) {
             </Button>
           </DialogActions>
         </Box>
+
+        <FloatingAlert
+          isActive={alertMessage !== ''}
+          onClose={() => setAlertMessage('')}
+          severity="error"
+        >
+          {alertMessage}
+        </FloatingAlert>
       </Dialog>
     </>
   );

@@ -61,7 +61,7 @@ export function KaryawanPagePanel() {
       </Header>
 
       <Container maxWidth="sm">
-        <Stack gap={2} my={2}>
+        <Stack gap={2} my={2} pb={7}>
           {isLoading && <KaryawanPageSkeleton />}
 
           {!isLoading &&

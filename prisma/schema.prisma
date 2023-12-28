@@ -43,6 +43,8 @@ model Baju {
   id              String        @id @default(uuid())
   jumlahDepan     Int
   jumlahBelakang  Int
+  karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
+  karyawanId      String
   size            Size          @relation(fields: [sizeId], references: [id])
   sizeId          String
   grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
@@ -79,9 +81,10 @@ model SeriProduksi {
 
 model Karyawan {
   id                String              @id @default(uuid())
-  nama              String
+  nama              String              @unique
   telepon           String
   rekapGajiKaryawan RekapGajiKaryawan[]
+  baju              Baju[]
   softDelete        DateTime?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt

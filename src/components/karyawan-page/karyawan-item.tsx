@@ -27,6 +27,8 @@ import { willDisableSubmit } from '@/lib/form-helpers';
 import { KaryawanPUTBody } from '@/app/api/karyawan/karyawan-route.types';
 import { WorkHistoryItemProps } from './work-history-item';
 import WorkHistoryList from './work-history-list';
+import { karyawanExists } from '@/lib/karyawan';
+import { FloatingAlert } from '../ui/floating-alert';
 
 type KaryawanItemProps = {
   karyawan: Karyawan;
@@ -61,17 +63,28 @@ export function KaryawanItem(props: KaryawanItemProps) {
       defaultValues: { nama: karyawan.nama, telepon: karyawan.telepon },
     });
 
+  const [alertMessage, setAlertMessage] = React.useState('');
   const [isDetailOpen, setIsDetailOpen] = React.useState(false);
   const [isEditing, setIsEditing] = React.useState(false);
 
-  async function handleAddKaryawan(editedKaryawan: PreviewKaryawan) {
-    await onEdit?.({
-      id: karyawan.id,
-      nama: editedKaryawan.nama,
-      telepon: editedKaryawan.telepon,
-    });
+  async function handleEditKaryawan(editedKaryawan: PreviewKaryawan) {
+    try {
+      if (!(await karyawanExists(editedKaryawan.nama))) {
+        await onEdit?.({
+          id: karyawan.id,
+          nama: editedKaryawan.nama,
+          telepon: editedKaryawan.telepon,
+        });
 
-    setIsEditing(false);
+        setIsEditing(false);
+      } else {
+        setAlertMessage('Nama karyawan sudah ada, silahkan gunakan nama lain.');
+        setTimeout(() => setAlertMessage(''), 3000);
+      }
+    } catch (error) {
+      setAlertMessage('Gagal mengedit karyawan!');
+      setTimeout(() => setAlertMessage(''), 3000);
+    }
   }
 
   return (
@@ -149,7 +162,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
             </Typography>
           </Box>
         </Header>
-        <Box component="form" onSubmit={handleSubmit(handleAddKaryawan)}>
+        <Box component="form" onSubmit={handleSubmit(handleEditKaryawan)}>
           <DialogContent>
             <Paper sx={{ padding: '24px', backgroundColor: grey[100] }}>
               <Stack direction="row" alignItems="center" gap={2}>
@@ -245,6 +258,14 @@ export function KaryawanItem(props: KaryawanItemProps) {
             <WorkHistoryList workHistory={mockData} />
           </DialogContent>
         </Box>
+
+        <FloatingAlert
+          isActive={alertMessage !== ''}
+          onClose={() => setAlertMessage('')}
+          severity="error"
+        >
+          {alertMessage}
+        </FloatingAlert>
       </Dialog>
     </>
   );
