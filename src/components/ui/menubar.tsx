@@ -52,10 +52,12 @@ export default function Menubar() {
     }
   };
 
-  return !session.data ? null : (
+  return (
     <>
       <BottomNavigation
         sx={{
+          transition: 'ease-in 200ms transform',
+          transform: `translateY(${session.data ? 0 : 100}%)`,
           width: '100%',
           boxShadow: 3,
           borderTopLeftRadius: '16px',
