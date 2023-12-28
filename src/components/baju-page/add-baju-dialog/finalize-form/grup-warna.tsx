@@ -30,10 +30,14 @@ type GrupWarnaItemProps = {
   onDataChange(grupWarna: NewGrupWarna, bajuList: NewBaju[]): void;
 };
 
-function getDefaultNewBaju(grupWarnaBajuId: string): NewBaju {
+function getDefaultNewBaju(
+  grupWarnaBajuId: string,
+  karyawanId: string,
+): NewBaju {
   return {
     id: crypto.randomUUID(),
     grupWarnaBajuId,
+    karyawanId,
     jumlahBelakang: 0,
     jumlahDepan: 0,
     merekId: null,
@@ -71,7 +75,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
   } = useSize({ onError });
 
   const [newBaju, setNewBaju] = React.useState<NewBaju>(
-    getDefaultNewBaju(grupWarna.id),
+    getDefaultNewBaju(grupWarna.id, grupWarna.karyawanId),
   );
 
   const warnaItem = warnaResult?.data.find(
@@ -115,28 +119,6 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
         </AccordionSummary>
 
         <AccordionDetails>
-          {/* Karyawan */}
-          <FormControl size="medium" fullWidth sx={{ marginBlock: '16px' }}>
-            <InputLabel id="karyawan">Yang Mengerjakan</InputLabel>
-            <Select
-              labelId="karyawan"
-              variant="standard"
-              size="medium"
-              value={grupWarna.karyawanId || defaultKaryawanId}
-              onChange={e =>
-                onDataChange(
-                  { ...grupWarna, karyawanId: e.target.value },
-                  bajuList,
-                )
-              }
-            >
-              {previewKaryawanResult?.data.map(karyawan => (
-                <MenuItem value={karyawan.id} key={karyawan.id}>
-                  {karyawan.nama}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           <BajuTable
             bajuList={bajuList}
             sizeList={sizeResult?.data ?? []}
@@ -149,8 +131,35 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
             }
           />
 
+          {/* Karyawan */}
+          <FormControl
+            size="medium"
+            fullWidth
+            sx={{ marginTop: '32px', marginBottom: '16px' }}
+          >
+            <InputLabel id="karyawan">Yang Mengerjakan</InputLabel>
+            <Select
+              labelId="karyawan"
+              variant="standard"
+              size="medium"
+              value={grupWarna.karyawanId || defaultKaryawanId}
+              onChange={e => {
+                setNewBaju(prev => ({ ...prev, karyawanId: e.target.value }));
+                onDataChange(
+                  { ...grupWarna, karyawanId: e.target.value },
+                  bajuList,
+                );
+              }}
+            >
+              {previewKaryawanResult?.data.map(karyawan => (
+                <MenuItem value={karyawan.id} key={karyawan.id}>
+                  {karyawan.nama}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           {/* Add new baju to grup warna */}
-          <Grid my={2} container spacing={2}>
+          <Grid mb={2} container spacing={2}>
             {/* Merek */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -252,7 +261,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
           <Button
             onClick={() => {
               onDataChange(grupWarna, [...bajuList, newBaju]);
-              setNewBaju(getDefaultNewBaju(grupWarna.id));
+              setNewBaju(getDefaultNewBaju(grupWarna.id, grupWarna.karyawanId));
             }}
             fullWidth
             disabled={

@@ -17,6 +17,7 @@ import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import axios from 'axios';
 import { ExistsGETResponse } from '@/app/api/exists/exists.types';
+import { seriProduksiExists } from '@/lib/seri-produksi';
 
 const seriProduksiFormSchema = z.object({
   nama: z.string().nullable(),
@@ -36,13 +37,7 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
   async function onSubmitHandler(data: SeriProduksiForm) {
     try {
       // Validate if nomor seri doesn't exists
-      const {
-        data: { data: isNomorSeriExists },
-      } = await axios.get<ExistsGETResponse>(
-        `/api/exists/nomor-seri/${data.nomorSeri}`,
-      );
-
-      if (!isNomorSeriExists) {
+      if (!(await seriProduksiExists(data.nomorSeri))) {
         await onSubmit({ ...data, nama: data.nama ?? null });
       } else {
         setAlertMessage(

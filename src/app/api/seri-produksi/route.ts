@@ -69,6 +69,9 @@ export async function POST(req: NextRequest) {
         data: parsedSeriProduksi.grupWarnaList,
       }),
       prisma.baju.createMany({ data: parsedSeriProduksi.bajuList }),
+      prisma.rekapGajiKaryawan.createMany({
+        data: parsedSeriProduksi.rekapGajiList,
+      }),
     ]);
 
     return new Response(null, { status: 204 });

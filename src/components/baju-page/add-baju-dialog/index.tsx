@@ -13,6 +13,7 @@ import {
   newSeriProduksiSchema,
 } from '@/schema/seri-produksi.schema';
 import { FloatingAlert } from '@/components/ui/floating-alert';
+import { createRekapGaji } from '@/lib/rekap-gaji-karyawan';
 
 export type FormProps<T extends unknown | unknown[]> = {
   onCancel?: () => void;
@@ -33,16 +34,16 @@ function getDefaultSeriProduksi(): NewSeriProduksi {
     nomorSeri: 0,
     grupWarnaList: [],
     bajuList: [],
+    rekapGajiList: [],
   };
 }
 
 export function AddBajuDialog(props: AddBajuDialogProps<NewSeriProduksi>) {
   const { children, onSubmit, onCancel } = props;
-  const [newSeriProduksi, setNewSeriProduksi] = React.useState<NewSeriProduksi>(
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const newSeriProduksiRef = React.useRef<NewSeriProduksi>(
     getDefaultSeriProduksi(),
   );
-
-  const [alertMessage, setAlertMessage] = React.useState('');
 
   const [open, setOpen] = React.useState(false);
   const { next, back, step, goTo } = useMultistepForm([
@@ -53,11 +54,11 @@ export function AddBajuDialog(props: AddBajuDialogProps<NewSeriProduksi>) {
         setOpen(false);
       }}
       onSubmit={async seriData => {
-        setNewSeriProduksi(prev => ({
-          ...prev,
+        newSeriProduksiRef.current = {
+          ...newSeriProduksiRef.current,
           nama: seriData.nama,
           nomorSeri: seriData.nomorSeri,
-        }));
+        };
 
         next();
       }}
@@ -66,31 +67,35 @@ export function AddBajuDialog(props: AddBajuDialogProps<NewSeriProduksi>) {
       key={1}
       onCancel={() => back()}
       onSubmit={async warnaData => {
-        setNewSeriProduksi(prev => ({
-          ...prev,
+        newSeriProduksiRef.current = {
+          ...newSeriProduksiRef.current,
           grupWarnaList: warnaData.warnaIds.map(warnaId => ({
             id: crypto.randomUUID(),
-            seriProduksiId: prev.id,
+            seriProduksiId: newSeriProduksiRef.current.id,
             warnaId,
             karyawanId: '',
           })),
-        }));
+        };
 
         next();
       }}
     />,
     <FinalizeForm
       key={2}
-      newSeriProduksi={newSeriProduksi}
+      newSeriProduksi={newSeriProduksiRef.current}
       onCancel={() => back()}
       onSubmit={async data => {
-        const parsingResult = await newSeriProduksiSchema.safeParseAsync(data);
+        newSeriProduksiRef.current = data;
+
+        const parsingResult = await newSeriProduksiSchema.safeParseAsync(
+          newSeriProduksiRef.current,
+        );
 
         if (parsingResult.success) {
-          onSubmit(data);
+          onSubmit(newSeriProduksiRef.current);
           setOpen(false);
           goTo(0);
-          setNewSeriProduksi(getDefaultSeriProduksi());
+          newSeriProduksiRef.current = getDefaultSeriProduksi();
         } else {
           setAlertMessage('Gagal untuk menambahkan seri produksi baru!');
           setTimeout(() => setAlertMessage(''), 3000);
