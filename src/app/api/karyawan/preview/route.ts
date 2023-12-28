@@ -8,7 +8,7 @@ export async function GET() {
     await clientUnauthedApiResponse();
 
     const karyawanPreviewData = await prisma.karyawan.findMany({
-      select: { id: true, nama: true },
+      select: { id: true, nama: true, telepon: true },
     });
 
     return NextResponse.json<KaryawanPreviewGETResponse>(
