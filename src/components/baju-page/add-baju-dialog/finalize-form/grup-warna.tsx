@@ -45,6 +45,10 @@ function getDefaultNewBaju(grupWarnaBajuId: string): NewBaju {
 export function GrupWarnaItem(props: GrupWarnaItemProps) {
   const { grupWarna, bajuList, onDataChange } = props;
 
+  const filteredBajuList = bajuList.filter(
+    baju => baju.grupWarnaBajuId === grupWarna.id,
+  );
+
   const [isAlertOn, setIsAlertOn] = React.useState(false);
   function onError() {
     setIsAlertOn(true);
@@ -115,7 +119,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
         <AccordionDetails>
           <BajuTable
             canDelete
-            bajuList={bajuList}
+            bajuList={filteredBajuList}
             sizeList={sizeResult?.data ?? []}
             merekList={merekResult?.data ?? []}
             previewKaryawanList={previewKaryawanResult?.data ?? []}
