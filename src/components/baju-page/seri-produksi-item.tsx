@@ -53,7 +53,7 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
   } = useWarna({ onError });
 
   const {
-    queryResult: {
+    queryResultBeforeComma: {
       data: sizeResult,
       error: sizeError,
       isLoading: isSizeLoading,
@@ -270,15 +270,6 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
                         />
                         <Typography variant="h5">{warna?.nama}</Typography>
                       </Box>
-
-                      {/* Karyawan */}
-                      <Typography>
-                        {`Dikerjakan Oleh: ${previewKaryawanResult?.data.find(
-                          previewKaryawan =>
-                            previewKaryawan.id === grupWarna.karyawanId,
-                        )?.nama}
-                          `}
-                      </Typography>
                     </Box>
                   </AccordionSummary>
 

@@ -13,7 +13,6 @@ import {
   newSeriProduksiSchema,
 } from '@/schema/seri-produksi.schema';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import { createRekapGaji } from '@/lib/rekap-gaji-karyawan';
 
 export type FormProps<T extends unknown | unknown[]> = {
   onCancel?: () => void;

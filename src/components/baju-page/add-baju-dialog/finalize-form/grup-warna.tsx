@@ -30,14 +30,11 @@ type GrupWarnaItemProps = {
   onDataChange(grupWarna: NewGrupWarna, bajuList: NewBaju[]): void;
 };
 
-function getDefaultNewBaju(
-  grupWarnaBajuId: string,
-  karyawanId: string,
-): NewBaju {
+function getDefaultNewBaju(grupWarnaBajuId: string): NewBaju {
   return {
     id: crypto.randomUUID(),
     grupWarnaBajuId,
-    karyawanId,
+    karyawanId: '',
     jumlahBelakang: 0,
     jumlahDepan: 0,
     merekId: null,
@@ -71,19 +68,16 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
   } = useMerek({ onError });
 
   const {
-    queryResult: { data: sizeResult, error: sizeError },
+    queryResultBeforeComma: { data: sizeResult, error: sizeError },
   } = useSize({ onError });
 
   const [newBaju, setNewBaju] = React.useState<NewBaju>(
-    getDefaultNewBaju(grupWarna.id, grupWarna.karyawanId),
+    getDefaultNewBaju(grupWarna.id),
   );
 
   const warnaItem = warnaResult?.data.find(
     warna => warna.id === grupWarna.warnaId,
   );
-  const defaultKaryawanId = isLoading
-    ? previewKaryawanResult?.data[0].id ?? ''
-    : '';
 
   return (
     <>
@@ -144,13 +138,9 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
               labelId="karyawan"
               variant="standard"
               size="medium"
-              value={grupWarna.karyawanId || defaultKaryawanId}
+              value={newBaju.karyawanId}
               onChange={e => {
                 setNewBaju(prev => ({ ...prev, karyawanId: e.target.value }));
-                onDataChange(
-                  { ...grupWarna, karyawanId: e.target.value },
-                  bajuList,
-                );
               }}
             >
               {previewKaryawanResult?.data.map(karyawan => (
@@ -263,10 +253,11 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
           <Button
             onClick={() => {
               onDataChange(grupWarna, [...bajuList, newBaju]);
-              setNewBaju(getDefaultNewBaju(grupWarna.id, grupWarna.karyawanId));
+              setNewBaju(getDefaultNewBaju(grupWarna.id));
             }}
             fullWidth
             disabled={
+              !newBaju.karyawanId ||
               !newBaju.sizeId ||
               newBaju.jumlahDepan === 0 ||
               newBaju.jumlahBelakang === 0

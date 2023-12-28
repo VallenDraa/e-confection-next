@@ -12,11 +12,26 @@ export default function useSize(props: useSizeProps) {
   const { onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
-  const queryResult = useQuery<SizeGETResponse>({
-    queryKey: ['size'],
+  const queryResultBeforeComma = useQuery<SizeGETResponse>({
+    queryKey: ['size', 'before-comma'],
     async queryFn() {
       try {
-        const { data } = await axios.get(`/api/size`);
+        const { data } = await axios.get(`/api/size?type=before-comma`);
+
+        return data;
+      } catch (error) {
+        onError?.('query');
+
+        return { data: [] };
+      }
+    },
+  });
+
+  const queryResultAfterComma = useQuery<SizeGETResponse>({
+    queryKey: ['size', 'after-comma'],
+    async queryFn() {
+      try {
+        const { data } = await axios.get(`/api/size?type=after-comma`);
 
         return data;
       } catch (error) {
@@ -50,5 +65,5 @@ export default function useSize(props: useSizeProps) {
     onError: () => onError?.('delete'),
   });
 
-  return { queryResult, addSize, deleteSize };
+  return { queryResultBeforeComma, queryResultAfterComma, addSize, deleteSize };
 }

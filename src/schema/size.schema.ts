@@ -6,6 +6,7 @@ export const sizeSchema: z.ZodType<OptionalDBMetadata<Size>> = z.object({
   id: z.string().optional(),
   nama: z.string(),
   harga: z.number(),
+  beforeCommaPairId: z.string().nullable(),
   softDelete: z.date().nullable(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),

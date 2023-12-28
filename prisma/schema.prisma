@@ -11,13 +11,16 @@ datasource db {
 }
 
 model Size {
-  id         String    @id @default(uuid())
-  nama       String    @unique
-  harga      Int
-  baju       Baju[]
-  softDelete DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id                String    @id @default(uuid())
+  nama              String    @unique
+  beforeCommaPairId String?   @unique
+  beforeComma       Size?     @relation("SizePair", fields: [beforeCommaPairId], references: [id])
+  afterComma        Size?     @relation("SizePair")
+  harga             Int
+  baju              Baju[]
+  softDelete        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 model Warna {
@@ -57,15 +60,14 @@ model Baju {
 }
 
 model GrupWarnaBaju {
-  id                String              @id @default(uuid())
-  warna             Warna               @relation(fields: [warnaId], references: [id])
-  warnaId           String
-  seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
-  seriProduksiId    String
-  baju              Baju[]
-  rekapGajiKaryawan RekapGajiKaryawan[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  id             String       @id @default(uuid())
+  warna          Warna        @relation(fields: [warnaId], references: [id])
+  warnaId        String
+  seriProduksi   SeriProduksi @relation(fields: [seriProduksiId], references: [id])
+  seriProduksiId String
+  baju           Baju[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model SeriProduksi {
@@ -89,14 +91,12 @@ model Karyawan {
 }
 
 model RekapGajiKaryawan {
-  id              String        @id @default(uuid())
-  jumlahGaji      Int
-  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
-  grupWarnaBajuId String
-  karyawanId      String
-  Karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id         String   @id @default(uuid())
+  jumlahGaji Int
+  karyawanId String
+  Karyawan   Karyawan @relation(fields: [karyawanId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Account {
