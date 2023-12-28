@@ -7,5 +7,10 @@ export type SizeGETResponse = {
 export type SizeBody = {
   nama: string;
   softDelete: Date | null;
-  harga: number;
+  hargaBeforeComma: number;
+  hargaAfterComma: number;
 };
+
+export type SizeQueryType = 'before-comma' | 'after-comma';
+
+export const AFTER_COMMA_SUFFIX = '_after_comma';

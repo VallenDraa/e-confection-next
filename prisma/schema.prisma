@@ -11,16 +11,17 @@ datasource db {
 }
 
 model Size {
-  id               String    @id @default(uuid())
-  nama             String    @unique
-  afterCommaPairId String?   @unique
-  afterComma       Size?     @relation("SizePair", fields: [afterCommaPairId], references: [id])
-  beforeComma      Size?     @relation("SizePair")
-  harga            Int
-  baju             Baju[]
-  softDelete       DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id                String              @id @default(uuid())
+  nama              String              @unique
+  afterCommaPairId  String?             @unique
+  afterComma        Size?               @relation("SizePair", fields: [afterCommaPairId], references: [id])
+  beforeComma       Size?               @relation("SizePair")
+  harga             Int
+  baju              Baju[]
+  softDelete        DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  RekapGajiKaryawan RekapGajiKaryawan[]
 }
 
 model Warna {
@@ -92,6 +93,8 @@ model Karyawan {
 
 model RekapGajiKaryawan {
   id         String   @id @default(uuid())
+  sizeId     String
+  size       Size     @relation(fields: [sizeId], references: [id])
   jumlahGaji Int
   karyawanId String
   Karyawan   Karyawan @relation(fields: [karyawanId], references: [id])

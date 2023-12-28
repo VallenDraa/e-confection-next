@@ -43,12 +43,12 @@ export default function useSize(props: useSizeProps) {
   });
 
   const addSize = useMutation({
-    mutationKey: ['size'],
     mutationFn: async (newSize: SizeBody) => {
       await axios.post('/api/size', newSize);
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['size'] });
+      queryClient.invalidateQueries({ queryKey: ['size', 'before-comma'] });
+      queryClient.invalidateQueries({ queryKey: ['size', 'after-comma'] });
       onSuccess?.('add');
     },
     onError: () => onError?.('add'),
@@ -59,7 +59,8 @@ export default function useSize(props: useSizeProps) {
       await axios.delete(`/api/size/${sizeId}`);
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['size'] });
+      queryClient.invalidateQueries({ queryKey: ['size', 'before-comma'] });
+      queryClient.invalidateQueries({ queryKey: ['size', 'after-comma'] });
       onSuccess?.('delete');
     },
     onError: () => onError?.('delete'),

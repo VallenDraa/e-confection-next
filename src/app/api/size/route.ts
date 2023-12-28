@@ -1,15 +1,25 @@
 import { clientUnauthedApiResponse } from '@/lib/auth/user-auth-checker';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { SizeGETResponse } from './size-route.types';
+import { SizeGETResponse, SizeQueryType } from './size-route.types';
 import { sizeSchema } from '@/schema/size.schema';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const queryType: SizeQueryType =
+      !req.nextUrl.searchParams.get('type') ||
+      (req.nextUrl.searchParams.get('type') !== 'after-comma' &&
+        req.nextUrl.searchParams.get('type') !== 'before-comma')
+        ? 'before-comma'
+        : (req.nextUrl.searchParams.get('type') as SizeQueryType);
+
     await clientUnauthedApiResponse();
 
     const sizeList = await prisma.size.findMany({
-      where: { softDelete: null },
+      where: {
+        softDelete: null,
+        afterCommaPairId: queryType === 'after-comma' ? null : { not: null },
+      },
     });
 
     return NextResponse.json<SizeGETResponse>(
