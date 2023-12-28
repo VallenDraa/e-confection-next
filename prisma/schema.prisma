@@ -62,8 +62,6 @@ model GrupWarnaBaju {
   warnaId           String
   seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
   seriProduksiId    String
-  karyawan          Karyawan            @relation(fields: [karyawanId], references: [id])
-  karyawanId        String
   baju              Baju[]
   rekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
@@ -88,11 +86,8 @@ model Karyawan {
   softDelete        DateTime?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  grupWarnaBaju     GrupWarnaBaju[]
 }
 
-// When querying the salary, must get all of the entry
-// of a given time which points to the same karyawan ID 
 model RekapGajiKaryawan {
   id              String        @id @default(uuid())
   jumlahGaji      Int
