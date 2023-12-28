@@ -27,16 +27,20 @@ const MENU_NAMES = {
   keluar: 'keluar',
 };
 
+function changeMenuBarActiveMenu(pathname: string) {
+  if (pathname === '/sign-in' || pathname === '/') {
+    return MENU_NAMES.home;
+  }
+
+  const currPath = pathname.split('/')[1];
+  return currPath in MENU_NAMES ? currPath : MENU_NAMES.home;
+}
+
 export default function Menubar() {
   const pathname = usePathname();
-  const [activeMenu, setActiveMenu] = React.useState(() => {
-    if (pathname === '/sign-in' || pathname === '/') {
-      return MENU_NAMES.home;
-    }
-
-    const currPath = pathname.split('/')[1];
-    return currPath in MENU_NAMES ? currPath : MENU_NAMES.home;
-  });
+  const [activeMenu, setActiveMenu] = React.useState(
+    changeMenuBarActiveMenu(pathname),
+  );
 
   const [willLogout, setWillLogout] = React.useState(false);
   const router = useRouter();
@@ -51,6 +55,11 @@ export default function Menubar() {
       router.push(newValue === MENU_NAMES.home ? '/' : `/${newValue}`);
     }
   };
+
+  React.useEffect(
+    () => setActiveMenu(changeMenuBarActiveMenu(pathname)),
+    [pathname],
+  );
 
   return (
     <>
