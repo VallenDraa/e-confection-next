@@ -55,9 +55,9 @@ export async function GET(
     });
 
     const data: RekapGajiKaryawanGETData[] = rekapGajiList.map(rekap => {
-      const grupWarna = rekap.seriProduksi.grupWarnaBaju.find(grup => {
-        grup.seriProduksiId === rekap.seriProduksiId;
-      });
+      const grupWarna = rekap.seriProduksi.grupWarnaBaju.find(
+        grup => grup.seriProduksiId === rekap.seriProduksiId,
+      );
 
       if (!grupWarna) {
         throw new Error();
