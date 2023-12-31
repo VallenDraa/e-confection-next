@@ -4,6 +4,7 @@ import { Size } from '@prisma/client';
 import { findSize } from '../size';
 
 export function createRekapGajiList(
+  seriProduksiId: string,
   bajuList: NewBaju[],
   sizesBeforeComma: Size[],
   sizesAfterComma: Size[],
@@ -34,7 +35,12 @@ export function createRekapGajiList(
 
       rekapGajiList = [
         ...rekapGajiList,
-        ...countRekapGaji(bajuByKaryawan, sizesBeforeComma, sizesAfterComma),
+        ...countRekapGaji(
+          seriProduksiId,
+          bajuByKaryawan,
+          sizesBeforeComma,
+          sizesAfterComma,
+        ),
       ];
     }
   }
@@ -43,6 +49,7 @@ export function createRekapGajiList(
 }
 
 function countRekapGaji(
+  seriProduksiId: string,
   bajuByKaryawan: NewBaju[],
   sizesBeforeComma: Size[],
   sizesAfterComma: Size[],
@@ -106,6 +113,8 @@ function countRekapGaji(
 
     rekapGajiKaryawan.push({
       id: crypto.randomUUID(),
+      seriProduksiId,
+      merekId: groupedBaju[0].merekId ?? null,
       jumlahGaji: beforeCommaValue + afterCommaValue,
       sizeId: groupedBaju[0].sizeId,
       karyawanId: groupedBaju[0].karyawanId,

@@ -3,6 +3,8 @@ import { z } from 'zod';
 export const newRekapGajiSchema = z.object({
   id: z.string(),
   sizeId: z.string(),
+  merekId: z.string().nullable(),
+  seriProduksiId: z.string(),
   karyawanId: z.string(),
   jumlahGaji: z.number(),
 });

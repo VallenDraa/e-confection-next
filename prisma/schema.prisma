@@ -35,12 +35,13 @@ model Warna {
 }
 
 model Merek {
-  id         String    @id @default(uuid())
-  nama       String    @unique
-  baju       Baju[]
-  softDelete DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id                String              @id @default(uuid())
+  nama              String              @unique
+  baju              Baju[]
+  softDelete        DateTime?
+  rekapGajiKaryawan RekapGajiKaryawan[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 }
 
 model Baju {
@@ -72,12 +73,13 @@ model GrupWarnaBaju {
 }
 
 model SeriProduksi {
-  id            String          @id @default(uuid())
-  nama          String?
-  nomorSeri     Int             @unique
-  grupWarnaBaju GrupWarnaBaju[]
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id                String              @id @default(uuid())
+  nama              String?
+  nomorSeri         Int                 @unique
+  grupWarnaBaju     GrupWarnaBaju[]
+  rekapGajiKaryawan RekapGajiKaryawan[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 }
 
 model Karyawan {
@@ -92,14 +94,18 @@ model Karyawan {
 }
 
 model RekapGajiKaryawan {
-  id         String   @id @default(uuid())
-  sizeId     String
-  size       Size     @relation(fields: [sizeId], references: [id])
-  jumlahGaji Int
-  karyawanId String
-  Karyawan   Karyawan @relation(fields: [karyawanId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id             String       @id @default(uuid())
+  sizeId         String
+  size           Size         @relation(fields: [sizeId], references: [id])
+  jumlahGaji     Int
+  karyawanId     String
+  karyawan       Karyawan     @relation(fields: [karyawanId], references: [id])
+  merekId        String?
+  merek          Merek?       @relation(fields: [merekId], references: [id])
+  seriProduksiId String
+  seriProduksi   SeriProduksi @relation(fields: [seriProduksiId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Account {

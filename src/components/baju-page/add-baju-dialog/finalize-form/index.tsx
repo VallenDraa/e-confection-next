@@ -88,6 +88,7 @@ export default function FinalizeForm(props: FinalizeFormProps) {
 
           // Update rekap gaji karyawan
           editedSeriProduksi.rekapGajiList = createRekapGajiList(
+            editedSeriProduksi.id,
             editedSeriProduksi.bajuList,
             sizeBeforeCommaResult?.data ?? [],
             sizeAfterCommaResult?.data ?? [],
@@ -139,6 +140,7 @@ export default function FinalizeForm(props: FinalizeFormProps) {
                 return (
                   <GrupWarnaItem
                     key={i}
+                    rekapGajiList={localNewSeriProduksi.rekapGajiList}
                     grupWarna={grupWarna}
                     onDataChange={handleGrupWarnaChange}
                     bajuList={localNewSeriProduksi.bajuList}

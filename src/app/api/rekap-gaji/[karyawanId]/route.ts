@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 import { prisma } from '@/lib/prisma';
-import { RekapGajiGETResponse } from '../rekap-gaji-route.types';
+import {
+  RekapGajiGETResponse,
+  RekapGajiKaryawanGETData,
+} from '../rekap-gaji-route.types';
 
 export async function GET(
   req: NextRequest,
@@ -31,14 +34,54 @@ export async function GET(
 
     const rekapGajiList = await prisma.rekapGajiKaryawan.findMany({
       where: { karyawanId: parsedKaryawanId },
+      include: {
+        merek: { select: { nama: true } },
+        size: { select: { nama: true } },
+        seriProduksi: {
+          select: {
+            nomorSeri: true,
+            grupWarnaBaju: {
+              select: {
+                seriProduksiId: true,
+                warna: { select: { nama: true } },
+              },
+            },
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * size,
       take: size,
     });
 
+    const data: RekapGajiKaryawanGETData[] = rekapGajiList.map(rekap => {
+      const grupWarna = rekap.seriProduksi.grupWarnaBaju.find(grup => {
+        grup.seriProduksiId === rekap.seriProduksiId;
+      });
+
+      if (!grupWarna) {
+        throw new Error();
+      }
+
+      return {
+        id: rekap.id,
+        createdAt: rekap.createdAt,
+        jumlahGaji: rekap.jumlahGaji,
+        karyawanId: rekap.karyawanId,
+        noSeriProduksi: rekap.seriProduksi.nomorSeri,
+        seriProduksiId: rekap.seriProduksiId,
+        sizeId: rekap.sizeId,
+        merekId: rekap.merekId,
+        merek: rekap.merek?.nama ?? null,
+        size: rekap.size.nama,
+        updatedAt: rekap.updatedAt,
+        warna: grupWarna.warna.nama,
+      };
+    });
+
     return NextResponse.json<RekapGajiGETResponse>(
       {
-        data: rekapGajiList,
+        data,
         metadata: {
           prev: page > 1 ? page - 1 : 1,
           current: page,
