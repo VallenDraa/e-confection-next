@@ -16,8 +16,8 @@ theme = responsiveFontSizes(theme);
 const client = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnReconnect: true,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 5,
     },
   },
 });
