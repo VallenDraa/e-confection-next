@@ -35,6 +35,8 @@ export async function GET(req: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('🚀 ~ file: route.ts:38 ~ GET ~ error:', error);
     return NextResponse.json(
       { message: 'Gagal untuk mengambil data karyawan!' },
       { status: 500 },

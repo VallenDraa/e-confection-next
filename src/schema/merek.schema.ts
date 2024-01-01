@@ -1,11 +1,5 @@
-import { OptionalDBMetadata } from '@/lib/db';
-import { Merek } from '@prisma/client';
 import * as z from 'zod';
 
-export const merekSchema: z.ZodType<OptionalDBMetadata<Merek>> = z.object({
-  id: z.string().optional(),
-  nama: z.string(),
-  softDelete: z.date().nullable(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-});
+export const merekSchema = z.object({ nama: z.string() });
+
+export type MerekSchema = z.infer<typeof merekSchema>;

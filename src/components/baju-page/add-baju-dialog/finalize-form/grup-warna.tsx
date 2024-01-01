@@ -25,6 +25,7 @@ import { NewGrupWarna } from '@/schema/grup-warna.schema';
 import { NewBaju } from '@/schema/baju.schema';
 import { NewRekapGaji } from '@/schema/rekap-gaji.schema';
 import { SizeInputDialog } from '../size-input-dialog';
+import { MerekInputDialog } from '../merek-input-dialog';
 
 type GrupWarnaItemProps = {
   grupWarnaBaju: NewGrupWarna;
@@ -81,6 +82,8 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
     queryResultBeforeComma: { data: sizeResult, error: sizeError },
   } = useSize({ onError });
 
+  const [isMerekInputDialogOpen, setIsMerekInputDialogOpen] =
+    React.useState(false);
   const [isSizeInputDialogOpen, setIsSizeInputDialogOpen] =
     React.useState(false);
   const [newBaju, setNewBaju] = React.useState<NewBaju>(
@@ -168,6 +171,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
               ))}
             </Select>
           </FormControl>
+
           {/* Add new baju to grup warna */}
           <Grid mb={2} container spacing={2}>
             {/* Merek */}
@@ -179,13 +183,14 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                   size="small"
                   label="Merek"
                   labelId="merek"
-                  value={newBaju.merekId ?? 'addMerek'}
+                  value={newBaju.merekId ?? ''}
                   onChange={e => {
                     const newMerekId =
                       e.target.value && e.target.value === 'addMerek'
-                        ? null
+                        ? ''
                         : e.target.value;
 
+                    setIsMerekInputDialogOpen(e.target.value === 'addMerek');
                     setNewBaju(prev => ({ ...prev, merekId: newMerekId }));
                   }}
                 >
@@ -198,6 +203,11 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                   <MenuItem value="addMerek">Tambah Merek</MenuItem>
                 </Select>
               </FormControl>
+
+              <MerekInputDialog
+                open={isMerekInputDialogOpen}
+                onClose={setIsMerekInputDialogOpen}
+              />
             </Grid>
 
             {/* Size */}
@@ -209,18 +219,14 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                   label="Size"
                   size="small"
                   labelId="size"
-                  value={newBaju.sizeId ?? 'addSize'}
+                  value={newBaju.sizeId ?? ''}
                   onChange={e => {
                     const newSizeId =
                       e.target.value && e.target.value === 'addSize'
                         ? ''
                         : e.target.value;
 
-                    if (e.target.value === 'addSize') {
-                      setIsSizeInputDialogOpen(true);
-                      return;
-                    }
-
+                    setIsSizeInputDialogOpen(e.target.value === 'addSize');
                     setNewBaju(prev => ({ ...prev, sizeId: newSizeId }));
                   }}
                 >
