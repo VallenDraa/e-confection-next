@@ -51,7 +51,13 @@ export function KaryawanItem(props: KaryawanItemProps) {
 
   async function handleEditKaryawan(editedKaryawan: PreviewKaryawan) {
     try {
-      if (!(await karyawanExists(editedKaryawan.nama))) {
+      if (
+        karyawan.nama !== editedKaryawan.nama &&
+        (await karyawanExists(editedKaryawan.nama))
+      ) {
+        setAlertMessage('Nama karyawan sudah ada, silahkan gunakan nama lain.');
+        setTimeout(() => setAlertMessage(''), 3000);
+      } else {
         await onEdit?.({
           id: karyawan.id,
           nama: editedKaryawan.nama,
@@ -59,9 +65,6 @@ export function KaryawanItem(props: KaryawanItemProps) {
         });
 
         setIsEditing(false);
-      } else {
-        setAlertMessage('Nama karyawan sudah ada, silahkan gunakan nama lain.');
-        setTimeout(() => setAlertMessage(''), 3000);
       }
     } catch (error) {
       setAlertMessage('Gagal mengedit karyawan!');
