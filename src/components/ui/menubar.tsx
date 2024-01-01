@@ -132,12 +132,7 @@ export default function Menubar() {
             BATAL
           </Button>
           <Button
-            onClick={() =>
-              signOut({
-                callbackUrl: '/sign-in',
-                redirect: false,
-              })
-            }
+            onClick={() => signOut({ callbackUrl: '/sign-in' })}
             variant="contained"
             color="error"
           >
