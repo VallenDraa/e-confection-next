@@ -146,9 +146,10 @@ export function KaryawanPagePanel() {
             </Button>
 
             <AddKaryawanDialog
-              onSubmit={async karyawan =>
-                await addKaryawan.mutateAsync(karyawan)
-              }
+              onSubmit={async karyawan => {
+                await addKaryawan.mutateAsync(karyawan);
+                setIsDeletingKaryawan(false);
+              }}
             >
               {setOpen => (
                 <Button
