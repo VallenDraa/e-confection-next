@@ -2,7 +2,7 @@ import { ExistsGETResponse } from '@/app/api/exists/exists.types';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { Header } from '@/components/ui/header';
 import { NumberInput } from '@/components/ui/number-input';
-import useSize from '@/hooks/server-state-hooks/use-size';
+import { useSize } from '@/hooks/server-state-hooks/use-size';
 import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
 import { SizeSchema, sizeSchema } from '@/schema/size.schema';
 import { zodResolver } from '@hookform/resolvers/zod';

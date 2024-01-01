@@ -16,7 +16,7 @@ import { NewSeriProduksi } from '@/schema/seri-produksi.schema';
 import { NewGrupWarna } from '@/schema/grup-warna.schema';
 import { NewBaju } from '@/schema/baju.schema';
 import { ConfirmAddDialog } from '@/components/ui/confirm-add-dialog';
-import useSize from '@/hooks/server-state-hooks/use-size';
+import { useSize } from '@/hooks/server-state-hooks/use-size';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { createRekapGajiList } from '@/lib/rekap-gaji-karyawan';
 

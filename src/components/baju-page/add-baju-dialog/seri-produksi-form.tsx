@@ -18,7 +18,7 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import useKaryawan from '@/hooks/server-state-hooks/use-karyawan';
+import { useKaryawan } from '@/hooks/server-state-hooks/use-karyawan';
 import Link from 'next/link';
 import { seriProduksiExists } from '@/actions/seri-produksi';
 

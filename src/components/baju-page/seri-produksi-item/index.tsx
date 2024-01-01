@@ -20,7 +20,7 @@ import { Header } from '../../ui/header';
 import { FloatingAlert } from '../../ui/floating-alert';
 import { SeriProduksi } from '@prisma/client';
 import { SeriProduksiWarnaAccordion } from './seri-produksi-warna-accordion';
-import useGrupWarna from '@/hooks/server-state-hooks/use-grup-warna';
+import { useGrupWarna } from '@/hooks/server-state-hooks/use-grup-warna';
 
 type SeriProduksiItemProps = {
   seriProduksi: SeriProduksi;
