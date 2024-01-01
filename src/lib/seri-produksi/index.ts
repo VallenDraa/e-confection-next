@@ -1,10 +1,15 @@
-'use server';
+import { SeriProduksi } from '@prisma/client';
 
-import { prisma } from '../prisma';
+export function findSeriProduksiById(
+  seriProduksiId: string,
+  seriProduksiList: SeriProduksi[],
+) {
+  return seriProduksiList.find(seri => seri.id === seriProduksiId);
+}
 
-export async function seriProduksiExists(nomorSeri: number) {
-  const seriProduksiExists =
-    (await prisma.seriProduksi.count({ where: { nomorSeri } })) > 0;
-
-  return seriProduksiExists;
+export function findSeriProduksiByNomorSeri(
+  nomorSeri: number,
+  seriProduksiList: SeriProduksi[],
+) {
+  return seriProduksiList.find(seri => seri.nomorSeri === nomorSeri);
 }

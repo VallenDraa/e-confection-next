@@ -6,11 +6,11 @@ import { AFTER_COMMA_SUFFIX, SizeBody } from '../size-route.types';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { beforeCommaId: string } },
+  { params }: { params: { afterCommaId: string } },
 ) {
   try {
     await clientUnauthedApiResponse();
-    const { beforeCommaId } = params;
+    const { afterCommaId } = params;
 
     const body = await req.json();
     const bodySchema: z.ZodType<SizeBody> = z.object({
@@ -21,7 +21,7 @@ export async function PUT(
     });
 
     const bodyParsingResult = await bodySchema.safeParseAsync(body);
-    const idParsingResult = await z.string().safeParseAsync(beforeCommaId);
+    const idParsingResult = await z.string().safeParseAsync(afterCommaId);
 
     if (!bodyParsingResult.success) {
       return NextResponse.json(
@@ -38,10 +38,10 @@ export async function PUT(
     }
 
     const { data: sizeData } = bodyParsingResult;
-    const { data: parsedBeforeCommaId } = idParsingResult;
+    const { data: parsedAfterCommaId } = idParsingResult;
 
     const afterCommaSize = await prisma.size.findUnique({
-      where: { id: parsedBeforeCommaId },
+      where: { id: parsedAfterCommaId },
       select: { afterComma: { select: { id: true } } },
     });
 
@@ -53,16 +53,16 @@ export async function PUT(
     }
 
     await prisma.$transaction([
-      // Update the price for size before comma
+      // Update the price for size after comma
       prisma.size.update({
-        where: { id: parsedBeforeCommaId },
+        where: { id: parsedAfterCommaId },
         data: {
           nama: sizeData.nama,
           harga: sizeData.hargaBeforeComma,
         },
       }),
 
-      // Update the price for size before comma
+      // Update the price for size after comma
       prisma.size.update({
         where: { id: afterCommaSize.afterComma.id },
         data: {
@@ -83,13 +83,13 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { beforeCommaId: string } },
+  { params }: { params: { afterCommaId: string } },
 ) {
   try {
     await clientUnauthedApiResponse();
-    const { beforeCommaId } = params;
+    const { afterCommaId } = params;
 
-    const idParsingResult = await z.string().safeParseAsync(beforeCommaId);
+    const idParsingResult = await z.string().safeParseAsync(afterCommaId);
 
     if (!idParsingResult.success) {
       return NextResponse.json(
@@ -98,9 +98,9 @@ export async function DELETE(
       );
     }
 
-    const { data: parsedBeforeCommaId } = idParsingResult;
+    const { data: parsedAfterCommaId } = idParsingResult;
     const afterCommaSize = await prisma.size.findUnique({
-      where: { id: parsedBeforeCommaId },
+      where: { id: parsedAfterCommaId },
       select: { afterComma: { select: { id: true } } },
     });
 
@@ -114,7 +114,7 @@ export async function DELETE(
     const deletedTime = new Date();
     await prisma.$transaction([
       prisma.size.update({
-        where: { id: parsedBeforeCommaId },
+        where: { id: parsedAfterCommaId },
         data: { softDelete: deletedTime },
       }),
       prisma.size.update({

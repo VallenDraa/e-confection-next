@@ -21,17 +21,18 @@ model Size {
   softDelete        DateTime?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  RekapGajiKaryawan RekapGajiKaryawan[]
+  rekapGajiKaryawan RekapGajiKaryawan[]
 }
 
 model Warna {
   id            String          @id @default(uuid())
   nama          String          @unique
   kodeWarna     String
-  GrupWarnaBaju GrupWarnaBaju[]
   softDelete    DateTime?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  grupWarnaBaju GrupWarnaBaju[]
+  baju          Baju[]
 }
 
 model Merek {
@@ -45,31 +46,38 @@ model Merek {
 }
 
 model Baju {
-  id              String        @id @default(uuid())
-  jumlahDepan     Int
-  jumlahBelakang  Int
-  karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
-  karyawanId      String
-  size            Size          @relation(fields: [sizeId], references: [id])
-  sizeId          String
-  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
-  grupWarnaBajuId String
-  merek           Merek?        @relation(fields: [merekId], references: [id])
-  merekId         String?
-  softDelete      DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id                  String            @id @default(uuid())
+  jumlahDepan         Int
+  jumlahBelakang      Int
+  seriProduksiId      String
+  seriProduksi        SeriProduksi      @relation(fields: [seriProduksiId], references: [id])
+  rekapGajiKaryawanId String
+  rekapGajiKaryawan   RekapGajiKaryawan @relation(fields: [rekapGajiKaryawanId], references: [id])
+  karyawan            Karyawan          @relation(fields: [karyawanId], references: [id])
+  karyawanId          String
+  size                Size              @relation(fields: [sizeId], references: [id])
+  sizeId              String
+  warnaId             String
+  warna               Warna             @relation(fields: [warnaId], references: [id])
+  grupWarnaBaju       GrupWarnaBaju     @relation(fields: [grupWarnaBajuId], references: [id])
+  grupWarnaBajuId     String
+  merek               Merek?            @relation(fields: [merekId], references: [id])
+  merekId             String?
+  softDelete          DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 }
 
 model GrupWarnaBaju {
-  id             String       @id @default(uuid())
-  warna          Warna        @relation(fields: [warnaId], references: [id])
-  warnaId        String
-  seriProduksi   SeriProduksi @relation(fields: [seriProduksiId], references: [id])
-  seriProduksiId String
-  baju           Baju[]
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                String              @id @default(uuid())
+  warna             Warna               @relation(fields: [warnaId], references: [id])
+  warnaId           String
+  seriProduksi      SeriProduksi        @relation(fields: [seriProduksiId], references: [id])
+  seriProduksiId    String
+  baju              Baju[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  rekapGajiKaryawan RekapGajiKaryawan[]
 }
 
 model SeriProduksi {
@@ -80,6 +88,7 @@ model SeriProduksi {
   rekapGajiKaryawan RekapGajiKaryawan[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
+  baju              Baju[]
 }
 
 model Karyawan {
@@ -94,18 +103,21 @@ model Karyawan {
 }
 
 model RekapGajiKaryawan {
-  id             String       @id @default(uuid())
-  sizeId         String
-  size           Size         @relation(fields: [sizeId], references: [id])
-  jumlahGaji     Int
-  karyawanId     String
-  karyawan       Karyawan     @relation(fields: [karyawanId], references: [id])
-  merekId        String?
-  merek          Merek?       @relation(fields: [merekId], references: [id])
-  seriProduksiId String
-  seriProduksi   SeriProduksi @relation(fields: [seriProduksiId], references: [id])
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id              String        @id @default(uuid())
+  sizeId          String
+  size            Size          @relation(fields: [sizeId], references: [id])
+  jumlahGaji      Int
+  grupWarnaBajuId String
+  grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
+  karyawanId      String
+  karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
+  merekId         String?
+  merek           Merek?        @relation(fields: [merekId], references: [id])
+  seriProduksiId  String
+  seriProduksi    SeriProduksi  @relation(fields: [seriProduksiId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  baju            Baju[]
 }
 
 model Account {

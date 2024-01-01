@@ -18,9 +18,9 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
 import { FloatingAlert } from '@/components/ui/floating-alert';
-import { seriProduksiExists } from '@/lib/seri-produksi';
 import useKaryawan from '@/hooks/server-state-hooks/use-karyawan';
 import Link from 'next/link';
+import { seriProduksiExists } from '@/actions/seri-produksi';
 
 const seriProduksiFormSchema = z.object({
   nama: z.string().nullable(),

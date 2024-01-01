@@ -1,7 +1,7 @@
 import { clientUnauthedApiResponse } from '@/lib/auth/user-auth-checker';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { SeriProduksiGETResponse } from './seri-produksi.types';
+import { SeriProduksiGETResponse } from './seri-produksi-route.types';
 import { newSeriProduksiSchema } from '@/schema/seri-produksi.schema';
 
 export async function GET(req: { query: { page: string; size: string } }) {
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: parsedSeriProduksi } = seriParsingResult;
+
     await prisma.$transaction([
       prisma.seriProduksi.create({
         data: {
@@ -68,10 +69,10 @@ export async function POST(req: NextRequest) {
       prisma.grupWarnaBaju.createMany({
         data: parsedSeriProduksi.grupWarnaList,
       }),
-      prisma.baju.createMany({ data: parsedSeriProduksi.bajuList }),
       prisma.rekapGajiKaryawan.createMany({
         data: parsedSeriProduksi.rekapGajiList,
       }),
+      prisma.baju.createMany({ data: parsedSeriProduksi.bajuList }),
     ]);
 
     return new Response(null, { status: 204 });

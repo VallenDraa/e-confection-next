@@ -1,12 +1,9 @@
 import { MerekBody, MerekGETResponse } from '@/app/api/merek/merek-route.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ServerStateHooksCallbackType } from './server-state-hooks.types';
+import { ServerStateHookCallback } from './server-state-hooks.types';
 
-type useMerekProps = {
-  onSuccess?: (type: ServerStateHooksCallbackType) => void;
-  onError?: (type: ServerStateHooksCallbackType) => void;
-};
+type useMerekProps = ServerStateHookCallback;
 
 export default function useMerek(props: useMerekProps) {
   const { onSuccess, onError } = props;
@@ -14,6 +11,7 @@ export default function useMerek(props: useMerekProps) {
   const queryClient = useQueryClient();
   const queryResult = useQuery<MerekGETResponse>({
     queryKey: ['merek'],
+    staleTime: Infinity,
     async queryFn() {
       try {
         const { data } = await axios.get(`/api/merek`);

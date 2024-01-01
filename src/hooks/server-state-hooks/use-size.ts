@@ -1,12 +1,9 @@
 import { SizeBody, SizeGETResponse } from '@/app/api/size/size-route.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ServerStateHooksCallbackType } from './server-state-hooks.types';
+import { ServerStateHookCallback } from './server-state-hooks.types';
 
-type useSizeProps = {
-  onSuccess?: (type: ServerStateHooksCallbackType) => void;
-  onError?: (type: ServerStateHooksCallbackType) => void;
-};
+type useSizeProps = ServerStateHookCallback;
 
 export default function useSize(props: useSizeProps) {
   const { onSuccess, onError } = props;
@@ -14,6 +11,7 @@ export default function useSize(props: useSizeProps) {
   const queryClient = useQueryClient();
   const queryResultBeforeComma = useQuery<SizeGETResponse>({
     queryKey: ['size', 'before-comma'],
+    staleTime: Infinity,
     async queryFn() {
       try {
         const { data } = await axios.get(`/api/size?type=before-comma`);

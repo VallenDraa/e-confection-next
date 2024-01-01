@@ -23,30 +23,39 @@ import { BajuTable } from './baju-table';
 import { grey } from '@mui/material/colors';
 import { NewGrupWarna } from '@/schema/grup-warna.schema';
 import { NewBaju } from '@/schema/baju.schema';
+import { NewRekapGaji } from '@/schema/rekap-gaji.schema';
 
 type GrupWarnaItemProps = {
-  grupWarna: NewGrupWarna;
+  grupWarnaBaju: NewGrupWarna;
   bajuList: NewBaju[];
-  onDataChange(grupWarna: NewGrupWarna, bajuList: NewBaju[]): void;
+  rekapGajiList: NewRekapGaji[];
+  onDataChange(grupWarnaBaju: NewGrupWarna, bajuList: NewBaju[]): void;
 };
 
-function getDefaultNewBaju(grupWarnaBajuId: string): NewBaju {
+function getDefaultNewBaju(
+  seriProduksiId: string,
+  grupWarnaBajuId: string,
+  warnaId: string,
+): NewBaju {
   return {
     id: crypto.randomUUID(),
+    seriProduksiId,
     grupWarnaBajuId,
+    warnaId,
     karyawanId: '',
     jumlahBelakang: 0,
     jumlahDepan: 0,
     merekId: null,
+    rekapGajiKaryawanId: '',
     sizeId: '',
   };
 }
 
 export function GrupWarnaItem(props: GrupWarnaItemProps) {
-  const { grupWarna, bajuList, onDataChange } = props;
+  const { grupWarnaBaju, bajuList, rekapGajiList, onDataChange } = props;
 
   const filteredBajuList = bajuList.filter(
-    baju => baju.grupWarnaBajuId === grupWarna.id,
+    baju => baju.grupWarnaBajuId === grupWarnaBaju.id,
   );
 
   const [isAlertOn, setIsAlertOn] = React.useState(false);
@@ -60,11 +69,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
   } = useWarna({ onError });
 
   const {
-    previewQueryResult: {
-      data: previewKaryawanResult,
-      error: karyawanError,
-      isLoading,
-    },
+    previewQueryResult: { data: previewKaryawanResult, error: karyawanError },
   } = useKaryawan({ karyawanPage: 1, onError });
 
   const {
@@ -76,11 +81,15 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
   } = useSize({ onError });
 
   const [newBaju, setNewBaju] = React.useState<NewBaju>(
-    getDefaultNewBaju(grupWarna.id),
+    getDefaultNewBaju(
+      grupWarnaBaju.seriProduksiId,
+      grupWarnaBaju.id,
+      grupWarnaBaju.warnaId,
+    ),
   );
 
   const warnaItem = warnaResult?.data.find(
-    warna => warna.id === grupWarna.warnaId,
+    warna => warna.id === grupWarnaBaju.warnaId,
   );
 
   return (
@@ -119,13 +128,15 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
         <AccordionDetails>
           <BajuTable
             canDelete
+            grupWarnaBajuId={grupWarnaBaju.id}
+            rekapGajiKaryawan={rekapGajiList}
             bajuList={filteredBajuList}
             sizeList={sizeResult?.data ?? []}
             merekList={merekResult?.data ?? []}
             previewKaryawanList={previewKaryawanResult?.data ?? []}
             onBajuDelete={bajuId =>
               onDataChange(
-                grupWarna,
+                grupWarnaBaju,
                 bajuList.filter(baju => baju.id !== bajuId),
               )
             }
@@ -256,8 +267,14 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
           <Button
             onClick={() => {
-              onDataChange(grupWarna, [...bajuList, newBaju]);
-              setNewBaju(getDefaultNewBaju(grupWarna.id));
+              onDataChange(grupWarnaBaju, [...bajuList, newBaju]);
+              setNewBaju(
+                getDefaultNewBaju(
+                  grupWarnaBaju.seriProduksiId,
+                  grupWarnaBaju.id,
+                  grupWarnaBaju.warnaId,
+                ),
+              );
             }}
             fullWidth
             disabled={

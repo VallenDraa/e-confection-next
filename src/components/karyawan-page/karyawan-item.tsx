@@ -25,8 +25,7 @@ import {
 } from '@/schema/karyawan.schema';
 import { willDisableSubmit } from '@/lib/form-helpers';
 import { KaryawanPUTBody } from '@/app/api/karyawan/karyawan-route.types';
-import { WorkHistoryItemProps } from './work-history-item';
-import WorkHistoryList from './work-history-list';
+import WorkHistoryList from './rekap-gaji-list';
 import { karyawanExists } from '@/lib/karyawan';
 import { FloatingAlert } from '../ui/floating-alert';
 
@@ -36,23 +35,6 @@ type KaryawanItemProps = {
   onChecked: (isChecked: boolean) => void;
   onEdit: (karyawan: KaryawanPUTBody) => void;
 };
-
-const generateMockData = (): WorkHistoryItemProps => ({
-  noSeri: Math.floor(Math.random() * 1000) + 1,
-  size: ['S', 'M', 'L'][Math.floor(Math.random() * 3)],
-  warna: Array.from(
-    { length: Math.floor(Math.random() * 4) + 1 },
-    () => ['Red', 'Blue', 'Green', 'Yellow'][Math.floor(Math.random() * 4)],
-  ),
-  merek: 'Some Brand',
-  gaji: Math.floor(Math.random() * 5000) + 500,
-  createdAt: new Date(),
-});
-
-const mockData: WorkHistoryItemProps[] = Array.from(
-  { length: 20 },
-  generateMockData,
-);
 
 export function KaryawanItem(props: KaryawanItemProps) {
   const { karyawan, checkable, onChecked, onEdit } = props;
@@ -255,7 +237,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
             >
               Riwayat Pekerjaan
             </Typography>
-            <WorkHistoryList workHistory={mockData} />
+            <WorkHistoryList karyawanId={karyawan.id} />
           </DialogContent>
         </Box>
 

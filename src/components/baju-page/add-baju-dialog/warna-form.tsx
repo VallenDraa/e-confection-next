@@ -20,6 +20,7 @@ import { grey } from '@mui/material/colors';
 import { WarnaBody } from '@/app/api/warna/warna-route.types';
 import { NamedCheckbox } from './named-checkbox';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { ColorCircle } from '@/components/ui/color-circle';
 
 type WarnaForm = {
   warnaIds: string[];
@@ -116,12 +117,7 @@ export default function WarnaForm(props: FormProps<WarnaForm>) {
 
                         {/* Color code and delete button */}
                         <Box display="flex" alignItems="center" gap={1}>
-                          <Box
-                            height={30}
-                            width={30}
-                            borderRadius={'50%'}
-                            bgcolor={color.kodeWarna}
-                          />
+                          <ColorCircle bgColor={color.kodeWarna} />
                           <IconButton
                             color="error"
                             size="medium"

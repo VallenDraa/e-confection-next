@@ -53,9 +53,9 @@ export default function FinalizeForm(props: FinalizeFormProps) {
 
   function disableSubmit() {
     const someGrupWarnaHasNoShirt = localNewSeriProduksi.grupWarnaList.some(
-      grupWarna =>
+      grupWarnaBaju =>
         localNewSeriProduksi.bajuList.every(
-          baju => baju.grupWarnaBajuId !== grupWarna.id,
+          baju => baju.grupWarnaBajuId !== grupWarnaBaju.id,
         ),
     );
 
@@ -68,47 +68,64 @@ export default function FinalizeForm(props: FinalizeFormProps) {
 
   const handleGrupWarnaChange = React.useCallback(
     (incomingGrupWarna: NewGrupWarna, incomingBajuList: NewBaju[]) => {
-      setLocalNewSeriProduksi(prev => {
-        try {
-          const editedSeriProduksi = { ...prev };
-          const currGrupWarnaListLen = editedSeriProduksi.grupWarnaList.length;
+      try {
+        const editedSeriProduksi = { ...localNewSeriProduksi };
+        const currGrupWarnaListLen = editedSeriProduksi.grupWarnaList.length;
 
-          // Override grup warna data with new one
-          for (let i = 0; i < currGrupWarnaListLen; i++) {
-            const currGrupWarna = editedSeriProduksi.grupWarnaList[i];
+        // Override grup warna data with new one
+        for (let i = 0; i < currGrupWarnaListLen; i++) {
+          const currGrupWarna = editedSeriProduksi.grupWarnaList[i];
 
-            if (currGrupWarna.id === incomingGrupWarna.id) {
-              editedSeriProduksi.grupWarnaList[i] = incomingGrupWarna;
-              break;
-            }
+          if (currGrupWarna.id === incomingGrupWarna.id) {
+            editedSeriProduksi.grupWarnaList[i] = incomingGrupWarna;
+            break;
           }
-
-          // Override baju data with new one
-          editedSeriProduksi.bajuList = incomingBajuList;
-
-          // Update rekap gaji karyawan
-          editedSeriProduksi.rekapGajiList = createRekapGajiList(
-            editedSeriProduksi.id,
-            editedSeriProduksi.bajuList,
-            sizeBeforeCommaResult?.data ?? [],
-            sizeAfterCommaResult?.data ?? [],
-          );
-
-          return editedSeriProduksi;
-        } catch (error) {
-          if (error instanceof Error) {
-            setAlertMessage(error.message);
-          } else {
-            setAlertMessage('Gagal untuk mengupdate grup warna!');
-          }
-
-          setTimeout(() => setAlertMessage(''), 3000);
-
-          return prev;
         }
-      });
+
+        // Override baju data with new one
+        editedSeriProduksi.bajuList = incomingBajuList;
+        const currBajuListLen = editedSeriProduksi.bajuList.length;
+
+        // Update rekap gaji karyawan
+        const { rekapGajiList, bajuRekapGajiList } = createRekapGajiList(
+          editedSeriProduksi.id,
+          editedSeriProduksi.bajuList,
+          sizeBeforeCommaResult?.data ?? [],
+          sizeAfterCommaResult?.data ?? [],
+        );
+
+        editedSeriProduksi.rekapGajiList = rekapGajiList;
+
+        // Insert newly created rekap gaji ids into each baju
+        for (let i = 0; i < currBajuListLen; i++) {
+          const baju = editedSeriProduksi.bajuList[i];
+          const rekapGajiKaryawanId = bajuRekapGajiList.get(baju.id);
+
+          if (!rekapGajiKaryawanId) {
+            throw new Error(
+              'Tidak bisa menemukan id rekap gaji, silahkan lapor ke developer!',
+            );
+          }
+
+          baju.rekapGajiKaryawanId = rekapGajiKaryawanId;
+        }
+
+        setLocalNewSeriProduksi(editedSeriProduksi);
+      } catch (error) {
+        if (error instanceof Error) {
+          setAlertMessage(error.message);
+        } else {
+          setAlertMessage('Gagal untuk mengupdate grup warna!');
+        }
+
+        setTimeout(() => setAlertMessage(''), 3000);
+      }
     },
-    [sizeBeforeCommaResult?.data, sizeAfterCommaResult?.data],
+    [
+      sizeBeforeCommaResult?.data,
+      sizeAfterCommaResult?.data,
+      localNewSeriProduksi,
+    ],
   );
 
   return (
@@ -136,12 +153,12 @@ export default function FinalizeForm(props: FinalizeFormProps) {
             </Typography>
 
             <Stack gap={2} mt={2}>
-              {localNewSeriProduksi.grupWarnaList.map((grupWarna, i) => {
+              {localNewSeriProduksi.grupWarnaList.map((grupWarnaBaju, i) => {
                 return (
                   <GrupWarnaItem
                     key={i}
                     rekapGajiList={localNewSeriProduksi.rekapGajiList}
-                    grupWarna={grupWarna}
+                    grupWarnaBaju={grupWarnaBaju}
                     onDataChange={handleGrupWarnaChange}
                     bajuList={localNewSeriProduksi.bajuList}
                   />

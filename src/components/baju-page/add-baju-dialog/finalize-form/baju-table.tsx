@@ -15,12 +15,16 @@ import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { grey } from '@mui/material/colors';
 import { NewBaju } from '@/schema/baju.schema';
 import { PreviewKaryawan } from '@/schema/karyawan.schema';
+import { NewRekapGaji } from '@/schema/rekap-gaji.schema';
+import { rupiah } from '@/lib/formatter';
 
 type BajuTableProps = {
+  grupWarnaBajuId: string;
   canDelete?: boolean;
   merekList: Merek[];
   sizeList: Size[];
   bajuList: NewBaju[];
+  rekapGajiKaryawan: NewRekapGaji[];
   previewKaryawanList: PreviewKaryawan[];
   onBajuDelete?: (id: string) => void;
 };
@@ -94,21 +98,19 @@ const columns: BajuColumn[] = [
 
 export function BajuTable(props: BajuTableProps) {
   const {
+    grupWarnaBajuId,
     bajuList,
     canDelete,
     onBajuDelete,
     merekList,
     sizeList,
+    rekapGajiKaryawan,
     previewKaryawanList,
   } = props;
 
   return (
     <TableContainer
-      sx={{
-        backgroundColor: grey[200],
-        maxHeight: 320,
-        width: '100%',
-      }}
+      sx={{ backgroundColor: grey[200], maxHeight: 320, width: '100%' }}
     >
       <Table stickyHeader>
         <TableHead>
@@ -241,6 +243,26 @@ export function BajuTable(props: BajuTableProps) {
 
               return null;
             })}
+          </TableRow>
+          <TableRow>
+            <TableCell sx={{ fontSize: '16px !important' }} colSpan={4}>
+              Total Harga:
+            </TableCell>
+            <TableCell
+              sx={{ fontSize: '16px !important' }}
+              align="center"
+              colSpan={2}
+            >
+              {rupiah(
+                rekapGajiKaryawan.reduce(
+                  (acc, rekap) =>
+                    rekap.grupWarnaBajuId === grupWarnaBajuId
+                      ? acc + rekap.jumlahGaji
+                      : acc,
+                  0,
+                ),
+              )}
+            </TableCell>
           </TableRow>
         </TableFooter>
       </Table>

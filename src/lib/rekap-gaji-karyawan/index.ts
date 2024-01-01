@@ -1,16 +1,24 @@
 import { NewBaju } from '@/schema/baju.schema';
 import { NewRekapGaji } from '@/schema/rekap-gaji.schema';
 import { Size } from '@prisma/client';
-import { findSize } from '../size';
+import { findSizeById } from '../size';
+
+type RekapGajiListResult = {
+  bajuRekapGajiList: Map<string, string>;
+  rekapGajiList: NewRekapGaji[];
+};
 
 export function createRekapGajiList(
   seriProduksiId: string,
   bajuList: NewBaju[],
   sizesBeforeComma: Size[],
   sizesAfterComma: Size[],
-): NewRekapGaji[] {
+): RekapGajiListResult {
   if (bajuList.length === 0) {
-    return [];
+    return {
+      bajuRekapGajiList: new Map(),
+      rekapGajiList: [],
+    };
   }
 
   if (sizesBeforeComma.length === 0 || sizesAfterComma.length === 0) {
@@ -27,25 +35,34 @@ export function createRekapGajiList(
   );
 
   // Count gaji based on grouped baju
-  let rekapGajiList: NewRekapGaji[] = [];
+  // and get rekap gaji id for each baju
+  const returnValue: RekapGajiListResult = {
+    bajuRekapGajiList: new Map(),
+    rekapGajiList: [],
+  };
 
   for (const karyawanId in groupedBaju) {
     if (karyawanId in groupedBaju) {
       const bajuByKaryawan = groupedBaju[karyawanId];
 
-      rekapGajiList = [
-        ...rekapGajiList,
-        ...countRekapGaji(
-          seriProduksiId,
-          bajuByKaryawan,
-          sizesBeforeComma,
-          sizesAfterComma,
-        ),
-      ];
+      const rekapGajiResults = countRekapGaji(
+        seriProduksiId,
+        bajuByKaryawan,
+        sizesBeforeComma,
+        sizesAfterComma,
+      );
+
+      for (const { bajuIds, ...others } of rekapGajiResults) {
+        returnValue.rekapGajiList.push(others);
+
+        for (const bajuId of bajuIds) {
+          returnValue.bajuRekapGajiList.set(bajuId, others.id);
+        }
+      }
     }
   }
 
-  return rekapGajiList;
+  return returnValue;
 }
 
 function countRekapGaji(
@@ -60,7 +77,7 @@ function countRekapGaji(
 
   const ONE_DOZEN = 12;
 
-  const bajuListGroupedBySize = bajuByKaryawan.reduce<NewBaju[][]>(
+  const bajuListGroupedBySizeAndWarna = bajuByKaryawan.reduce<NewBaju[][]>(
     (acc, baju) => {
       if (acc.length === 0) {
         acc.push([baju]);
@@ -68,8 +85,13 @@ function countRekapGaji(
         for (let i = 0; i < acc.length; i++) {
           const group = acc[i];
 
-          if (group[0].sizeId === baju.sizeId) {
-            group.push(baju);
+          if (
+            group[0].sizeId === baju.sizeId &&
+            group[0].grupWarnaBajuId === baju.grupWarnaBajuId
+          ) {
+            if (group.every(pushedBaju => pushedBaju.id !== baju.id)) {
+              group.push(baju);
+            }
             break;
           } else if (i === acc.length - 1) {
             acc.push([baju]);
@@ -82,16 +104,19 @@ function countRekapGaji(
     [],
   );
 
-  const rekapGajiKaryawan: NewRekapGaji[] = [];
+  const rekapGajiKaryawan: Array<NewRekapGaji & { bajuIds: string[] }> = [];
 
-  for (const groupedBaju of bajuListGroupedBySize) {
-    const sizeBeforeComma = findSize(groupedBaju[0].sizeId, sizesBeforeComma);
+  for (const groupedBaju of bajuListGroupedBySizeAndWarna) {
+    const sizeBeforeComma = findSizeById(
+      groupedBaju[0].sizeId,
+      sizesBeforeComma,
+    );
 
     if (!sizeBeforeComma || !sizeBeforeComma.afterCommaPairId) {
       throw new Error('Size tidak ditemukan.');
     }
 
-    const sizeAfterComma = findSize(
+    const sizeAfterComma = findSizeById(
       sizeBeforeComma?.afterCommaPairId,
       sizesAfterComma,
     );
@@ -114,6 +139,8 @@ function countRekapGaji(
     rekapGajiKaryawan.push({
       id: crypto.randomUUID(),
       seriProduksiId,
+      bajuIds: groupedBaju.map(b => b.id),
+      grupWarnaBajuId: groupedBaju[0].grupWarnaBajuId,
       merekId: groupedBaju[0].merekId ?? null,
       jumlahGaji: beforeCommaValue + afterCommaValue,
       sizeId: groupedBaju[0].sizeId,

@@ -1,9 +1,6 @@
 'use client';
 
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Avatar,
   Box,
   Dialog,
@@ -19,18 +16,14 @@ import { grey } from '@mui/material/colors';
 import * as React from 'react';
 import FolderIcon from '@mui/icons-material/Folder';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Header } from '../ui/header';
-import useWarna from '@/hooks/server-state-hooks/use-warna';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { FloatingAlert } from '../ui/floating-alert';
-import useSize from '@/hooks/server-state-hooks/use-size';
-import { SeriProduksiData } from '@/app/api/seri-produksi/seri-produksi.types';
-import { BajuTable } from './add-baju-dialog/finalize-form/baju-table';
-import useMerek from '@/hooks/server-state-hooks/use-merek';
-import useKaryawan from '@/hooks/server-state-hooks/use-karyawan';
+import { Header } from '../../ui/header';
+import { FloatingAlert } from '../../ui/floating-alert';
+import { SeriProduksi } from '@prisma/client';
+import { SeriProduksiWarnaAccordion } from './seri-produksi-warna-accordion';
+import useGrupWarna from '@/hooks/server-state-hooks/use-grup-warna';
 
 type SeriProduksiItemProps = {
-  seriProduksi: SeriProduksiData;
+  seriProduksi: SeriProduksi;
 };
 
 export function SeriProduksiItem(props: SeriProduksiItemProps) {
@@ -46,38 +39,11 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
 
   const {
     queryResult: {
-      data: warnaResult,
-      error: warnaError,
-      isLoading: isWarnaLoading,
+      data: grupWarnaResult,
+      error: grupWarnaError,
+      isLoading: isGrupWarnaLoading,
     },
-  } = useWarna({ onError });
-
-  const {
-    queryResultBeforeComma: {
-      data: sizeResult,
-      error: sizeError,
-      isLoading: isSizeLoading,
-    },
-  } = useSize({ onError });
-
-  const {
-    queryResult: {
-      data: merekResult,
-      error: merekError,
-      isLoading: isMerekLoading,
-    },
-  } = useMerek({ onError });
-
-  const {
-    previewQueryResult: {
-      data: previewKaryawanResult,
-      error: previewKaryawanError,
-      isLoading: isKaryawanLoading,
-    },
-  } = useKaryawan({ karyawanPage: 1, onError });
-
-  const isDataLoading =
-    isWarnaLoading || isSizeLoading || isMerekLoading || isKaryawanLoading;
+  } = useGrupWarna({ seriProduksiId: seriProduksi.id, onError });
 
   return (
     <>
@@ -104,7 +70,7 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
 
           <Stack direction="row" justifyContent="space-between" flexGrow={1}>
             <Stack flexGrow={1} gap={0.5}>
-              {isDataLoading ? (
+              {isGrupWarnaLoading ? (
                 <>
                   <Skeleton
                     variant="rounded"
@@ -238,52 +204,12 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
             List Warna Dan Baju
           </Typography>
           <Stack gap={2}>
-            {seriProduksi.grupWarnaBaju.map(grupWarna => {
-              const warna = warnaResult?.data.find(
-                warna => warna.id === grupWarna.warnaId,
-              );
-
-              return (
-                <Accordion
-                  key={grupWarna.id}
-                  sx={{ backgroundColor: grey[50] }}
-                  TransitionProps={{ unmountOnExit: true }}
-                >
-                  {/* Warna title and karyawan selector */}
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    sx={{ backgroundColor: grey[200] }}
-                  >
-                    <Box
-                      width="100%"
-                      display="flex"
-                      flexDirection="column"
-                      gap={1}
-                    >
-                      {/* Warna title */}
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Box
-                          height={30}
-                          width={30}
-                          borderRadius="50%"
-                          bgcolor={warna?.kodeWarna ?? 'transparent'}
-                        />
-                        <Typography variant="h5">{warna?.nama}</Typography>
-                      </Box>
-                    </Box>
-                  </AccordionSummary>
-
-                  <AccordionDetails>
-                    <BajuTable
-                      bajuList={grupWarna.baju}
-                      previewKaryawanList={previewKaryawanResult?.data ?? []}
-                      sizeList={sizeResult?.data ?? []}
-                      merekList={merekResult?.data ?? []}
-                    />
-                  </AccordionDetails>
-                </Accordion>
-              );
-            })}
+            {grupWarnaResult?.data.map(grupWarna => (
+              <SeriProduksiWarnaAccordion
+                grupWarna={grupWarna}
+                key={grupWarna.id}
+              />
+            ))}
           </Stack>
         </DialogContent>
 
@@ -292,10 +218,7 @@ export function SeriProduksiItem(props: SeriProduksiItemProps) {
           onClose={() => setIsAlertOn(false)}
           severity="error"
         >
-          {previewKaryawanError?.message && previewKaryawanError.message}
-          {warnaError?.message && warnaError.message}
-          {sizeError?.message && sizeError.message}
-          {merekError?.message && merekError.message}
+          {grupWarnaError?.message && grupWarnaError.message}
         </FloatingAlert>
       </Dialog>
     </>

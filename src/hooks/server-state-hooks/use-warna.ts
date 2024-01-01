@@ -1,12 +1,9 @@
 import { WarnaBody, WarnaGETResponse } from '@/app/api/warna/warna-route.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ServerStateHookCallback } from './server-state-hooks.types';
 import axios from 'axios';
-import { ServerStateHooksCallbackType } from './server-state-hooks.types';
 
-type useWarnaProps = {
-  onSuccess?: (type: ServerStateHooksCallbackType) => void;
-  onError?: (type: ServerStateHooksCallbackType) => void;
-};
+type useWarnaProps = ServerStateHookCallback;
 
 export default function useWarna(props: useWarnaProps) {
   const { onSuccess, onError } = props;
@@ -14,6 +11,7 @@ export default function useWarna(props: useWarnaProps) {
   const queryClient = useQueryClient();
   const queryResult = useQuery<WarnaGETResponse>({
     queryKey: ['warna'],
+    staleTime: Infinity,
     async queryFn() {
       try {
         const { data } = await axios.get(`/api/warna`);

@@ -1,15 +1,7 @@
 import { Karyawan } from '@prisma/client';
+import { GETPaginatedResponse } from '../responses.types';
 
-export type KaryawanGETResponse = {
-  data: Karyawan[];
-  metadata: {
-    prev: number;
-    current: number;
-    next: number;
-    last: number;
-  };
-};
-
+export type KaryawanGETResponse = GETPaginatedResponse<Karyawan[]>;
 export type KaryawanPUTBody = {
   id: string;
   nama: string;

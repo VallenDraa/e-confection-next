@@ -1,23 +1,36 @@
-import { SeriProduksiGETResponse } from '@/app/api/seri-produksi/seri-produksi.types';
+import {
+  IndividualSeriProduksiGETResponse,
+  SeriProduksiGETResponse,
+} from '@/app/api/seri-produksi/seri-produksi-route.types';
 import { NewSeriProduksi } from '@/schema/seri-produksi.schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ServerStateHooksCallbackType } from './server-state-hooks.types';
+import { ServerStateHookCallback } from './server-state-hooks.types';
 
-type useSeriProduksiProps = {
-  page: number;
-  onSuccess?: (type: ServerStateHooksCallbackType) => void;
-  onError?: (type: ServerStateHooksCallbackType) => void;
+/**
+ * When `page` argument is present, it means that it returns paginated result
+ * meanwhile if `seriProduksiId` argument is filled it returns a one single result.
+ */
+type useSeriProduksiProps = ServerStateHookCallback & {
+  page?: number;
+  seriProduksiId?: string;
 };
 
 export function useSeriProduksi(props: useSeriProduksiProps) {
-  const { page, onSuccess, onError } = props;
+  const { page, seriProduksiId, onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
   const queryResult = useQuery<SeriProduksiGETResponse>({
     queryKey: ['seri-produksi', page],
     async queryFn() {
       try {
+        if (!page) {
+          return {
+            data: [],
+            metadata: { last: 0, current: 0, next: 0, prev: 0 },
+          };
+        }
+
         const { data } = await axios.get(`/api/seri-produksi?page=${page}`);
 
         return data;
@@ -28,6 +41,27 @@ export function useSeriProduksi(props: useSeriProduksiProps) {
           data: [],
           metadata: { last: 0, current: 0, next: 0, prev: 0 },
         };
+      }
+    },
+  });
+
+  const individualQueryResult = useQuery<IndividualSeriProduksiGETResponse>({
+    queryKey: ['seri-produksi', seriProduksiId],
+    async queryFn() {
+      try {
+        if (!seriProduksiId) {
+          return null;
+        }
+
+        const { data } = await axios.get(
+          `/api/seri-produksi/${seriProduksiId}`,
+        );
+
+        return data;
+      } catch (error) {
+        onError?.('query');
+
+        return null;
       }
     },
   });
@@ -69,5 +103,11 @@ export function useSeriProduksi(props: useSeriProduksiProps) {
     onError: () => onError?.('delete'),
   });
 
-  return { queryResult, addSeriProduksi, editSeriProduksi, deleteSeriProduksi };
+  return {
+    individualQueryResult,
+    queryResult,
+    addSeriProduksi,
+    editSeriProduksi,
+    deleteSeriProduksi,
+  };
 }

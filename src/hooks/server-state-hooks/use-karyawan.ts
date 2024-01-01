@@ -6,12 +6,10 @@ import { KaryawanPreviewGETResponse } from '@/app/api/karyawan/preview/karyawan-
 import { Karyawan } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ServerStateHooksCallbackType } from './server-state-hooks.types';
+import { ServerStateHookCallback } from './server-state-hooks.types';
 
-type useKaryawanProps = {
+type useKaryawanProps = ServerStateHookCallback & {
   karyawanPage: number;
-  onSuccess?: (type: ServerStateHooksCallbackType) => void;
-  onError?: (type: ServerStateHooksCallbackType) => void;
 };
 
 export default function useKaryawan(props: useKaryawanProps) {
@@ -41,6 +39,7 @@ export default function useKaryawan(props: useKaryawanProps) {
 
   const previewQueryResult = useQuery<KaryawanPreviewGETResponse>({
     queryKey: ['karyawan', 'preview'],
+    staleTime: Infinity,
     async queryFn() {
       try {
         const { data } = await axios.get<KaryawanGETResponse>(
