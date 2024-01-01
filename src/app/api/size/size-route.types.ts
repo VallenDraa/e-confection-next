@@ -5,7 +5,6 @@ export type SizeGETResponse = GETResponse<Size[]>;
 
 export type SizeBody = {
   nama: string;
-  softDelete: Date | null;
   hargaBeforeComma: number;
   hargaAfterComma: number;
 };

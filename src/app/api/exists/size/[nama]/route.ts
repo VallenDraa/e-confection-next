@@ -9,20 +9,7 @@ export async function GET(
 ) {
   try {
     const { nama } = params;
-
-    const parsingResult = await z.string().safeParseAsync(nama);
-
-    if (!parsingResult.success) {
-      return NextResponse.json(
-        { message: 'Nama size tidak valid!' },
-        { status: 400 },
-      );
-    }
-
-    const namaMerek = parsingResult.data;
-    const data = await prisma.seriProduksi.count({
-      where: { nama: namaMerek },
-    });
+    const data = await prisma.size.count({ where: { nama } });
 
     return NextResponse.json<ExistsGETResponse>(
       { data: data > 0 },
@@ -30,7 +17,7 @@ export async function GET(
     );
   } catch (error) {
     return NextResponse.json(
-      { message: 'Gagal untuk mengecek nama seri!' },
+      { message: 'Gagal untuk mengecek size!' },
       { status: 500 },
     );
   }

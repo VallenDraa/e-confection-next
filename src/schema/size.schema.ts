@@ -1,13 +1,9 @@
-import { Size } from '@prisma/client';
-import { OptionalDBMetadata } from '@/lib/db';
 import * as z from 'zod';
 
-export const sizeSchema: z.ZodType<OptionalDBMetadata<Size>> = z.object({
-  id: z.string().optional(),
+export const sizeSchema = z.object({
   nama: z.string(),
-  harga: z.number(),
-  afterCommaPairId: z.string().nullable(),
-  softDelete: z.date().nullable(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  hargaBeforeComma: z.number(),
+  hargaAfterComma: z.number(),
 });
+
+export type SizeSchema = z.infer<typeof sizeSchema>;

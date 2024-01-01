@@ -24,6 +24,7 @@ import { grey } from '@mui/material/colors';
 import { NewGrupWarna } from '@/schema/grup-warna.schema';
 import { NewBaju } from '@/schema/baju.schema';
 import { NewRekapGaji } from '@/schema/rekap-gaji.schema';
+import { SizeInputDialog } from '../size-input-dialog';
 
 type GrupWarnaItemProps = {
   grupWarnaBaju: NewGrupWarna;
@@ -80,6 +81,8 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
     queryResultBeforeComma: { data: sizeResult, error: sizeError },
   } = useSize({ onError });
 
+  const [isSizeInputDialogOpen, setIsSizeInputDialogOpen] =
+    React.useState(false);
   const [newBaju, setNewBaju] = React.useState<NewBaju>(
     getDefaultNewBaju(
       grupWarnaBaju.seriProduksiId,
@@ -213,6 +216,11 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                         ? ''
                         : e.target.value;
 
+                    if (e.target.value === 'addSize') {
+                      setIsSizeInputDialogOpen(true);
+                      return;
+                    }
+
                     setNewBaju(prev => ({ ...prev, sizeId: newSizeId }));
                   }}
                 >
@@ -225,6 +233,11 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                   <MenuItem value="addSize">Tambah Size</MenuItem>
                 </Select>
               </FormControl>
+
+              <SizeInputDialog
+                open={isSizeInputDialogOpen}
+                onClose={setIsSizeInputDialogOpen}
+              />
             </Grid>
 
             {/* jumlah depan */}

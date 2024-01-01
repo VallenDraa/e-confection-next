@@ -1,7 +1,11 @@
 import { clientUnauthedApiResponse } from '@/lib/auth/user-auth-checker';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { SizeGETResponse, SizeQueryType } from './size-route.types';
+import {
+  AFTER_COMMA_SUFFIX,
+  SizeGETResponse,
+  SizeQueryType,
+} from './size-route.types';
 import { sizeSchema } from '@/schema/size.schema';
 
 export async function GET(req: NextRequest) {
@@ -57,7 +61,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Size sudah ada!' }, { status: 400 });
     }
 
-    await prisma.size.create({ data: sizeData });
+    const beforeCommaId = crypto.randomUUID();
+    const afterCommaId = crypto.randomUUID();
+
+    await prisma.size.createMany({
+      data: [
+        {
+          id: afterCommaId,
+          nama: `${sizeData.nama}${AFTER_COMMA_SUFFIX}`,
+          harga: sizeData.hargaAfterComma,
+        },
+        {
+          id: beforeCommaId,
+          nama: sizeData.nama,
+          afterCommaPairId: afterCommaId,
+          harga: sizeData.hargaBeforeComma,
+        },
+      ],
+    });
     return new Response(null, { status: 204 });
   } catch (error) {
     return NextResponse.json(
