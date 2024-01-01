@@ -60,7 +60,7 @@ export default function RekapGajiList(props: RekapGajiListProps) {
           <InfiniteScroll
             hasMore={hasNextPage}
             next={fetchNextPage}
-            dataLength={data?.pages.length ?? 0}
+            dataLength={data?.pages?.length ?? 0}
             loader={<Skeleton variant="rounded" width="100%" height={212} />}
             endMessage={
               <Typography
@@ -71,7 +71,7 @@ export default function RekapGajiList(props: RekapGajiListProps) {
                 fontWeight={500}
                 component="p"
               >
-                {data?.pages[0].data.length === 0
+                {data?.pages[0].data?.length === 0
                   ? 'Belum ada rekap gaji.'
                   : 'Akhir rekap gaji.'}
               </Typography>
