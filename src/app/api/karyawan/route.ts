@@ -132,7 +132,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const softDelete = new Date();
-    prisma.karyawan.updateMany({
+    await prisma.karyawan.updateMany({
       where: { id: { in: parsingRes.data } },
       data: { softDelete },
     });

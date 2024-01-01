@@ -119,9 +119,10 @@ export function KaryawanPagePanel() {
             </Button>
 
             <ConfirmDeleteDialog
-              onDelete={async () =>
-                await deleteKaryawan.mutateAsync(toBeDeletedKaryawan)
-              }
+              onDelete={async () => {
+                await deleteKaryawan.mutateAsync(toBeDeletedKaryawan);
+                setIsDeletingKaryawan(false);
+              }}
             >
               {setOpen => (
                 <Button
