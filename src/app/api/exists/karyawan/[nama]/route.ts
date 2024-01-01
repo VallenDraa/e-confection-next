@@ -9,18 +9,7 @@ export async function GET(
 ) {
   try {
     const { nama } = params;
-
-    const parsingResult = await z.string().safeParseAsync(nama);
-
-    if (!parsingResult.success) {
-      return NextResponse.json(
-        { message: 'Nama karyawan tidak valid!' },
-        { status: 400 },
-      );
-    }
-
-    const namaKaryawan = parsingResult.data;
-    const data = await prisma.karyawan.count({ where: { nama: namaKaryawan } });
+    const data = await prisma.karyawan.count({ where: { nama } });
 
     return NextResponse.json<ExistsGETResponse>(
       { data: data > 0 },
@@ -28,7 +17,7 @@ export async function GET(
     );
   } catch (error) {
     return NextResponse.json(
-      { message: 'Gagal untuk mengecek nama merek!' },
+      { message: 'Gagal untuk mengecek karyawan!' },
       { status: 500 },
     );
   }

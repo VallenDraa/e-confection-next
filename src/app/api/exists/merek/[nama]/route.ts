@@ -10,17 +10,7 @@ export async function GET(
   try {
     const { nama } = params;
 
-    const parsingResult = await z.string().safeParseAsync(nama);
-
-    if (!parsingResult.success) {
-      return NextResponse.json(
-        { message: 'Nama merek tidak valid!' },
-        { status: 400 },
-      );
-    }
-
-    const namaMerek = parsingResult.data;
-    const data = await prisma.merek.count({ where: { nama: namaMerek } });
+    const data = await prisma.merek.count({ where: { nama } });
 
     return NextResponse.json<ExistsGETResponse>(
       { data: data > 0 },
