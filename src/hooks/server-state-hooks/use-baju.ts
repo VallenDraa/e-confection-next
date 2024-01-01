@@ -17,7 +17,7 @@ type useBajuProps = ServerStateHookCallback & {
   queryKey: RequireAtLeastOne<UseBajuQueryKey>;
 };
 
-export default function useBaju(props: useBajuProps) {
+export function useBaju(props: useBajuProps) {
   const { onSuccess, onError, queryKey } = props;
 
   const queryResult = useQuery<BajuGETResponse>({

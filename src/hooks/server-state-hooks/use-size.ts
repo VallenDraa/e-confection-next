@@ -5,7 +5,7 @@ import { ServerStateHookCallback } from './server-state-hooks.types';
 
 type useSizeProps = ServerStateHookCallback;
 
-export default function useSize(props: useSizeProps) {
+export function useSize(props: useSizeProps) {
   const { onSuccess, onError } = props;
 
   const queryClient = useQueryClient();

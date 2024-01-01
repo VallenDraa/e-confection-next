@@ -5,7 +5,7 @@ import { ServerStateHookCallback } from './server-state-hooks.types';
 
 type useMerekProps = ServerStateHookCallback;
 
-export default function useMerek(props: useMerekProps) {
+export function useMerek(props: useMerekProps) {
   const { onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
@@ -25,7 +25,7 @@ export default function useMerek(props: useMerekProps) {
     },
   });
 
-  const addSize = useMutation({
+  const addMerek = useMutation({
     mutationKey: ['merek'],
     mutationFn: async (newMerek: MerekBody) => {
       await axios.post('/api/merek', newMerek);
@@ -37,7 +37,7 @@ export default function useMerek(props: useMerekProps) {
     onError: () => onError?.('add'),
   });
 
-  const deleteSize = useMutation({
+  const deleteMerek = useMutation({
     mutationFn: async (merekId: string) => {
       await axios.delete(`/api/merek/${merekId}`);
     },
@@ -48,5 +48,5 @@ export default function useMerek(props: useMerekProps) {
     onError: () => onError?.('delete'),
   });
 
-  return { queryResult, addSize, deleteSize };
+  return { queryResult, addMerek, deleteMerek };
 }

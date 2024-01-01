@@ -5,7 +5,7 @@ import axios from 'axios';
 
 type useWarnaProps = ServerStateHookCallback;
 
-export default function useWarna(props: useWarnaProps) {
+export function useWarna(props: useWarnaProps) {
   const { onSuccess, onError } = props;
 
   const queryClient = useQueryClient();

@@ -7,7 +7,7 @@ type useGrupWarnaProps = ServerStateHookCallback & {
   seriProduksiId: string;
 };
 
-export default function useGrupWarna(props: useGrupWarnaProps) {
+export function useGrupWarna(props: useGrupWarnaProps) {
   const { onSuccess, onError, seriProduksiId } = props;
 
   const queryResult = useQuery<BajuGETResponse>({

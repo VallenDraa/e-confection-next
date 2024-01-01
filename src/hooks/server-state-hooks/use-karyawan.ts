@@ -12,7 +12,7 @@ type useKaryawanProps = ServerStateHookCallback & {
   karyawanPage: number;
 };
 
-export default function useKaryawan(props: useKaryawanProps) {
+export function useKaryawan(props: useKaryawanProps) {
   const { karyawanPage, onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
