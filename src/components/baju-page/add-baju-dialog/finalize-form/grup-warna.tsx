@@ -286,7 +286,30 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
           <Button
             onClick={() => {
-              onDataChange(grupWarnaBaju, [...bajuList, newBaju]);
+              const newBajuListData = [...bajuList];
+              const existingBajuIdx = newBajuListData.findIndex(
+                baju =>
+                  newBaju.karyawanId === baju.karyawanId &&
+                  newBaju.merekId === baju.merekId &&
+                  newBaju.sizeId === baju.sizeId &&
+                  newBaju.grupWarnaBajuId === baju.grupWarnaBajuId,
+              );
+
+              if (existingBajuIdx !== -1) {
+                newBajuListData[existingBajuIdx] = {
+                  ...newBajuListData[existingBajuIdx],
+                  jumlahBelakang:
+                    newBaju.jumlahBelakang +
+                    newBajuListData[existingBajuIdx].jumlahBelakang,
+                  jumlahDepan:
+                    newBaju.jumlahDepan +
+                    newBajuListData[existingBajuIdx].jumlahDepan,
+                };
+              } else {
+                newBajuListData.push(newBaju);
+              }
+
+              onDataChange(grupWarnaBaju, newBajuListData);
               setNewBaju(
                 getDefaultNewBaju(
                   grupWarnaBaju.seriProduksiId,
