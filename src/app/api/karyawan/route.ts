@@ -131,13 +131,11 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    await prisma.$transaction([
-      prisma.rekapGajiKaryawan.deleteMany({
-        where: { karyawanId: { in: parsingRes.data } },
-      }),
-
-      prisma.karyawan.deleteMany({ where: { id: { in: parsingRes.data } } }),
-    ]);
+    const softDelete = new Date();
+    prisma.karyawan.updateMany({
+      where: { id: { in: parsingRes.data } },
+      data: { softDelete },
+    });
 
     return new Response(null, { status: 204 });
   } catch (error) {
