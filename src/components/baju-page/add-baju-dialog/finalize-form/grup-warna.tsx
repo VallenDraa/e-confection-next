@@ -6,7 +6,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
   Accordion,
   AccordionSummary,
@@ -26,6 +25,7 @@ import { NewBaju } from '@/schema/baju.schema';
 import { NewRekapGaji } from '@/schema/rekap-gaji.schema';
 import { SizeInputDialog } from '../size-input-dialog';
 import { MerekInputDialog } from '../merek-input-dialog';
+import { NumberInput } from '@/components/ui/number-input';
 
 type GrupWarnaItemProps = {
   grupWarnaBaju: NewGrupWarna;
@@ -248,12 +248,12 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
             {/* jumlah depan */}
             <Grid item xs={12} sm={6}>
-              <TextField
+              <NumberInput
+                noNegative
                 variant="standard"
                 fullWidth
                 size="small"
                 label="Jumlah Depan"
-                type="number"
                 value={newBaju.jumlahDepan}
                 onChange={e =>
                   setNewBaju(prev => ({
@@ -266,12 +266,12 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
             {/* jumlah belakang */}
             <Grid item xs={12} sm={6}>
-              <TextField
+              <NumberInput
+                noNegative
                 variant="standard"
                 fullWidth
                 size="small"
                 label="Jumlah Belakang"
-                type="number"
                 value={newBaju.jumlahBelakang}
                 onChange={e =>
                   setNewBaju(prev => ({

@@ -121,7 +121,6 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
                 label="Harga Bulat"
                 variant="standard"
                 size="medium"
-                type="number"
                 error={!!formState.errors.hargaBeforeComma}
                 {...register('hargaBeforeComma', {
                   onBlur: e =>
@@ -136,7 +135,6 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
                 label="Harga Koma"
                 variant="standard"
                 size="medium"
-                type="number"
                 error={!!formState.errors.hargaAfterComma}
                 {...register('hargaAfterComma', {
                   onBlur: e =>

@@ -21,6 +21,7 @@ import { FloatingAlert } from '@/components/ui/floating-alert';
 import { useKaryawan } from '@/hooks/server-state-hooks/use-karyawan';
 import Link from 'next/link';
 import { seriProduksiExists } from '@/actions/seri-produksi';
+import { NumberInput } from '@/components/ui/number-input';
 
 const seriProduksiFormSchema = z.object({
   nama: z.string().nullable(),
@@ -99,12 +100,12 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
                 helperText={formState.errors.nama?.message}
                 {...register('nama')}
               />
-              <TextField
+              <NumberInput
+                noNegative
                 fullWidth
                 label="No. Seri"
                 variant="standard"
                 size="medium"
-                type="number"
                 error={!!formState.errors.nomorSeri}
                 helperText={formState.errors.nomorSeri?.message}
                 {...register('nomorSeri', {
