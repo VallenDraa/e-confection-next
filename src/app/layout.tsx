@@ -18,7 +18,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en" style={{ height: '100%' }}>
-      <body style={{ height: '100%' }}>
+      <body style={{ overscrollBehavior: 'none', height: '100%' }}>
         <BackgroundSvg />
         <CssBaseline />
         <Providers>
