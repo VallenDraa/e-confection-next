@@ -139,17 +139,25 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
           </FloatingAlert>
         </Box>
       ) : (
-        <DialogContent>
-          <Stack gap={1}>
-            <Typography>
-              Tidak ada karyawan yang tersedia. Silahkan tambahkan minimal satu!
-            </Typography>
+        <>
+          <DialogContent>
+            <Stack gap={1}>
+              <Typography>
+                Tidak ada karyawan yang tersedia. Silahkan tambahkan minimal
+                satu!
+              </Typography>
 
-            <MuiLink href="/karyawan" component={Link}>
-              Halaman Karyawan
-            </MuiLink>
-          </Stack>
-        </DialogContent>
+              <MuiLink href="/karyawan" component={Link}>
+                Halaman Karyawan
+              </MuiLink>
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button type="button" color="error" onClick={onCancel}>
+              Tutup
+            </Button>
+          </DialogActions>
+        </>
       )}
     </>
   );
