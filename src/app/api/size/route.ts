@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
 
     const sizeList = await prisma.size.findMany({
       where: {
-        softDelete: null,
         afterCommaPairId: queryType === 'after-comma' ? null : { not: null },
       },
     });

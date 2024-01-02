@@ -194,11 +194,14 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                     setNewBaju(prev => ({ ...prev, merekId: newMerekId }));
                   }}
                 >
-                  {merekResult?.data.map(merek => (
-                    <MenuItem value={merek.id} key={merek.id}>
-                      {merek.nama}
-                    </MenuItem>
-                  ))}
+                  {merekResult?.data.map(
+                    merek =>
+                      merek.softDelete === null && (
+                        <MenuItem value={merek.id} key={merek.id}>
+                          {merek.nama}
+                        </MenuItem>
+                      ),
+                  )}
 
                   <MenuItem value="addMerek">Tambah Merek</MenuItem>
                 </Select>
@@ -230,11 +233,14 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
                     setNewBaju(prev => ({ ...prev, sizeId: newSizeId }));
                   }}
                 >
-                  {sizeResult?.data.map(size => (
-                    <MenuItem value={size.id} key={size.id}>
-                      {size.nama}
-                    </MenuItem>
-                  ))}
+                  {sizeResult?.data.map(
+                    size =>
+                      size.softDelete === null && (
+                        <MenuItem value={size.id} key={size.id}>
+                          {size.nama}
+                        </MenuItem>
+                      ),
+                  )}
 
                   <MenuItem value="addSize">Tambah Size</MenuItem>
                 </Select>

@@ -8,9 +8,7 @@ export async function GET() {
   try {
     await clientUnauthedApiResponse();
 
-    const warnaList = await prisma.warna.findMany({
-      where: { softDelete: null },
-    });
+    const warnaList = await prisma.warna.findMany();
 
     return NextResponse.json<WarnaGETResponse>(
       { data: warnaList },

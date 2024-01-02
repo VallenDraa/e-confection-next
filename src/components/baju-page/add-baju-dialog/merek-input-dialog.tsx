@@ -127,11 +127,14 @@ export function MerekInputDialog(props: MerekInputDialogProps) {
                 value={toBeDeletedMerek}
                 onChange={e => setToBeDeletedMerek(e.target.value)}
               >
-                {merekResult?.data.map(merek => (
-                  <MenuItem value={merek.id} key={merek.id}>
-                    {merek.nama}
-                  </MenuItem>
-                ))}
+                {merekResult?.data.map(
+                  merek =>
+                    merek.softDelete == null && (
+                      <MenuItem value={merek.id} key={merek.id}>
+                        {merek.nama}
+                      </MenuItem>
+                    ),
+                )}
               </Select>
             </FormControl>
           )}

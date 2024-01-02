@@ -8,9 +8,7 @@ export async function GET() {
   try {
     await clientUnauthedApiResponse();
 
-    const merekList = await prisma.merek.findMany({
-      where: { softDelete: null },
-    });
+    const merekList = await prisma.merek.findMany();
 
     return NextResponse.json<MerekGETResponse>(
       { data: merekList },

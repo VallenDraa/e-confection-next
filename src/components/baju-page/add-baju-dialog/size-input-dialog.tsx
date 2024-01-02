@@ -156,11 +156,14 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
                   value={toBeDeletedSize}
                   onChange={e => setToBeDeletedSize(e.target.value)}
                 >
-                  {sizeResult?.data.map(size => (
-                    <MenuItem value={size.id} key={size.id}>
-                      {size.nama}
-                    </MenuItem>
-                  ))}
+                  {sizeResult?.data.map(
+                    size =>
+                      size.softDelete === null && (
+                        <MenuItem value={size.id} key={size.id}>
+                          {size.nama}
+                        </MenuItem>
+                      ),
+                  )}
                 </Select>
               </FormControl>
             )}
