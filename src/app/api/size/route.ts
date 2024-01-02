@@ -53,13 +53,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: sizeData } = parsingResult;
-    const hasExists = await prisma.size.count({
-      where: { nama: sizeData.nama },
-    });
-
-    if (hasExists) {
-      return NextResponse.json({ message: 'Size sudah ada!' }, { status: 400 });
-    }
 
     const beforeCommaId = crypto.randomUUID();
     const afterCommaId = crypto.randomUUID();

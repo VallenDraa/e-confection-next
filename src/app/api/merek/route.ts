@@ -39,16 +39,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: merekData } = parsingResult;
-    const hasExists = await prisma.merek.count({
-      where: { nama: merekData.nama },
-    });
-
-    if (hasExists) {
-      return NextResponse.json(
-        { message: 'Merek sudah ada!' },
-        { status: 400 },
-      );
-    }
 
     await prisma.merek.create({ data: merekData });
     return new Response(null, { status: 204 });

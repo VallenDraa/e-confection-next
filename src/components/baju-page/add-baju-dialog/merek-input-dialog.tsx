@@ -1,4 +1,5 @@
 import { ExistsGETResponse } from '@/app/api/exists/exists.types';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { Header } from '@/components/ui/header';
 import { useMerek } from '@/hooks/server-state-hooks/use-merek';
@@ -11,6 +12,10 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from '@mui/material';
@@ -32,13 +37,26 @@ export function MerekInputDialog(props: MerekInputDialogProps) {
 
   const [alertMessage, setAlertMessage] = React.useState('');
   const {
-    addMerek: { error: addMerekError, mutateAsync },
+    queryResult: { data: merekResult, error: merekError },
+    addMerek: { error: addMerekError, mutateAsync: addMerekMutateAsync },
+    deleteMerek: {
+      error: deleteMerekError,
+      mutateAsync: deleteMerekMutateAsync,
+    },
   } = useMerek({
     onError() {
-      setAlertMessage(addMerekError?.message ?? '');
+      setAlertMessage(
+        merekError?.message ||
+          addMerekError?.message ||
+          deleteMerekError?.message ||
+          '',
+      );
+
       setTimeout(() => setAlertMessage(''), 3000);
     },
   });
+
+  const [toBeDeletedMerek, setToBeDeletedMerek] = React.useState('');
 
   async function onSubmitHandler(formData: MerekSchema) {
     try {
@@ -52,14 +70,14 @@ export function MerekInputDialog(props: MerekInputDialogProps) {
         throw new Error('Merek sudah ada!');
       }
 
-      await mutateAsync(formData);
-      onClose(false);
+      await addMerekMutateAsync(formData);
       reset();
+      onClose(false);
     } catch (error) {
       if (error instanceof Error) {
-        setAlertMessage(error?.message ?? 'Gagal membuat size baru!');
+        setAlertMessage(error?.message ?? 'Gagal membuat merek baru!');
       } else {
-        setAlertMessage('Gagal membuat size baru!');
+        setAlertMessage('Gagal membuat merek baru!');
       }
 
       setTimeout(() => setAlertMessage(''), 3000);
@@ -97,6 +115,26 @@ export function MerekInputDialog(props: MerekInputDialogProps) {
             helperText={formState.errors.nama?.message}
             {...register('nama')}
           />
+
+          {merekResult?.data && merekResult?.data.length > 0 && (
+            <FormControl sx={{ mt: 3 }} fullWidth>
+              <InputLabel id="hapus-merek">Hapus Merek</InputLabel>
+              <Select
+                variant="standard"
+                size="small"
+                label="Hapus Merek"
+                labelId="hapus-merek"
+                value={toBeDeletedMerek}
+                onChange={e => setToBeDeletedMerek(e.target.value)}
+              >
+                {merekResult?.data.map(merek => (
+                  <MenuItem value={merek.id} key={merek.id}>
+                    {merek.nama}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </DialogContent>
 
         <DialogActions>
@@ -112,6 +150,15 @@ export function MerekInputDialog(props: MerekInputDialogProps) {
           >
             TAMBAH
           </Button>
+
+          <ConfirmDeleteDialog
+            isOpen={toBeDeletedMerek !== ''}
+            changeOpen={() => setToBeDeletedMerek('')}
+            onDelete={async () => {
+              await deleteMerekMutateAsync(toBeDeletedMerek);
+              setToBeDeletedMerek('');
+            }}
+          />
         </DialogActions>
 
         <FloatingAlert
