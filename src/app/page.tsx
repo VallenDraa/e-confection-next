@@ -1,6 +1,5 @@
-import { Header } from '@/components/ui/header';
+import { HomePagePanel } from '@/components/home-page-panel';
 import { authOptions } from '@/lib/auth';
-import { Stack } from '@mui/material';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
@@ -11,11 +10,5 @@ export default async function Home() {
     redirect('/sign-in');
   }
 
-  return (
-    <Stack>
-      <Header>
-        <h1>Home</h1>
-      </Header>
-    </Stack>
-  );
+  return <HomePagePanel />;
 }
