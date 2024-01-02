@@ -1,4 +1,6 @@
 import { ExistsGETResponse } from '@/app/api/exists/exists.types';
+import { ConfirmAddDialog } from '@/components/ui/confirm-add-dialog';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { Header } from '@/components/ui/header';
 import { NumberInput } from '@/components/ui/number-input';
@@ -12,6 +14,10 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -33,13 +39,22 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
 
   const [alertMessage, setAlertMessage] = React.useState('');
   const {
-    addSize: { error: addSizeError, mutateAsync },
+    queryResultBeforeComma: { data: sizeResult, error: sizeError },
+    addSize: { error: addSizeError, mutateAsync: addSizeMutateAsync },
+    deleteSize: { error: deleteSizeError, mutateAsync: deleteSizeMutateAsync },
   } = useSize({
     onError() {
-      setAlertMessage(addSizeError?.message ?? '');
+      setAlertMessage(
+        sizeError?.message ||
+          addSizeError?.message ||
+          deleteSizeError?.message ||
+          '',
+      );
       setTimeout(() => setAlertMessage(''), 3000);
     },
   });
+
+  const [toBeDeletedSize, setToBeDeletedSize] = React.useState('');
 
   async function onSubmitHandler(formData: SizeSchema) {
     try {
@@ -53,9 +68,9 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
         throw new Error('Size sudah ada!');
       }
 
-      await mutateAsync(formData);
-      onClose(false);
+      await addSizeMutateAsync(formData);
       reset();
+      onClose(false);
     } catch (error) {
       if (error instanceof Error) {
         setAlertMessage(error?.message ?? 'Gagal membuat size baru!');
@@ -100,35 +115,57 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
               {...register('nama')}
             />
 
-            <NumberInput
-              fullWidth
-              label="Harga Sebelum Comma"
-              variant="standard"
-              size="medium"
-              type="number"
-              error={!!formState.errors.hargaBeforeComma}
-              {...register('hargaBeforeComma', {
-                onBlur: e =>
-                  overrideNumberInput(e, 'hargaBeforeComma', setValue),
-                onChange: e =>
-                  overrideNumberInput(e, 'hargaBeforeComma', setValue),
-              })}
-            />
+            <Stack direction="row" gap={2}>
+              <NumberInput
+                fullWidth
+                label="Harga Bulat"
+                variant="standard"
+                size="medium"
+                type="number"
+                error={!!formState.errors.hargaBeforeComma}
+                {...register('hargaBeforeComma', {
+                  onBlur: e =>
+                    overrideNumberInput(e, 'hargaBeforeComma', setValue),
+                  onChange: e =>
+                    overrideNumberInput(e, 'hargaBeforeComma', setValue),
+                })}
+              />
 
-            <NumberInput
-              fullWidth
-              label="Harga Setelah Comma"
-              variant="standard"
-              size="medium"
-              type="number"
-              error={!!formState.errors.hargaAfterComma}
-              {...register('hargaAfterComma', {
-                onBlur: e =>
-                  overrideNumberInput(e, 'hargaAfterComma', setValue),
-                onChange: e =>
-                  overrideNumberInput(e, 'hargaAfterComma', setValue),
-              })}
-            />
+              <NumberInput
+                fullWidth
+                label="Harga Koma"
+                variant="standard"
+                size="medium"
+                type="number"
+                error={!!formState.errors.hargaAfterComma}
+                {...register('hargaAfterComma', {
+                  onBlur: e =>
+                    overrideNumberInput(e, 'hargaAfterComma', setValue),
+                  onChange: e =>
+                    overrideNumberInput(e, 'hargaAfterComma', setValue),
+                })}
+              />
+            </Stack>
+
+            {sizeResult?.data && sizeResult?.data.length > 0 && (
+              <FormControl sx={{ mt: 3 }} fullWidth>
+                <InputLabel id="hapus-size">Hapus Size</InputLabel>
+                <Select
+                  variant="standard"
+                  size="small"
+                  label="Hapus Size"
+                  labelId="hapus-size"
+                  value={toBeDeletedSize}
+                  onChange={e => setToBeDeletedSize(e.target.value)}
+                >
+                  {sizeResult?.data.map(size => (
+                    <MenuItem value={size.id} key={size.id}>
+                      {size.nama}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
           </Stack>
         </DialogContent>
 
@@ -139,22 +176,31 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
 
           <Button
             disabled={willDisableSubmit(formState)}
-            type="submit"
             variant="contained"
+            type="submit"
             color="success"
           >
             TAMBAH
           </Button>
         </DialogActions>
 
-        <FloatingAlert
-          severity="error"
-          isActive={alertMessage !== ''}
-          onClose={() => setAlertMessage('')}
-        >
-          {alertMessage}
-        </FloatingAlert>
+        <ConfirmDeleteDialog
+          isOpen={toBeDeletedSize !== ''}
+          changeOpen={() => setToBeDeletedSize('')}
+          onDelete={async () => {
+            await deleteSizeMutateAsync(toBeDeletedSize);
+            setToBeDeletedSize('');
+          }}
+        />
       </Box>
+
+      <FloatingAlert
+        severity="error"
+        isActive={alertMessage !== ''}
+        onClose={() => setAlertMessage('')}
+      >
+        {alertMessage}
+      </FloatingAlert>
     </Dialog>
   );
 }

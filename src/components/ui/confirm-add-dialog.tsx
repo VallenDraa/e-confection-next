@@ -11,6 +11,7 @@ import { Header } from './header';
 import { grey } from '@mui/material/colors';
 
 type ConfirmAddDialogProps = {
+  message?: string;
   onAdd: () => void;
   children: (
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -18,7 +19,7 @@ type ConfirmAddDialogProps = {
 };
 
 export function ConfirmAddDialog(props: ConfirmAddDialogProps) {
-  const { children, onAdd } = props;
+  const { children, onAdd, message } = props;
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -40,8 +41,8 @@ export function ConfirmAddDialog(props: ConfirmAddDialogProps) {
 
         <DialogContent>
           <Typography>
-            Apakah anda yakin ingin menambahkan data ini? Data yang telah
-            ditambakan tidak bisa diedit di kemudian hari!
+            {message ||
+              `Apakah anda yakin ingin menambahkan data ini? Data yang telah ditambakan tidak bisa diedit di kemudian hari!`}
           </Typography>
         </DialogContent>
 

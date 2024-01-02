@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BajuGETResponse } from '@/app/api/baju/baju-route.types';
 import { ServerStateHookCallback } from './server-state-hooks.types';
-import { RequireAtLeastOne } from '@/types';
 
 type UseBajuQueryKey = {
   seriProduksiId?: string;
@@ -14,7 +13,7 @@ type UseBajuQueryKey = {
 };
 
 type useBajuProps = ServerStateHookCallback & {
-  queryKey: RequireAtLeastOne<UseBajuQueryKey>;
+  queryKey: UseBajuQueryKey;
 };
 
 export function useBaju(props: useBajuProps) {
