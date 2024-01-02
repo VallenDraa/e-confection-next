@@ -12,7 +12,7 @@ datasource db {
 
 model Size {
   id                String              @id @default(uuid())
-  nama              String              @unique
+  nama              String
   afterCommaPairId  String?             @unique
   afterComma        Size?               @relation("SizePair", fields: [afterCommaPairId], references: [id])
   beforeComma       Size?               @relation("SizePair")
@@ -26,7 +26,7 @@ model Size {
 
 model Warna {
   id            String          @id @default(uuid())
-  nama          String          @unique
+  nama          String
   kodeWarna     String
   softDelete    DateTime?
   createdAt     DateTime        @default(now())
@@ -37,7 +37,7 @@ model Warna {
 
 model Merek {
   id                String              @id @default(uuid())
-  nama              String              @unique
+  nama              String
   baju              Baju[]
   softDelete        DateTime?
   rekapGajiKaryawan RekapGajiKaryawan[]
@@ -93,7 +93,7 @@ model SeriProduksi {
 
 model Karyawan {
   id                String              @id @default(uuid())
-  nama              String              @unique
+  nama              String
   telepon           String
   rekapGajiKaryawan RekapGajiKaryawan[]
   baju              Baju[]

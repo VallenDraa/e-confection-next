@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma';
-import * as z from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { ExistsGETResponse } from '../../exists.types';
 
@@ -10,7 +9,9 @@ export async function GET(
   try {
     const { nama } = params;
 
-    const data = await prisma.merek.count({ where: { nama } });
+    const data = await prisma.merek.count({
+      where: { nama, softDelete: null },
+    });
 
     return NextResponse.json<ExistsGETResponse>(
       { data: data > 0 },

@@ -9,7 +9,9 @@ export async function GET(
 ) {
   try {
     const { nama } = params;
-    const data = await prisma.karyawan.count({ where: { nama } });
+    const data = await prisma.karyawan.count({
+      where: { nama, softDelete: null },
+    });
 
     return NextResponse.json<ExistsGETResponse>(
       { data: data > 0 },
