@@ -8,7 +8,6 @@ export async function GET() {
     await clientUnauthedApiResponse();
 
     const karyawanPreviewData = await prisma.karyawan.findMany({
-      where: { softDelete: null },
       orderBy: { nama: 'desc' },
       select: { id: true, nama: true, telepon: true },
     });
