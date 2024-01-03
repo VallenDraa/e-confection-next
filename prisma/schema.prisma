@@ -36,13 +36,12 @@ model Warna {
 }
 
 model Merek {
-  id                String              @id @default(uuid())
-  nama              String
-  baju              Baju[]
-  softDelete        DateTime?
-  rekapGajiKaryawan RekapGajiKaryawan[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  id         String    @id @default(uuid())
+  nama       String
+  baju       Baju[]
+  softDelete DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Baju {
@@ -111,8 +110,6 @@ model RekapGajiKaryawan {
   grupWarnaBaju   GrupWarnaBaju @relation(fields: [grupWarnaBajuId], references: [id])
   karyawanId      String
   karyawan        Karyawan      @relation(fields: [karyawanId], references: [id])
-  merekId         String?
-  merek           Merek?        @relation(fields: [merekId], references: [id])
   seriProduksiId  String
   seriProduksi    SeriProduksi  @relation(fields: [seriProduksiId], references: [id])
   createdAt       DateTime      @default(now())
