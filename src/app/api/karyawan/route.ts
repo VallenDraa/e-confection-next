@@ -9,15 +9,20 @@ export async function GET(req: NextRequest) {
   try {
     await clientUnauthedApiResponse();
 
-    const page = Number(req.nextUrl.searchParams.get('page') ?? 1);
-    const size = Number(req.nextUrl.searchParams.get('size') ?? 6);
+    const page = Number(req.nextUrl.searchParams.get('page') || 1);
+    const search = req.nextUrl.searchParams.get('search') || '';
+    const size = Number(req.nextUrl.searchParams.get('size') || 6);
 
     const totalData = await prisma.karyawan.count();
     const totalPages = Math.ceil(totalData / size) || 1;
 
     const karyawanData = await prisma.karyawan.findMany({
       orderBy: { createdAt: 'desc' },
-      where: { softDelete: null },
+      where: {
+        nama: { contains: search },
+        telepon: { contains: search },
+        softDelete: null,
+      },
       skip: (page - 1) * size,
       take: size,
     });

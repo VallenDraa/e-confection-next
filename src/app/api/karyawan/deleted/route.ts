@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     await clientUnauthedApiResponse();
 
     const page = Number(req.nextUrl.searchParams.get('page') || 1);
+    const search = req.nextUrl.searchParams.get('search') || '';
     const size = Number(req.nextUrl.searchParams.get('size') || 6);
 
     const totalData = await prisma.karyawan.count();
@@ -15,7 +16,11 @@ export async function GET(req: NextRequest) {
 
     const karyawanData = await prisma.karyawan.findMany({
       orderBy: { createdAt: 'desc' },
-      where: { softDelete: { not: null } },
+      where: {
+        nama: { contains: search },
+        telepon: { contains: search },
+        softDelete: { not: null },
+      },
       skip: (page - 1) * size,
       take: size,
     });

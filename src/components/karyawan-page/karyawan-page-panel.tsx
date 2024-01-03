@@ -21,10 +21,12 @@ import { FloatingAlert } from '@/components/ui/floating-alert';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { useKaryawan } from '@/hooks/server-state-hooks/use-karyawan';
 import { KaryawanPageSkeleton } from './karyawan-page-skeleton';
+import db from 'just-debounce';
 
 type KaryawanTab = 'active' | 'deleted';
 
 type QueryConfig = {
+  search: string;
   activeTab: KaryawanTab;
   page: number;
 };
@@ -39,14 +41,30 @@ export function KaryawanPagePanel() {
 
   const [isAlertOn, setIsAlertOn] = React.useState(false);
 
+  const [localSearch, setLocalSearch] = React.useState(
+    query.get('search') || '',
+  );
   const [queryConfig, setQueryConfig] = React.useState<QueryConfig>(() => {
-    const page = Number(query.get('page') ?? 1);
+    const page = Number(query.get('page') || 1);
+    const search = query.get('search') || '';
 
     return {
+      search,
       page: isNaN(page) ? 1 : page,
       activeTab: 'active',
     };
   });
+  const searchKaryawawan = React.useMemo(
+    () =>
+      db(
+        (search: string) =>
+          setQueryConfig(prev => ({ ...prev, search, page: 1 })),
+        800,
+      ),
+    [],
+  );
+
+  React.useEffect(() => {}, [queryConfig]);
 
   const {
     activeQueryResult: {
@@ -65,11 +83,11 @@ export function KaryawanPagePanel() {
   } = useKaryawan({
     activeQueryProps:
       queryConfig.activeTab === 'active'
-        ? { page: queryConfig.page }
+        ? { search: queryConfig.search, page: queryConfig.page }
         : undefined,
     deletedQueryProps:
       queryConfig.activeTab === 'deleted'
-        ? { page: queryConfig.page }
+        ? { search: queryConfig.search, page: queryConfig.page }
         : undefined,
     onError() {
       setIsAlertOn(true);
@@ -100,9 +118,10 @@ export function KaryawanPagePanel() {
         <Box display="flex" gap={1} mt={1} flexDirection="column">
           <Tabs
             value={queryConfig.activeTab}
-            onChange={(e, newTab: KaryawanTab) =>
-              setQueryConfig({ activeTab: newTab, page: 1 })
-            }
+            onChange={(e, newTab: KaryawanTab) => {
+              setLocalSearch('');
+              setQueryConfig({ search: '', activeTab: newTab, page: 1 });
+            }}
             aria-label="Karyawan Tabs"
           >
             <Tab
@@ -118,10 +137,15 @@ export function KaryawanPagePanel() {
           </Tabs>
 
           <TextField
-            sx={{ flexGrow: 1 }}
-            variant="standard"
-            label="Cari Karyawan..."
             type="search"
+            variant="standard"
+            sx={{ flexGrow: 1 }}
+            label="Cari Karyawan"
+            value={localSearch}
+            onChange={e => {
+              setLocalSearch(e.target.value);
+              searchKaryawawan(e.target.value);
+            }}
           />
         </Box>
 

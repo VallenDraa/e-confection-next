@@ -10,9 +10,11 @@ import { ServerStateHookCallback } from './server-state-hooks.types';
 
 type useKaryawanProps = ServerStateHookCallback & {
   activeQueryProps?: {
+    search: string;
     page: number;
   };
   deletedQueryProps?: {
+    search: string;
     page: number;
   };
 };
@@ -34,7 +36,7 @@ export function useKaryawan(props: useKaryawanProps) {
         }
 
         const { data } = await axios.get<KaryawanGETResponse>(
-          `/api/karyawan?page=${activeQueryProps?.page}`,
+          `/api/karyawan?page=${activeQueryProps?.page}&search=${activeQueryProps.search}`,
         );
 
         return data;
@@ -61,7 +63,7 @@ export function useKaryawan(props: useKaryawanProps) {
         }
 
         const { data } = await axios.get<KaryawanGETResponse>(
-          `/api/karyawan/deleted?page=${deletedQueryProps.page}`,
+          `/api/karyawan/deleted?page=${deletedQueryProps.page}&search=${deletedQueryProps.search}`,
         );
 
         return data;
