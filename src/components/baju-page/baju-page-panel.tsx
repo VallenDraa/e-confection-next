@@ -108,6 +108,7 @@ export function BajuPagePanel() {
                 onClick={() => setOpen(true)}
                 variant="contained"
                 color="success"
+                size="small"
               >
                 TAMBAH
               </Button>
