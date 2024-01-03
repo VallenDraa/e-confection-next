@@ -11,7 +11,7 @@ type RekapGajiListProps = {
   karyawanId: string;
 };
 
-export default function RekapGajiList(props: RekapGajiListProps) {
+export function RekapGajiList(props: RekapGajiListProps) {
   const { karyawanId } = props;
 
   const [isAlertOn, setIsAlertOn] = React.useState(false);

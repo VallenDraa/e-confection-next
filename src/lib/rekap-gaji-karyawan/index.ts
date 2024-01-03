@@ -141,7 +141,6 @@ function countRekapGaji(
       seriProduksiId,
       bajuIds: groupedBaju.map(b => b.id),
       grupWarnaBajuId: groupedBaju[0].grupWarnaBajuId,
-      merekId: groupedBaju[0].merekId ?? null,
       jumlahGaji: beforeCommaValue + afterCommaValue,
       sizeId: groupedBaju[0].sizeId,
       karyawanId: groupedBaju[0].karyawanId,

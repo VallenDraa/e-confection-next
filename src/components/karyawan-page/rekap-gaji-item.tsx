@@ -7,7 +7,7 @@ import { useBaju } from '@/hooks/server-state-hooks/use-baju';
 import { FloatingAlert } from '../ui/floating-alert';
 import { useMerek } from '@/hooks/server-state-hooks/use-merek';
 import { useSize } from '@/hooks/server-state-hooks/use-size';
-import { findMerekById } from '@/lib/merek';
+import { findMerekById, findMerekByIds } from '@/lib/merek';
 import { findSizeById } from '@/lib/size';
 import { findWarnaById } from '@/lib/warna';
 import { useWarna } from '@/hooks/server-state-hooks/use-warna';
@@ -81,12 +81,24 @@ export function RekapGajiItem(props: RekapGajiItemProps) {
     isSizeLoading ||
     isSeriProduksiLoading;
 
-  const currentMerek = React.useMemo(
+  const currentBajuMerekIds = React.useMemo(() => {
+    if (!bajuResult?.data) {
+      return [];
+    } else {
+      const merekIds = bajuResult.data
+        .map(baju => baju.merekId)
+        .filter(merekId => merekId !== null) as string[];
+
+      return merekIds;
+    }
+  }, [bajuResult]);
+
+  const currentMerekList = React.useMemo(
     () =>
-      rekapGaji.merekId && merekResult?.data
-        ? findMerekById(rekapGaji.merekId, merekResult?.data)
+      merekResult?.data
+        ? findMerekByIds(currentBajuMerekIds, merekResult?.data)
         : null,
-    [merekResult?.data, rekapGaji.merekId],
+    [merekResult?.data, currentBajuMerekIds],
   );
 
   const currentSize = React.useMemo(
@@ -115,19 +127,8 @@ export function RekapGajiItem(props: RekapGajiItemProps) {
       }}
     >
       <Box p={2}>
-        {isLoading ? (
-          <>
-            <Skeleton width="100%" height={20} />
-          </>
-        ) : (
-          <Typography variant="body2" color={grey[600]}>
-            {new Date(rekapGaji.createdAt)?.toLocaleDateString()}
-          </Typography>
-        )}
-
         {/* rekap gaji data */}
         <Stack
-          mt={2}
           gap={1}
           direction="row"
           alignItems="end"
@@ -146,11 +147,11 @@ export function RekapGajiItem(props: RekapGajiItemProps) {
                 </Typography>
                 <Stack direction="row" alignItems="start" gap={0.5}>
                   <ColorCircle
-                    width={25}
-                    height={25}
+                    width={22}
+                    height={22}
                     bgColor={currentWarna?.kodeWarna ?? '#ffffff'}
                   />
-                  <Typography fontWeight={500} variant="h6">
+                  <Typography fontWeight={500} variant="subtitle1">
                     {currentWarna?.nama}
                   </Typography>
                 </Stack>
@@ -161,19 +162,15 @@ export function RekapGajiItem(props: RekapGajiItemProps) {
           <Stack flexGrow={1} gap={1} alignItems="end">
             {isLoading ? (
               <>
+                <Skeleton width="100%" height={20} />
                 <Skeleton width="100%" height={36} />
-                <Skeleton width="100%" height={32} />
               </>
             ) : (
               <>
-                <Typography
-                  fontWeight={500}
-                  color={currentMerek?.nama ? grey[900] : grey[400]}
-                  variant="h6"
-                >
-                  {currentMerek?.nama || 'No Merek'}
+                <Typography variant="subtitle1" color={grey[600]}>
+                  {new Date(rekapGaji.createdAt)?.toLocaleDateString()}
                 </Typography>
-                <Typography variant="h6" color={grey[600]}>
+                <Typography variant="subtitle1" color={grey[600]}>
                   {`Size: ${currentSize?.nama}`}
                 </Typography>
               </>
@@ -182,26 +179,47 @@ export function RekapGajiItem(props: RekapGajiItemProps) {
         </Stack>
 
         {/* baju data */}
-        <Stack mt={2} gap={1}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          borderTop={`1px solid ${grey[300]}`}
+          mt={2}
+          pt={2}
+          gap={1}
+        >
           {isLoading && (
-            <Stack alignItems="center" gap={1}>
-              <Skeleton variant="rounded" width="100%" height={28} />
-              <Skeleton variant="rounded" width="100%" height={28} />
-            </Stack>
+            <>
+              <Stack alignItems="center" gap={1}>
+                <Skeleton variant="rounded" width="100%" height={28} />
+                <Skeleton variant="rounded" width="100%" height={28} />
+              </Stack>
+              <Stack alignItems="center" gap={1}>
+                <Skeleton variant="rounded" width="100%" height={28} />
+                <Skeleton variant="rounded" width="100%" height={28} />
+              </Stack>
+            </>
           )}
 
           {!isLoading &&
             bajuResult?.data.map(baju => (
-              <Stack key={baju.id}>
+              <Stack
+                key={baju.id}
+                gap={2}
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
                 <Typography variant="subtitle1" fontWeight={500}>
-                  {`Jumlah Depan: ${baju.jumlahDepan}`}
+                  {`Depan: ${baju.jumlahDepan} & Belakang: ${baju.jumlahDepan}`}
                 </Typography>
                 <Typography variant="subtitle1" fontWeight={500}>
-                  {`Jumlah Belakang: ${baju.jumlahDepan}`}
+                  {baju.merekId
+                    ? findMerekById(baju.merekId, currentMerekList ?? [])?.nama
+                    : 'N/A'}
                 </Typography>
               </Stack>
             ))}
-        </Stack>
+        </Box>
       </Box>
 
       <Box

@@ -25,7 +25,7 @@ import {
 } from '@/schema/karyawan.schema';
 import { willDisableSubmit } from '@/lib/form-helpers';
 import { KaryawanPUTBody } from '@/app/api/karyawan/karyawan-route.types';
-import WorkHistoryList from './rekap-gaji-list';
+import { RekapGajiList } from './rekap-gaji-list';
 import { karyawanExists } from '@/lib/karyawan';
 import { FloatingAlert } from '../ui/floating-alert';
 
@@ -238,7 +238,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
             >
               Riwayat Pekerjaan
             </Typography>
-            <WorkHistoryList karyawanId={karyawan.id} />
+            <RekapGajiList karyawanId={karyawan.id} />
           </DialogContent>
         </Box>
 
