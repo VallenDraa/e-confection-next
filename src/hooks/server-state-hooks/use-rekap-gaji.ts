@@ -19,10 +19,13 @@ export function useRekapGaji(props: useRekapGajiProps) {
 
   const queryResultByKaryawan = useInfiniteQuery<RekapGajiGETPaginatedResponse>(
     {
-      queryKey: ['rekap-gaji', rekapGajiByKaryawan],
-      initialPageParam: () => rekapGajiByKaryawan?.initialPage ?? 1,
-      getNextPageParam: prev =>
-        prev.metadata.next === prev.metadata.last ? null : prev.metadata.next,
+      queryKey: ['rekap-gaji', 'infinite', rekapGajiByKaryawan],
+      initialPageParam: () => rekapGajiByKaryawan?.initialPage || 1,
+      getNextPageParam: prev => {
+        return prev.metadata?.next === prev.metadata?.last
+          ? undefined
+          : prev.metadata?.next;
+      },
       async queryFn({ pageParam }) {
         if (!rekapGajiByKaryawan) {
           return {
@@ -52,7 +55,7 @@ export function useRekapGaji(props: useRekapGajiProps) {
   );
 
   const queryResultByGrupWarna = useQuery({
-    queryKey: ['rekap-gaji', rekapGajiByGrupWarna],
+    queryKey: ['rekap-gaji', 'non-infinite', rekapGajiByGrupWarna],
     async queryFn() {
       if (!rekapGajiByGrupWarna) {
         return { data: [] };
