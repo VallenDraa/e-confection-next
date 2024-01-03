@@ -68,14 +68,7 @@ export function KaryawanPagePanel() {
           {!isLoading &&
             result?.data &&
             result?.data?.length > 0 &&
-            [
-              ...result?.data,
-              ...result?.data,
-              ...result?.data,
-              ...result?.data,
-              ...result?.data,
-              ...result?.data,
-            ].map(karyawan => {
+            result?.data.map(karyawan => {
               return (
                 <KaryawanItem
                   onEdit={editKaryawan.mutateAsync}

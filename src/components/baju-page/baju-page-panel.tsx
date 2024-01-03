@@ -53,7 +53,7 @@ export function BajuPagePanel() {
       </Header>
 
       <Container maxWidth="sm">
-        <Stack gap={2} my={2}>
+        <Stack gap={2} my={2} pb={12}>
           {isLoading && <BajuPageSkeleton />}
 
           {!isLoading && (result?.data?.length === 0 || !result?.data) && (
