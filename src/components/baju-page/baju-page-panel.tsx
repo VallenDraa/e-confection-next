@@ -83,37 +83,37 @@ export function BajuPagePanel() {
         </Stack>
       </Container>
 
-      <Box
-        position="fixed"
-        bottom={65}
-        right={16}
-        gap={1}
-        display="flex"
-        flexDirection="column"
-      >
-        <AddBajuDialog
-          onSubmit={async data => await addSeriProduksi.mutateAsync(data)}
+      <Box position="fixed" bottom={65} width="100%">
+        <Container
+          maxWidth="sm"
+          sx={{
+            display: 'flex',
+            alignItems: 'end',
+            justifyContent: 'space-between',
+          }}
         >
-          {setOpen => (
-            <Button
-              onClick={() => setOpen(true)}
-              variant="contained"
-              color="success"
-            >
-              TAMBAH
-            </Button>
-          )}
-        </AddBajuDialog>
-      </Box>
+          <Pagination
+            shape="rounded"
+            onChange={(e, page) => setBajuPage(page)}
+            count={result?.metadata?.last ?? 0}
+            hidePrevButton
+            hideNextButton
+          />
 
-      <Box position="fixed" bottom={65} left={16}>
-        <Pagination
-          shape="rounded"
-          onChange={(e, page) => setBajuPage(page)}
-          count={result?.metadata?.last ?? 0}
-          hidePrevButton
-          hideNextButton
-        />
+          <AddBajuDialog
+            onSubmit={async data => await addSeriProduksi.mutateAsync(data)}
+          >
+            {setOpen => (
+              <Button
+                onClick={() => setOpen(true)}
+                variant="contained"
+                color="success"
+              >
+                TAMBAH
+              </Button>
+            )}
+          </AddBajuDialog>
+        </Container>
       </Box>
 
       {/* Alert message */}

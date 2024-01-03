@@ -7,7 +7,6 @@ import {
   Button,
   Container,
   Pagination,
-  Skeleton,
   Stack,
   Typography,
 } from '@mui/material';
@@ -22,9 +21,11 @@ import { KaryawanPageSkeleton } from './karyawan-page-skeleton';
 
 export function KaryawanPagePanel() {
   const query = useSearchParams();
-  const [karyawanPage, setKaryawanPage] = React.useState(
-    isNaN(Number(query.get('page') ?? 1)) ? 1 : Number(query.get('page') ?? 1),
-  );
+  const [karyawanPage, setKaryawanPage] = React.useState(() => {
+    const page = Number(query.get('page') ?? 1);
+
+    return isNaN(page) ? 1 : page;
+  });
 
   const [isDeletingKaryawan, setIsDeletingKaryawan] = React.useState(false);
   const [toBeDeletedKaryawan, setToBeDeletedKaryawan] = React.useState<
@@ -61,13 +62,20 @@ export function KaryawanPagePanel() {
       </Header>
 
       <Container maxWidth="sm">
-        <Stack gap={2} my={2} pb={7}>
+        <Stack gap={2} my={2} pb={12}>
           {isLoading && <KaryawanPageSkeleton />}
 
           {!isLoading &&
             result?.data &&
             result?.data?.length > 0 &&
-            result?.data.map(karyawan => {
+            [
+              ...result?.data,
+              ...result?.data,
+              ...result?.data,
+              ...result?.data,
+              ...result?.data,
+              ...result?.data,
+            ].map(karyawan => {
               return (
                 <KaryawanItem
                   onEdit={editKaryawan.mutateAsync}
@@ -100,80 +108,84 @@ export function KaryawanPagePanel() {
         </Stack>
       </Container>
 
-      <Box
-        position="fixed"
-        bottom={65}
-        right={16}
-        gap={1}
-        display="flex"
-        flexDirection="column"
-      >
-        {isDeletingKaryawan ? (
-          <>
-            <Button
-              onClick={() => setIsDeletingKaryawan(false)}
-              variant="contained"
-              color="success"
-            >
-              BATAL
-            </Button>
+      <Box position="fixed" bottom={65} width="100%">
+        <Container
+          maxWidth="sm"
+          sx={{
+            display: 'flex',
+            alignItems: 'end',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Pagination
+            shape="rounded"
+            onChange={(e, page) => setKaryawanPage(page)}
+            count={result?.metadata.last}
+            hidePrevButton
+            hideNextButton
+          />
 
-            <ConfirmDeleteDialog
-              onDelete={async () => {
-                await deleteKaryawan.mutateAsync(toBeDeletedKaryawan);
-                setIsDeletingKaryawan(false);
-              }}
-            >
-              {setOpen => (
+          <Box gap={1} display="flex" flexDirection="column">
+            {isDeletingKaryawan ? (
+              <>
                 <Button
-                  disabled={toBeDeletedKaryawan.length === 0}
-                  onClick={() => setOpen(true)}
+                  onClick={() => setIsDeletingKaryawan(false)}
+                  variant="contained"
+                  color="success"
+                  size="small"
+                >
+                  BATAL
+                </Button>
+
+                <ConfirmDeleteDialog
+                  onDelete={async () => {
+                    await deleteKaryawan.mutateAsync(toBeDeletedKaryawan);
+                    setIsDeletingKaryawan(false);
+                  }}
+                >
+                  {setOpen => (
+                    <Button
+                      disabled={toBeDeletedKaryawan.length === 0}
+                      onClick={() => setOpen(true)}
+                      variant="contained"
+                      color="error"
+                      size="small"
+                    >
+                      HAPUS DATA
+                    </Button>
+                  )}
+                </ConfirmDeleteDialog>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => setIsDeletingKaryawan(true)}
                   variant="contained"
                   color="error"
                 >
-                  HAPUS DATA
+                  HAPUS
                 </Button>
-              )}
-            </ConfirmDeleteDialog>
-          </>
-        ) : (
-          <>
-            <Button
-              onClick={() => setIsDeletingKaryawan(true)}
-              variant="contained"
-              color="error"
-            >
-              HAPUS
-            </Button>
 
-            <AddKaryawanDialog
-              onSubmit={async karyawan => {
-                await addKaryawan.mutateAsync(karyawan);
-                setIsDeletingKaryawan(false);
-              }}
-            >
-              {setOpen => (
-                <Button
-                  onClick={() => setOpen(true)}
-                  variant="contained"
-                  color="success"
+                <AddKaryawanDialog
+                  onSubmit={async karyawan => {
+                    await addKaryawan.mutateAsync(karyawan);
+                    setIsDeletingKaryawan(false);
+                  }}
                 >
-                  TAMBAH
-                </Button>
-              )}
-            </AddKaryawanDialog>
-          </>
-        )}
-      </Box>
-
-      <Box position="fixed" bottom={65} left={16}>
-        <Pagination
-          shape="rounded"
-          onChange={(e, page) => setKaryawanPage(page)}
-          count={result?.metadata.last}
-          hidePrevButton
-          hideNextButton
-        />
+                  {setOpen => (
+                    <Button
+                      onClick={() => setOpen(true)}
+                      variant="contained"
+                      color="success"
+                    >
+                      TAMBAH
+                    </Button>
+                  )}
+                </AddKaryawanDialog>
+              </>
+            )}
+          </Box>
+        </Container>
       </Box>
 
       {/* Alert message */}
