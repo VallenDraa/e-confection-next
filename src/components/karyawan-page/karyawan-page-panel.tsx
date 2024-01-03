@@ -8,6 +8,9 @@ import {
   Container,
   Pagination,
   Stack,
+  Tab,
+  Tabs,
+  TextField,
   Typography,
 } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
@@ -19,13 +22,15 @@ import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { useKaryawan } from '@/hooks/server-state-hooks/use-karyawan';
 import { KaryawanPageSkeleton } from './karyawan-page-skeleton';
 
+type KaryawanTab = 'active' | 'deleted';
+
+type QueryConfig = {
+  activeTab: KaryawanTab;
+  page: number;
+};
+
 export function KaryawanPagePanel() {
   const query = useSearchParams();
-  const [karyawanPage, setKaryawanPage] = React.useState(() => {
-    const page = Number(query.get('page') ?? 1);
-
-    return isNaN(page) ? 1 : page;
-  });
 
   const [isDeletingKaryawan, setIsDeletingKaryawan] = React.useState(false);
   const [toBeDeletedKaryawan, setToBeDeletedKaryawan] = React.useState<
@@ -33,18 +38,48 @@ export function KaryawanPagePanel() {
   >([]);
 
   const [isAlertOn, setIsAlertOn] = React.useState(false);
+
+  const [queryConfig, setQueryConfig] = React.useState<QueryConfig>(() => {
+    const page = Number(query.get('page') ?? 1);
+
+    return {
+      page: isNaN(page) ? 1 : page,
+      activeTab: 'active',
+    };
+  });
+
   const {
-    queryResult: { data: result, error, isLoading },
+    activeQueryResult: {
+      data: activeResult,
+      error: activeResultError,
+      isLoading: activeResultLoading,
+    },
+    deletedQueryResult: {
+      data: deletedResult,
+      error: deletedResultError,
+      isLoading: deletedResultLoading,
+    },
     addKaryawan,
     editKaryawan,
     deleteKaryawan,
   } = useKaryawan({
-    karyawanPage,
+    activeQueryProps:
+      queryConfig.activeTab === 'active'
+        ? { page: queryConfig.page }
+        : undefined,
+    deletedQueryProps:
+      queryConfig.activeTab === 'deleted'
+        ? { page: queryConfig.page }
+        : undefined,
     onError() {
       setIsAlertOn(true);
       setTimeout(() => setIsAlertOn(false), 3000);
     },
   });
+
+  const isLoading = activeResultLoading || deletedResultLoading;
+  const currentResult =
+    queryConfig.activeTab === 'active' ? activeResult : deletedResult;
 
   return (
     <Stack>
@@ -62,13 +97,41 @@ export function KaryawanPagePanel() {
       </Header>
 
       <Container maxWidth="sm">
+        <Box display="flex" gap={1} mt={1} flexDirection="column">
+          <Tabs
+            value={queryConfig.activeTab}
+            onChange={(e, newTab: KaryawanTab) =>
+              setQueryConfig({ activeTab: newTab, page: 1 })
+            }
+            aria-label="Karyawan Tabs"
+          >
+            <Tab
+              label="Aktif"
+              value="active"
+              sx={{ flexGrow: 1, borderBottom: `1px solid ${grey[400]}` }}
+            />
+            <Tab
+              label="Terhapus"
+              value="deleted"
+              sx={{ flexGrow: 1, borderBottom: `1px solid ${grey[400]}` }}
+            />
+          </Tabs>
+
+          <TextField
+            sx={{ flexGrow: 1 }}
+            variant="standard"
+            label="Cari Karyawan..."
+            type="search"
+          />
+        </Box>
+
         <Stack gap={2} my={2} pb={12}>
           {isLoading && <KaryawanPageSkeleton />}
 
           {!isLoading &&
-            result?.data &&
-            result?.data?.length > 0 &&
-            result?.data.map(karyawan => {
+            currentResult?.data &&
+            currentResult?.data?.length > 0 &&
+            currentResult?.data.map(karyawan => {
               return (
                 <KaryawanItem
                   onEdit={editKaryawan.mutateAsync}
@@ -86,18 +149,19 @@ export function KaryawanPagePanel() {
               );
             })}
 
-          {!isLoading && (result?.data?.length === 0 || !result?.data) && (
-            <Typography
-              textAlign="center"
-              my={5}
-              variant="subtitle1"
-              color={grey[600]}
-              fontWeight={500}
-              component="p"
-            >
-              Belum ada karyawan.
-            </Typography>
-          )}
+          {!isLoading &&
+            (currentResult?.data?.length === 0 || !currentResult?.data) && (
+              <Typography
+                textAlign="center"
+                my={5}
+                variant="subtitle1"
+                color={grey[600]}
+                fontWeight={500}
+                component="p"
+              >
+                Belum ada karyawan.
+              </Typography>
+            )}
         </Stack>
       </Container>
 
@@ -112,8 +176,8 @@ export function KaryawanPagePanel() {
         >
           <Pagination
             shape="rounded"
-            onChange={(e, page) => setKaryawanPage(page)}
-            count={result?.metadata.last}
+            onChange={(e, page) => setQueryConfig(prev => ({ ...prev, page }))}
+            count={currentResult?.metadata.last}
             hidePrevButton
             hideNextButton
           />
@@ -187,7 +251,8 @@ export function KaryawanPagePanel() {
         isActive={isAlertOn}
         onClose={() => setIsAlertOn(false)}
       >
-        {error?.message}
+        {activeResultError?.message && activeResultError?.message}
+        {deletedResultError?.message && deletedResultError?.message}
       </FloatingAlert>
     </Stack>
   );

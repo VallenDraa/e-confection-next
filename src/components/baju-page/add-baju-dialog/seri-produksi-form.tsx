@@ -72,7 +72,6 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
       isLoading: isKaryawanLoading,
     },
   } = useKaryawan({
-    karyawanPage: 1,
     onError() {
       setAlertMessage(
         previewKaryawanError?.message ?? 'Gagal memuat input No.Seri.',

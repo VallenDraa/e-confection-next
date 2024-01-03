@@ -114,9 +114,7 @@ export function KaryawanItem(props: KaryawanItemProps) {
                 noWrap
                 textAlign="start"
                 variant="body2"
-                component="a"
                 color={grey[600]}
-                href={`tel:${karyawan.telepon}`}
               >
                 {karyawan.telepon}
               </Typography>

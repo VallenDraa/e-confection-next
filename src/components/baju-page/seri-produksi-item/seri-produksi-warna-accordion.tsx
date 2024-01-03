@@ -65,7 +65,7 @@ export function SeriProduksiWarnaAccordion(
       error: previewKaryawanError,
       isLoading: isKaryawanLoading,
     },
-  } = useKaryawan({ karyawanPage: 1, onError });
+  } = useKaryawan({ onError });
 
   const {
     queryResult: {

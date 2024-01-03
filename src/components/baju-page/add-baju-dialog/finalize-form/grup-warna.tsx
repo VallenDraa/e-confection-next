@@ -72,7 +72,7 @@ export function GrupWarnaItem(props: GrupWarnaItemProps) {
 
   const {
     previewQueryResult: { data: previewKaryawanResult, error: karyawanError },
-  } = useKaryawan({ karyawanPage: 1, onError });
+  } = useKaryawan({ onError });
 
   const {
     queryResult: { data: merekResult, error: merekError },

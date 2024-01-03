@@ -9,20 +9,59 @@ import axios from 'axios';
 import { ServerStateHookCallback } from './server-state-hooks.types';
 
 type useKaryawanProps = ServerStateHookCallback & {
-  karyawanPage: number;
+  activeQueryProps?: {
+    page: number;
+  };
+  deletedQueryProps?: {
+    page: number;
+  };
 };
 
 export function useKaryawan(props: useKaryawanProps) {
-  const { karyawanPage, onSuccess, onError } = props;
+  const { activeQueryProps, deletedQueryProps, onSuccess, onError } = props;
 
   const queryClient = useQueryClient();
 
-  const queryResult = useQuery<KaryawanGETResponse>({
-    queryKey: ['karyawan', karyawanPage],
+  const activeQueryResult = useQuery<KaryawanGETResponse>({
+    queryKey: ['karyawan', 'active', activeQueryProps],
     async queryFn() {
       try {
+        if (!activeQueryProps) {
+          return {
+            data: [],
+            metadata: { last: 0, current: 0, next: 0, prev: 0 },
+          };
+        }
+
         const { data } = await axios.get<KaryawanGETResponse>(
-          `/api/karyawan?page=${karyawanPage}`,
+          `/api/karyawan?page=${activeQueryProps?.page}`,
+        );
+
+        return data;
+      } catch (error) {
+        onError?.('query');
+
+        return {
+          data: [],
+          metadata: { last: 0, current: 0, next: 0, prev: 0 },
+        };
+      }
+    },
+  });
+
+  const deletedQueryResult = useQuery<KaryawanGETResponse>({
+    queryKey: ['karyawan', 'deleted', deletedQueryProps],
+    async queryFn() {
+      try {
+        if (!deletedQueryProps) {
+          return {
+            data: [],
+            metadata: { last: 0, current: 0, next: 0, prev: 0 },
+          };
+        }
+
+        const { data } = await axios.get<KaryawanGETResponse>(
+          `/api/karyawan/deleted?page=${deletedQueryProps.page}`,
         );
 
         return data;
@@ -56,12 +95,17 @@ export function useKaryawan(props: useKaryawanProps) {
   });
 
   const addKaryawan = useMutation({
-    mutationKey: ['karyawan', karyawanPage],
     mutationFn: async (newKaryawan: Pick<Karyawan, 'nama' | 'telepon'>) => {
       await axios.post('/api/karyawan', newKaryawan);
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'active', activeQueryProps],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'deleted', deletedQueryProps],
+      });
+
       queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
       onSuccess?.('add');
     },
@@ -73,7 +117,12 @@ export function useKaryawan(props: useKaryawanProps) {
       await axios.put('/api/karyawan', newKaryawan);
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'active', activeQueryProps],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'deleted', deletedQueryProps],
+      });
       queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
       onSuccess?.('edit');
     },
@@ -81,12 +130,16 @@ export function useKaryawan(props: useKaryawanProps) {
   });
 
   const deleteKaryawan = useMutation({
-    mutationKey: ['karyawan', karyawanPage],
     mutationFn: async (karyawanIds: string[]) => {
       await axios.delete('/api/karyawan', { data: { ids: karyawanIds } });
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['karyawan', karyawanPage] });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'active', activeQueryProps],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'deleted', deletedQueryProps],
+      });
       queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
 
       onSuccess?.('delete');
@@ -95,7 +148,8 @@ export function useKaryawan(props: useKaryawanProps) {
   });
 
   return {
-    queryResult,
+    activeQueryResult,
+    deletedQueryResult,
     previewQueryResult,
     addKaryawan,
     editKaryawan,
