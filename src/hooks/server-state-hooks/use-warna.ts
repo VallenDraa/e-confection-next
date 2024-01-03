@@ -37,20 +37,6 @@ export function useWarna(props: useWarnaProps) {
     onError: () => onError?.('add'),
   });
 
-  // const editWarna = useMutation({
-  //   mutationFn: async (newWarna: WarnaBody & { id: string }) => {
-  //     await axios.put(`/api/warna/${newWarna.id}`, {
-  //       nama: newWarna.nama,
-  //       kodeWarna: newWarna.kodeWarna,
-  //     } as WarnaBody);
-  //   },
-  //   onSuccess() {
-  //     queryClient.invalidateQueries({ queryKey: ['warna'] });
-  //     onSuccess?.('edit');
-  //   },
-  //   onError: () => onError?.('edit'),
-  // });
-
   const deleteWarna = useMutation({
     mutationFn: async (warnaId: string) => {
       await axios.delete(`/api/warna/${warnaId}`);
