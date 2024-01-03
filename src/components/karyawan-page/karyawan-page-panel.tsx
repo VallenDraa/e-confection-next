@@ -22,6 +22,7 @@ import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { useKaryawan } from '@/hooks/server-state-hooks/use-karyawan';
 import { KaryawanPageSkeleton } from './karyawan-page-skeleton';
 import db from 'just-debounce';
+import { ConfirmAddDialog } from '../ui/confirm-add-dialog';
 
 type KaryawanTab = 'active' | 'deleted';
 
@@ -36,6 +37,11 @@ export function KaryawanPagePanel() {
 
   const [isDeletingKaryawan, setIsDeletingKaryawan] = React.useState(false);
   const [toBeDeletedKaryawan, setToBeDeletedKaryawan] = React.useState<
+    string[]
+  >([]);
+
+  const [isRestoringKaryawan, setIsRestoringKaryawan] = React.useState(false);
+  const [toBeRestoredKaryawan, setToBeRestoredKaryawan] = React.useState<
     string[]
   >([]);
 
@@ -64,7 +70,17 @@ export function KaryawanPagePanel() {
     [],
   );
 
-  React.useEffect(() => {}, [queryConfig]);
+  function handleTabChanges(
+    e: React.SyntheticEvent<Element, Event>,
+    newTab: KaryawanTab,
+  ) {
+    setLocalSearch('');
+    setIsDeletingKaryawan(false);
+    setToBeDeletedKaryawan([]);
+    setIsRestoringKaryawan(false);
+    setToBeRestoredKaryawan([]);
+    setQueryConfig({ search: '', activeTab: newTab, page: 1 });
+  }
 
   const {
     activeQueryResult: {
@@ -80,6 +96,7 @@ export function KaryawanPagePanel() {
     addKaryawan,
     editKaryawan,
     deleteKaryawan,
+    undeleteKaryawan,
   } = useKaryawan({
     activeQueryProps:
       queryConfig.activeTab === 'active'
@@ -118,10 +135,7 @@ export function KaryawanPagePanel() {
         <Box display="flex" gap={1} mt={1} flexDirection="column">
           <Tabs
             value={queryConfig.activeTab}
-            onChange={(e, newTab: KaryawanTab) => {
-              setLocalSearch('');
-              setQueryConfig({ search: '', activeTab: newTab, page: 1 });
-            }}
+            onChange={handleTabChanges}
             aria-label="Karyawan Tabs"
           >
             <Tab
@@ -159,13 +173,23 @@ export function KaryawanPagePanel() {
               return (
                 <KaryawanItem
                   onEdit={editKaryawan.mutateAsync}
-                  checkable={isDeletingKaryawan}
+                  checkable={isDeletingKaryawan || isRestoringKaryawan}
                   onChecked={isChecked => {
-                    setToBeDeletedKaryawan(prev =>
-                      isChecked
-                        ? [...prev, karyawan.id]
-                        : prev.filter(id => id !== karyawan.id),
-                    );
+                    if (isDeletingKaryawan) {
+                      setToBeDeletedKaryawan(prev =>
+                        isChecked
+                          ? [...prev, karyawan.id]
+                          : prev.filter(id => id !== karyawan.id),
+                      );
+                    }
+
+                    if (isRestoringKaryawan) {
+                      setToBeRestoredKaryawan(prev =>
+                        isChecked
+                          ? [...prev, karyawan.id]
+                          : prev.filter(id => id !== karyawan.id),
+                      );
+                    }
                   }}
                   karyawan={karyawan}
                   key={karyawan.id}
@@ -207,7 +231,38 @@ export function KaryawanPagePanel() {
           />
 
           <Box gap={1} display="flex" flexDirection="column">
-            {isDeletingKaryawan ? (
+            {queryConfig.activeTab === 'active' && !isDeletingKaryawan && (
+              <>
+                <Button
+                  onClick={() => setIsDeletingKaryawan(true)}
+                  variant="contained"
+                  color="error"
+                  size="small"
+                >
+                  HAPUS
+                </Button>
+
+                <AddKaryawanDialog
+                  onSubmit={async karyawan => {
+                    await addKaryawan.mutateAsync(karyawan);
+                    setIsDeletingKaryawan(false);
+                  }}
+                >
+                  {setOpen => (
+                    <Button
+                      onClick={() => setOpen(true)}
+                      variant="contained"
+                      color="success"
+                      size="small"
+                    >
+                      TAMBAH
+                    </Button>
+                  )}
+                </AddKaryawanDialog>
+              </>
+            )}
+
+            {queryConfig.activeTab === 'active' && isDeletingKaryawan && (
               <>
                 <Button
                   onClick={() => setIsDeletingKaryawan(false)}
@@ -221,6 +276,7 @@ export function KaryawanPagePanel() {
                 <ConfirmDeleteDialog
                   onDelete={async () => {
                     await deleteKaryawan.mutateAsync(toBeDeletedKaryawan);
+                    setToBeDeletedKaryawan([]);
                     setIsDeletingKaryawan(false);
                   }}
                 >
@@ -237,32 +293,52 @@ export function KaryawanPagePanel() {
                   )}
                 </ConfirmDeleteDialog>
               </>
-            ) : (
+            )}
+
+            {queryConfig.activeTab === 'deleted' && !isRestoringKaryawan && (
               <>
                 <Button
-                  onClick={() => setIsDeletingKaryawan(true)}
+                  onClick={() => setIsRestoringKaryawan(true)}
+                  variant="contained"
+                  color="success"
+                  size="small"
+                >
+                  Pulihkan
+                </Button>
+              </>
+            )}
+
+            {queryConfig.activeTab === 'deleted' && isRestoringKaryawan && (
+              <>
+                <Button
+                  onClick={() => setIsRestoringKaryawan(false)}
                   variant="contained"
                   color="error"
+                  size="small"
                 >
-                  HAPUS
+                  BATAL
                 </Button>
 
-                <AddKaryawanDialog
-                  onSubmit={async karyawan => {
-                    await addKaryawan.mutateAsync(karyawan);
-                    setIsDeletingKaryawan(false);
+                <ConfirmAddDialog
+                  message="Apakah anda yakin ingin memulihkan data karyawan yang anda telah pilih?"
+                  onAdd={async () => {
+                    await undeleteKaryawan.mutateAsync(toBeRestoredKaryawan);
+                    setToBeRestoredKaryawan([]);
+                    setIsRestoringKaryawan(false);
                   }}
                 >
                   {setOpen => (
                     <Button
+                      disabled={toBeRestoredKaryawan.length === 0}
                       onClick={() => setOpen(true)}
                       variant="contained"
                       color="success"
+                      size="small"
                     >
-                      TAMBAH
+                      PULIHKAN DATA
                     </Button>
                   )}
-                </AddKaryawanDialog>
+                </ConfirmAddDialog>
               </>
             )}
           </Box>

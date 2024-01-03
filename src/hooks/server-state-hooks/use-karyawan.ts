@@ -149,6 +149,24 @@ export function useKaryawan(props: useKaryawanProps) {
     onError: () => onError?.('delete'),
   });
 
+  const undeleteKaryawan = useMutation({
+    mutationFn: async (karyawanIds: string[]) => {
+      await axios.put('/api/karyawan/undelete', { data: { ids: karyawanIds } });
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'active', activeQueryProps],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['karyawan', 'deleted', deletedQueryProps],
+      });
+      queryClient.invalidateQueries({ queryKey: ['karyawan', 'preview'] });
+
+      onSuccess?.('edit');
+    },
+    onError: () => onError?.('edit'),
+  });
+
   return {
     activeQueryResult,
     deletedQueryResult,
@@ -156,5 +174,6 @@ export function useKaryawan(props: useKaryawanProps) {
     addKaryawan,
     editKaryawan,
     deleteKaryawan,
+    undeleteKaryawan,
   };
 }
