@@ -1,11 +1,10 @@
 import { ExistsGETResponse } from '@/app/api/exists/exists.types';
-import { ConfirmAddDialog } from '@/components/ui/confirm-add-dialog';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { Header } from '@/components/ui/header';
 import { NumberInput } from '@/components/ui/number-input';
 import { useSize } from '@/hooks/server-state-hooks/use-size';
-import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
+import { willDisableSubmit } from '@/lib/form-helpers';
 import { SizeSchema, sizeSchema } from '@/schema/size.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -122,12 +121,7 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
                 variant="standard"
                 size="medium"
                 error={!!formState.errors.hargaBeforeComma}
-                {...register('hargaBeforeComma', {
-                  onBlur: e =>
-                    overrideNumberInput(e, 'hargaBeforeComma', setValue),
-                  onChange: e =>
-                    overrideNumberInput(e, 'hargaBeforeComma', setValue),
-                })}
+                {...register('hargaBeforeComma', { valueAsNumber: true })}
               />
 
               <NumberInput
@@ -136,12 +130,7 @@ export function SizeInputDialog(props: SizeInputDialogProps) {
                 variant="standard"
                 size="medium"
                 error={!!formState.errors.hargaAfterComma}
-                {...register('hargaAfterComma', {
-                  onBlur: e =>
-                    overrideNumberInput(e, 'hargaAfterComma', setValue),
-                  onChange: e =>
-                    overrideNumberInput(e, 'hargaAfterComma', setValue),
-                })}
+                {...register('hargaAfterComma', { valueAsNumber: true })}
               />
             </Stack>
 

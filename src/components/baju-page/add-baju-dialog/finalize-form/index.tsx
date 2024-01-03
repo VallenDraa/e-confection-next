@@ -19,16 +19,14 @@ import { ConfirmAddDialog } from '@/components/ui/confirm-add-dialog';
 import { useSize } from '@/hooks/server-state-hooks/use-size';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { createRekapGajiList } from '@/lib/rekap-gaji-karyawan';
+import { useBajuFormStore } from '@/store/baju-form-store';
 
-export type FinalizeFormProps = {
-  newSeriProduksi: NewSeriProduksi;
-} & FormProps<NewSeriProduksi>;
+export default function FinalizeForm(props: FormProps<NewSeriProduksi>) {
+  const { onSubmit, onCancel } = props;
 
-export default function FinalizeForm(props: FinalizeFormProps) {
-  const { onSubmit, onCancel, newSeriProduksi } = props;
-
+  const { seriProduksi } = useBajuFormStore(({ formData }) => formData);
   const [localNewSeriProduksi, setLocalNewSeriProduksi] =
-    React.useState<NewSeriProduksi>(newSeriProduksi);
+    React.useState<NewSeriProduksi>(seriProduksi);
 
   const [alertMessage, setAlertMessage] = React.useState('');
   const {
@@ -167,7 +165,11 @@ export default function FinalizeForm(props: FinalizeFormProps) {
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button type="button" color="error" onClick={onCancel}>
+            <Button
+              type="button"
+              color="error"
+              onClick={() => onCancel?.(localNewSeriProduksi)}
+            >
               BATAL
             </Button>
             <ConfirmAddDialog onAdd={onSubmitHandler}>

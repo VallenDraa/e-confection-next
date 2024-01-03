@@ -21,6 +21,7 @@ import { WarnaBody } from '@/app/api/warna/warna-route.types';
 import { NamedCheckbox } from './named-checkbox';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { ColorCircle } from '@/components/ui/color-circle';
+import { useBajuFormStore } from '@/store/baju-form-store';
 
 type WarnaForm = {
   warnaIds: string[];
@@ -31,7 +32,8 @@ const DEFAULT_NEW_COLOR = { nama: '', kodeWarna: '#000000', softDelete: null };
 export default function WarnaForm(props: FormProps<WarnaForm>) {
   const { onSubmit, onCancel } = props;
 
-  const [warnaIds, setWarnaIds] = React.useState<string[]>([]);
+  const { selectedWarna } = useBajuFormStore(state => state.formData);
+  const [warnaIds, setWarnaIds] = React.useState<string[]>(selectedWarna);
   const [isAlertOn, setIsAlertOn] = React.useState(false);
 
   const {
@@ -180,7 +182,11 @@ export default function WarnaForm(props: FormProps<WarnaForm>) {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button type="button" color="error" onClick={onCancel}>
+          <Button
+            type="button"
+            color="error"
+            onClick={() => onCancel?.({ warnaIds })}
+          >
             BATAL
           </Button>
           <Button

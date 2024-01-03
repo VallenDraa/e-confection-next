@@ -13,9 +13,10 @@ import {
   newSeriProduksiSchema,
 } from '@/schema/seri-produksi.schema';
 import { FloatingAlert } from '@/components/ui/floating-alert';
+import { useBajuFormStore } from '@/store/baju-form-store/baju-form-store';
 
 export type FormProps<T extends unknown | unknown[]> = {
-  onCancel?: () => void;
+  onCancel?: (data: T) => void;
   onSubmit: (data: T) => Promise<void>;
 };
 
@@ -26,79 +27,56 @@ type AddBajuDialogProps<T> = {
   onCancel?: () => void;
 } & FormProps<T>;
 
-function getDefaultSeriProduksi(): NewSeriProduksi {
-  return {
-    id: crypto.randomUUID(),
-    nama: null,
-    nomorSeri: 0,
-    grupWarnaList: [],
-    bajuList: [],
-    rekapGajiList: [],
-  };
-}
-
 export function AddBajuDialog(props: AddBajuDialogProps<NewSeriProduksi>) {
   const { children, onSubmit, onCancel } = props;
   const [alertMessage, setAlertMessage] = React.useState('');
-  const newSeriProduksiRef = React.useRef<NewSeriProduksi>(
-    getDefaultSeriProduksi(),
-  );
+  const bajuStore = useBajuFormStore();
 
   const [open, setOpen] = React.useState(false);
   const { next, back, step, goTo } = useMultistepForm([
     <SeriProduksiForm
       key={0}
-      onCancel={() => {
+      onCancel={seriData => {
+        bajuStore.overrideSeriProduksi(seriData.nama, seriData.nomorSeri);
+
         onCancel?.();
         setOpen(false);
       }}
       onSubmit={async seriData => {
-        newSeriProduksiRef.current = {
-          ...newSeriProduksiRef.current,
-          nama: seriData.nama,
-          nomorSeri: seriData.nomorSeri,
-        };
-
+        bajuStore.overrideSeriProduksi(seriData.nama, seriData.nomorSeri);
         next();
       }}
     />,
     <WarnaForm
       key={1}
-      onCancel={() => back()}
+      onCancel={warnaData => {
+        bajuStore.overrideGrupWarnaList(
+          warnaData.warnaIds,
+          bajuStore.formData.seriProduksi,
+        );
+
+        back();
+      }}
       onSubmit={async warnaData => {
-        newSeriProduksiRef.current = {
-          ...newSeriProduksiRef.current,
-          grupWarnaList: warnaData.warnaIds.map(warnaId => ({
-            id: crypto.randomUUID(),
-            seriProduksiId: newSeriProduksiRef.current.id,
-            warnaId,
-            karyawanId: '',
-          })),
-        };
+        bajuStore.overrideGrupWarnaList(
+          warnaData.warnaIds,
+          bajuStore.formData.seriProduksi,
+        );
 
         next();
       }}
     />,
     <FinalizeForm
       key={2}
-      newSeriProduksi={newSeriProduksiRef.current}
-      onCancel={() => back()}
+      onCancel={finalizeData => {
+        bajuStore.overrideData(finalizeData);
+        back();
+      }}
       onSubmit={async data => {
-        newSeriProduksiRef.current = data;
-
-        const parsingResult = await newSeriProduksiSchema.safeParseAsync(
-          newSeriProduksiRef.current,
-        );
-
-        if (parsingResult.success) {
-          onSubmit(newSeriProduksiRef.current);
-          setOpen(false);
-          goTo(0);
-          newSeriProduksiRef.current = getDefaultSeriProduksi();
-        } else {
-          setAlertMessage('Gagal untuk menambahkan seri produksi baru!');
-          setTimeout(() => setAlertMessage(''), 3000);
-        }
+        onSubmit(data);
+        setOpen(false);
+        goTo(0);
+        bajuStore.resetFormData();
       }}
     />,
   ]);

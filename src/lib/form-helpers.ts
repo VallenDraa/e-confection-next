@@ -1,12 +1,4 @@
-import { FieldValues, FormState, UseFormSetValue } from 'react-hook-form';
-
-export function overrideNumberInput<T extends FieldValues>(
-  e: InputEvent,
-  key: string,
-  setValue: UseFormSetValue<T>,
-) {
-  setValue(key as any, (e.target as HTMLInputElement).valueAsNumber as any);
-}
+import { FieldValues, FormState } from 'react-hook-form';
 
 export function willDisableSubmit<T extends FieldValues>(
   formState: FormState<T>,

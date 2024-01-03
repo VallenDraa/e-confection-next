@@ -16,12 +16,13 @@ import { FormProps } from '.';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { overrideNumberInput, willDisableSubmit } from '@/lib/form-helpers';
+import { willDisableSubmit } from '@/lib/form-helpers';
 import { FloatingAlert } from '@/components/ui/floating-alert';
 import { useKaryawan } from '@/hooks/server-state-hooks/use-karyawan';
 import Link from 'next/link';
 import { seriProduksiExists } from '@/actions/seri-produksi';
 import { NumberInput } from '@/components/ui/number-input';
+import { useBajuFormStore } from '@/store/baju-form-store';
 
 const seriProduksiFormSchema = z.object({
   nama: z.string().nullable(),
@@ -32,9 +33,15 @@ type SeriProduksiForm = z.infer<typeof seriProduksiFormSchema>;
 
 export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
   const { onSubmit, onCancel } = props;
-  const { register, handleSubmit, formState, setValue } =
+
+  const { seriProduksi } = useBajuFormStore(state => state.formData);
+  const { register, handleSubmit, formState, setValue, getValues } =
     useForm<SeriProduksiForm>({
       resolver: zodResolver(seriProduksiFormSchema),
+      defaultValues: {
+        nama: seriProduksi.nama,
+        nomorSeri: seriProduksi.nomorSeri,
+      },
     });
 
   const [alertMessage, setAlertMessage] = React.useState('');
@@ -108,16 +115,17 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
                 size="medium"
                 error={!!formState.errors.nomorSeri}
                 helperText={formState.errors.nomorSeri?.message}
-                {...register('nomorSeri', {
-                  onBlur: e => overrideNumberInput(e, 'nomorSeri', setValue),
-                  onChange: e => overrideNumberInput(e, 'nomorSeri', setValue),
-                })}
+                {...register('nomorSeri', { valueAsNumber: true })}
               />
             </Stack>
           </DialogContent>
 
           <DialogActions>
-            <Button type="button" color="error" onClick={onCancel}>
+            <Button
+              type="button"
+              color="error"
+              onClick={() => onCancel?.(getValues())}
+            >
               BATAL
             </Button>
             <Button
@@ -152,8 +160,13 @@ export default function SeriProduksiForm(props: FormProps<SeriProduksiForm>) {
               </MuiLink>
             </Stack>
           </DialogContent>
+
           <DialogActions>
-            <Button type="button" color="error" onClick={onCancel}>
+            <Button
+              type="button"
+              color="error"
+              onClick={() => onCancel?.(getValues())}
+            >
               Tutup
             </Button>
           </DialogActions>

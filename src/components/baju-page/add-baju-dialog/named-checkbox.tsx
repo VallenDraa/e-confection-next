@@ -15,7 +15,7 @@ export function NamedCheckbox(props: NamedCheckboxProps) {
     <FormControlLabel
       label={label}
       sx={{ flexGrow: labelFullWidth ? 1 : 'initial' }}
-      control={<Checkbox onClick={onChange} value={value} />}
+      control={<Checkbox onClick={onChange} checked={value} />}
     />
   );
 }
