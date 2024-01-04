@@ -2,7 +2,7 @@ import { RekapGajiGETPaginatedResponse } from '../../rekap-gaji-route.types';
 import { NextRequest, NextResponse } from 'next/server';
 import * as z from 'zod';
 import { prisma } from '@/lib/prisma';
-import { searchParamsExtractor } from '@/lib/api';
+import { searchParamsExtractor } from '@/lib/api/api';
 
 export async function GET(
   req: NextRequest,

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { BajuGETResponse } from './baju-route.types';
-import { searchParamsExtractor } from '@/lib/api';
+import { searchParamsExtractor } from '@/lib/api/api';
 
 export async function GET(req: NextRequest) {
   try {

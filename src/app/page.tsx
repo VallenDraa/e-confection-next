@@ -1,4 +1,4 @@
-import { HomePagePanel } from '@/components/home-page-panel';
+import { HomePagePanel } from '@/components/home-page/home-page-panel';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';

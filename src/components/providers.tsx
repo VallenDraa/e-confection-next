@@ -10,6 +10,16 @@ import {
   responsiveFontSizes,
 } from '@mui/material/styles';
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
 
@@ -21,6 +31,15 @@ const client = new QueryClient({
     },
   },
 });
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 
 export function Providers({ children }: React.PropsWithChildren) {
   return (
