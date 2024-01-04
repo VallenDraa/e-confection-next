@@ -116,7 +116,7 @@ export function SignInPanel() {
               error={!!formState.errors.password}
               {...register('password')}
             />
-
+            {/* 
             <FormControlLabel
               sx={{
                 width: '100%',
@@ -126,7 +126,7 @@ export function SignInPanel() {
               labelPlacement="start"
               control={<Switch {...register('rememberMe')} />}
               label="Remember Me"
-            />
+            /> */}
           </Stack>
 
           <Button
