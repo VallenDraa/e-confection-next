@@ -13,7 +13,11 @@ export async function GET(req: NextRequest) {
     const search = req.nextUrl.searchParams.get('search') || '';
     const size = Number(req.nextUrl.searchParams.get('size') || 6);
 
-    const totalData = await prisma.karyawan.count();
+    const totalData = await prisma.karyawan.count({
+      where: {
+        softDelete: null,
+      },
+    });
     const totalPages = Math.ceil(totalData / size) || 1;
 
     const karyawanData = await prisma.karyawan.findMany({
