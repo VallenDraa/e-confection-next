@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
 
     const totalData = await prisma.karyawan.count({
       where: {
+        nama: { contains: search },
         softDelete: { not: null },
       },
     });
