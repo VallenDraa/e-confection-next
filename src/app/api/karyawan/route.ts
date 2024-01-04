@@ -24,7 +24,6 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
       where: {
         nama: { contains: search },
-        telepon: { contains: search },
         softDelete: null,
       },
       skip: (page - 1) * size,
